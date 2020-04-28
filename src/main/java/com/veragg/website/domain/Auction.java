@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+//TODO: AuctionConflict just extends Auction and has additional field date, probably column name(s) for conflict
+
 @Entity
 public class Auction {
 
