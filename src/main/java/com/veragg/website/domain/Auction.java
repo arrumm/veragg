@@ -1,9 +1,16 @@
 package com.veragg.website.domain;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 //TODO: AuctionConflict just extends Auction and has additional field date, probably column name(s) for conflict
 
@@ -15,6 +22,38 @@ public class Auction {
     private Long id;
 
     private String referenceNumber;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "court_id")
+    private Court court;
+
+    //aktenzeichen
+    private String fileNumber;
+
+    //objekttyp
+    private PropertyType propertyType;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    //termin
+    private LocalDateTime appointment;
+
+    //Verkehrswert
+    private Long amount;
+
+    //zuschlag
+    private Limit limit;
+    //Zuschlag ab: 	keine Grenze
+    private String limitInfo;
+
+    private String infoPlace;
+    private String infoPropertyBuilding;
+    private String infoPropertyLand;
+    private String infoEvaluation;
+
+//    private List<Document> pictures;
 
     public Auction() {
     }
