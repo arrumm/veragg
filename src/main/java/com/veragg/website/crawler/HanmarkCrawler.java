@@ -1,18 +1,60 @@
 package com.veragg.website.crawler;
 
-import java.util.Set;
+import java.util.regex.Pattern;
 
-public class HanmarkCrawler extends AbstractCrawler {
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
 
-    //TODO: own regexp for extracting urls
+import com.veragg.website.domain.Auction;
 
-    //TODO: own regexp to parse the page itself
+import static java.util.Objects.isNull;
+
+@Component
+public class HanmarkCrawler extends AbstractCrawler implements ApplicationListener<ContextRefreshedEvent> {
+
+    private final String START_URL = "https://www.hanmark.de/amtsgerichte.html";
+    private final String LINK_CRAWL_REGEXP = "(https://www.hanmark.de/).+(.html)";
+    private final String LINK_EXTRACT_REGEXP = "(https://www.hanmark.de/wertgutachten-)([0-9])+(.html)";
+
+    private Pattern LINK_CRAWL_PATTERN;
+    private Pattern LINK_EXTRACT_PATTERN;
 
     @Override
-    public Set<String> fetchUrls(final String startUrl) {
-
-
-
+    Auction parseAuction(final String pageData) {
+        //TODO: own rules to parse the page itself
         return null;
+    }
+
+
+    @Override
+    String getStartURL() {
+        return START_URL;
+    }
+
+    @Override
+    int getMaxCrawlDepth() {
+        return 2;
+    }
+
+    @Override
+    Pattern getExtractLinkPattern() {
+        if (isNull(LINK_EXTRACT_PATTERN)) {
+            LINK_EXTRACT_PATTERN = Pattern.compile(LINK_EXTRACT_REGEXP);
+        }
+        return LINK_EXTRACT_PATTERN;
+    }
+
+    @Override
+    Pattern getCrawlLInkPattern() {
+        if (isNull(LINK_CRAWL_PATTERN)) {
+            LINK_CRAWL_PATTERN = Pattern.compile(LINK_CRAWL_REGEXP);
+        }
+        return LINK_CRAWL_PATTERN;
+    }
+
+    @Override
+    public void onApplicationEvent(final ContextRefreshedEvent event) {
+        process();
     }
 }
