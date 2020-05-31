@@ -1,8 +1,6 @@
 package com.veragg.website.domain;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,8 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-//TODO: AuctionConflict just extends Auction and has additional field date, probably column name(s) for conflict
 
 @Entity
 public class Auction {
@@ -58,10 +54,6 @@ public class Auction {
     public Auction() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -86,6 +78,10 @@ public class Auction {
         return result;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setId(final Long id) {
         this.id = id;
     }
@@ -96,5 +92,101 @@ public class Auction {
 
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+
+    public Court getCourt() {
+        return court;
+    }
+
+    public void setCourt(final Court court) {
+        this.court = court;
+    }
+
+    public String getFileNumber() {
+        return fileNumber;
+    }
+
+    public void setFileNumber(final String fileNumber) {
+        this.fileNumber = fileNumber;
+    }
+
+    public PropertyType getPropertyType() {
+        return propertyType;
+    }
+
+    public void setPropertyType(final PropertyType propertyType) {
+        this.propertyType = propertyType;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(final Address address) {
+        this.address = address;
+    }
+
+    public LocalDateTime getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(final LocalDateTime appointment) {
+        this.appointment = appointment;
+    }
+
+    public Long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final Long amount) {
+        this.amount = amount;
+    }
+
+    public Limit getLimit() {
+        return limit;
+    }
+
+    public void setLimit(final Limit limit) {
+        this.limit = limit;
+    }
+
+    public String getLimitInfo() {
+        return limitInfo;
+    }
+
+    public void setLimitInfo(final String limitInfo) {
+        this.limitInfo = limitInfo;
+    }
+
+    public String getInfoPlace() {
+        return infoPlace;
+    }
+
+    public void setInfoPlace(final String infoPlace) {
+        this.infoPlace = infoPlace;
+    }
+
+    public String getInfoPropertyBuilding() {
+        return infoPropertyBuilding;
+    }
+
+    public void setInfoPropertyBuilding(final String infoPropertyBuilding) {
+        this.infoPropertyBuilding = infoPropertyBuilding;
+    }
+
+    public String getInfoPropertyLand() {
+        return infoPropertyLand;
+    }
+
+    public void setInfoPropertyLand(final String infoPropertyLand) {
+        this.infoPropertyLand = infoPropertyLand;
+    }
+
+    public String getInfoEvaluation() {
+        return infoEvaluation;
+    }
+
+    public void setInfoEvaluation(final String infoEvaluation) {
+        this.infoEvaluation = infoEvaluation;
     }
 }

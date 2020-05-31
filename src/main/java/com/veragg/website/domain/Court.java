@@ -14,14 +14,15 @@ import javax.persistence.OneToOne;
 @Entity
 public class Court {
 
-    private State state;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @OneToOne
     private Address address;
+
+    private String name;
+    private State state;
 
     @OneToMany(mappedBy = "court", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Auction> auctions;
@@ -48,6 +49,10 @@ public class Court {
     public Court() {
     }
 
+    public Court(final String name) {
+        this.name = name;
+    }
+
     public State getState() {
         return state;
     }
@@ -72,4 +77,11 @@ public class Court {
         this.address = address;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 }
