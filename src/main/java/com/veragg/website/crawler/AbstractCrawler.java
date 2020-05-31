@@ -1,6 +1,8 @@
 package com.veragg.website.crawler;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -16,7 +18,9 @@ import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.veragg.website.domain.Auction;
+import com.veragg.website.crawler.mapping.AuctionMapperService;
+import com.veragg.website.crawler.model.BaseAuctionModel;
+import com.veragg.website.domain.AuctionDraft;
 
 //TODO: should be regular job
 public abstract class AbstractCrawler implements Crawling {
@@ -26,21 +30,26 @@ public abstract class AbstractCrawler implements Crawling {
     private Set<String> visitedUrls = new HashSet<>();
     //TODO: add repository
 
+    AuctionMapperService mapperService;
+
+    public AbstractCrawler() {
+    }
+
     @Override
     public void process() {
 
         Set<String> urlsToFetch = collectUrls(getStartURL(), 0, getMaxCrawlDepth());
 
         for (String url : urlsToFetch) {
-            //            try {
-            System.out.println(url);
-            //                String pageData = getPageContent(url);
-            //                Auction auction = parseAuction(pageData);
-            //TODO: AuctionRepository.save(auction)
-            //  or compare in the service and persist then
-            //            } catch (IOException e) {
-            //                LOGGER.error("Page data fetch error", e);
-            //            }
+            try {
+                String pageData = getPageContent(url);
+                BaseAuctionModel auctionModel = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
+                AuctionDraft auctionDraft = mapperService.map(auctionModel);
+                //TODO: AuctionRepository.save(auction)
+                //  or compare in the service and persist then
+            } catch (IOException e) {
+                LOGGER.error("Page data fetch error", e);
+            }
         }
 
     }
@@ -67,7 +76,7 @@ public abstract class AbstractCrawler implements Crawling {
                         return fetchedUrls;
                     }
 
-                    Pattern crawlUrlPattern = getCrawlLInkPattern();
+                    Pattern crawlUrlPattern = getCrawlLinkPattern();
                     Set<String> urlsToCrawl = fetchUrls(crawlUrlPattern, currentPageContent);
                     urlsToCrawl.removeAll(visitedUrls);
                     urlsToCrawl.forEach(url -> fetchedUrls.addAll(collectUrls(url, currentDepth + 1, maxDepth)));
@@ -84,14 +93,12 @@ public abstract class AbstractCrawler implements Crawling {
     /**
      * Fetches urls from url with logic defined in specific class
      *
-     * @param r
-     * @param pageContent
-     * @return
-     * @throws IOException
+     * @param pattern     to fetch urls by
+     * @param pageContent to fetch urls from
+     * @return set of urls
      */
-    private Set<String> fetchUrls(final Pattern r, final String pageContent) {
-        Matcher m;
-        m = r.matcher(pageContent);
+    private Set<String> fetchUrls(final Pattern pattern, final String pageContent) {
+        Matcher m = pattern.matcher(pageContent);
         Set<String> urls = new HashSet<>();
         while (m.find()) {
             urls.add(m.group());
@@ -123,11 +130,11 @@ public abstract class AbstractCrawler implements Crawling {
     }
 
     /**
-     * Parse the page and map it to {@link com.veragg.website.domain.Auction} specific to {@link AbstractCrawler} implementation
+     * Parse the page and map it to {@link BaseAuctionModel} specific to {@link AbstractCrawler} implementation
      *
      * @param pageData
      */
-    abstract Auction parseAuction(String pageData);
+    abstract BaseAuctionModel parseAuction(String url, InputStream pageData) throws IOException;
 
     abstract String getStartURL();
 
@@ -135,6 +142,6 @@ public abstract class AbstractCrawler implements Crawling {
 
     abstract Pattern getExtractLinkPattern();
 
-    abstract Pattern getCrawlLInkPattern();
+    abstract Pattern getCrawlLinkPattern();
 
 }

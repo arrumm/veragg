@@ -1,15 +1,14 @@
-GET https://www.hanmark.de/wertgutachten-29335.html
-Accept: application/json
-
-###
-GET https://www.hanmark.de/amtsgericht-26.html
-Accept: application/json
-
-###
 GET https://www.hanmark.de/amtsgerichte.html
 Accept: application/json
 
 ###
 
+GET https://www.hanmark.de/amtsgericht-26.html
+Accept: application/json
 
+###
 
+GET https://www.hanmark.de/wertgutachten-29336.html
+Accept: application/json
+
+###
