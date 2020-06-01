@@ -7,7 +7,7 @@ public class BaseAuctionModel {
     private String courtName;
     private String propertyTypeName;
     private String streetAddress;
-    private String streetCity;
+    private String cityAddress;
     private String amount;
     private String appointmentDate;
     private String expertDescription;
@@ -49,12 +49,12 @@ public class BaseAuctionModel {
         this.streetAddress = streetAddress;
     }
 
-    public String getStreetCity() {
-        return streetCity;
+    public String getCityAddress() {
+        return cityAddress;
     }
 
-    public void setStreetCity(final String streetCity) {
-        this.streetCity = streetCity;
+    public void setCityAddress(final String cityAddress) {
+        this.cityAddress = cityAddress;
     }
 
     public String getAmount() {
