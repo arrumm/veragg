@@ -2,23 +2,17 @@ package com.veragg.website.crawler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UncheckedIOException;
 
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.FileCopyUtils;
 
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
 
 import static com.veragg.website.domain.PropertyType.ONE_FAMILY_HOUSE;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -46,14 +40,18 @@ class HanmarkCrawler_when_parseAuction_is_called {
         assertEquals("12b K 3/19", result.getFileNumber());
         assertEquals("Wittlich", result.getCourtName());
         assertEquals(ONE_FAMILY_HOUSE.getName(), result.getPropertyTypeName());
+        assertEquals("Bergweg 7", result.getStreetAddress());
+        assertEquals("54538 Hontheim", result.getCityAddress());
+        assertEquals("161.700,00 EUR", result.getAmount());
+        assertEquals("16.06.2020 14:00 Uhr", result.getAppointmentDate());
+
+        assertEquals(
+                "der Sachverständigen über den Verkehrswert für das mit einem Wohnhaus mit Garage bebaute Grundstück in 54538 Hontheim, Bergweg 7\n" + "· Grundbuch Hontheim\n" + "· Blatt 2297\n" +
+                        "· Gemarkung Hontheim\n" + "· Flur 31\n" + "· BV. Nr. 1, Flurstück 33/2, Gebäude- und Freifläche; Größe 50 m²; Verkehrswert: 4.700,00 €\n" +
+                        "· BV. Nr. 2, Flurstück 27/3, Gebäude- und Freifläche; Größe 67 m²; Verkehrswert: 1.800,00 €\n" +
+                        "· BV. Nr. 3, Flurstück 36/2, Erholungsfläche, Gebäude- und Freifläche; Größe 1.136 m²; Verkehrswert: 155.200,00 €\n" + "Wertermittlungsstichtag: 30.07.2019\n" +
+                        "Gesamtverkehrswert: 161.700,00 €\n", result.getExpertDescription());
 
     }
 
-    public static String asString(Resource resource) {
-        try (Reader reader = new InputStreamReader(resource.getInputStream(), UTF_8)) {
-            return FileCopyUtils.copyToString(reader);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
 }
