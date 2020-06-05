@@ -4,9 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.veragg.website.domain.Court;
+import com.veragg.website.domain.State;
 import com.veragg.website.repository.CourtRepo;
-
-import static java.util.Objects.nonNull;
 
 @Service
 public class CourtServiceImpl implements CourtService {
@@ -19,13 +18,7 @@ public class CourtServiceImpl implements CourtService {
     }
 
     @Override
-    public Court getByName(final String name) {
-
-        if (nonNull(courtRepo.findByName(name))) {
-            return courtRepo.findByName(name);
-        }
-
-        Court court = new Court(name);
-        return courtRepo.save(court);
+    public Court get(final String name, final State state) {
+        return courtRepo.findByNameAndState(name, state);
     }
 }

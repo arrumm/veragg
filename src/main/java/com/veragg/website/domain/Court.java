@@ -11,14 +11,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
+@EqualsAndHashCode(exclude = {"id", "address"})
 @Entity
+@RequiredArgsConstructor
 public class Court {
 
     @Id
@@ -28,33 +29,12 @@ public class Court {
     @Embedded
     private Address address;
 
+    @NonNull
     private String name;
+
+    @NonNull
     private State state;
 
     @OneToMany(mappedBy = "court", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Auction> auctions;
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final Court court = (Court) o;
-
-        if (!getName().equals(court.getName())) {
-            return false;
-        }
-        return getState() == court.getState();
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getName().hashCode();
-        result = 31 * result + getState().hashCode();
-        return result;
-    }
 }
