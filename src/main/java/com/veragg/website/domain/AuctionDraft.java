@@ -1,7 +1,9 @@
 package com.veragg.website.domain;
 
+import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+@Entity
 public class AuctionDraft extends Auction {
 
     @ManyToOne

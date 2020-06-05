@@ -3,14 +3,21 @@ package com.veragg.website.domain;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Court {
 
@@ -18,7 +25,7 @@ public class Court {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @Embedded
     private Address address;
 
     private String name;
@@ -32,56 +39,22 @@ public class Court {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Court)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         final Court court = (Court) o;
 
-        return getId() != null ? getId().equals(court.getId()) : court.getId() == null;
+        if (!getName().equals(court.getName())) {
+            return false;
+        }
+        return getState() == court.getState();
     }
 
     @Override
     public int hashCode() {
-        return getId() != null ? getId().hashCode() : 0;
-    }
-
-    public Court() {
-    }
-
-    public Court(final String name) {
-        this.name = name;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(final State state) {
-        this.state = state;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(final Address address) {
-        this.address = address;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
+        int result = getName().hashCode();
+        result = 31 * result + getState().hashCode();
+        return result;
     }
 }
