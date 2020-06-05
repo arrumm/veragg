@@ -56,6 +56,11 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
     }
 
     @Override
+    public void onApplicationEvent(final ContextRefreshedEvent event) {
+        process();
+    }
+
+    @Override
     HanmarkAuctionModel parseAuction(final String url, final InputStream pageData) throws IOException {
 
         final HanmarkAuctionModel auction = new HanmarkAuctionModel();
@@ -72,6 +77,7 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
         Element description = getElementsChildrenByPath(doc, DESCRIPTION_BLOCK_CSS_PATH);
 
         auction.setExpertDescription(collectDescription(description, EXPRETISE_DESCRIPTON_NAME));
+        auction.setPlotDescription(collectDescription(description, PLOT_DESCRIPTON_NAME));
 
         return auction;
     }
@@ -155,10 +161,5 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
             LINK_CRAWL_PATTERN = Pattern.compile(LINK_CRAWL_REGEXP);
         }
         return LINK_CRAWL_PATTERN;
-    }
-
-    @Override
-    public void onApplicationEvent(final ContextRefreshedEvent event) {
-        process();
     }
 }

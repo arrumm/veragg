@@ -52,6 +52,19 @@ class HanmarkCrawler_when_parseAuction_is_called {
                         "· BV. Nr. 3, Flurstück 36/2, Erholungsfläche, Gebäude- und Freifläche; Größe 1.136 m²; Verkehrswert: 155.200,00 €\n" + "Wertermittlungsstichtag: 30.07.2019\n" +
                         "Gesamtverkehrswert: 161.700,00 €\n", result.getExpertDescription());
 
+        assertEquals("Ort und Einwohnerzahl: Hontheim ist eine Ortsgemeinde in der südlichen Vulkaneifel. Sie gehört zur Verbandsgemeinde Traben- Trarbach. Der Ort liegt am Randes des Kondelwalds " +
+                        "und ist umgeben von den Bächen Alf sowie Üss. Hontheim hat ca. 800 Einwohner und verfügt über eine Kindertagesstätte. Eine Grundschule ist in Hontheim nicht vorhanden.\n" +
+                        "Überörtliche Anbindung/Entfernungen: Durch Hontheim verläuft die Bundesstraße 421, die von der belgischen Grenze bis in den Hunsrück führt. Zudem hat der Ort eine gute " +
+                        "Anbindung an" +
+                        " die Autobahn A1 Kelberg - Trier - Saarbrücken. Die Entfernung bis zur Anschlussstelle Hasborn (123) beträgt ca. 13 km. Die Entfernungen zu den nächstgelegenen Städten " +
+                        "betragen: ca" +
+                        ". 5 km bis nach Bad Bertrich, ca. 18 km bis nach Wittlich, ca. 19 km bis nach Zell, ca. 24 km bis nach Traben- Trarbach, ca. 28 km bis nach Daun, ca. 29 km bis nach Cochem," +
+                        " ca. 37 " +
+                        "km bis zum Flughafen Frankfurt- Hahn, ca. 42 km bis nach Schweich.\nInnerörtliche Lage: Das zu bewertenden Grundstück liegt im nördlichen Zentrum von Hontheim.\n" +
+                        "Art der Bebauung und Nutzungen: gemischte Bauweise; Die Bebauung in der näheren Umgebung besteht überwiegend aus Wohnhäusern in zweigeschossiger Bauweise.\n" +
+                        "Straßenart: Ortsstraße\nAnschlüsse an Versorgungsleitungen: Flurstück 36/2: Die Wasser-, Abwasser- und Elektrizitätsversorgung sind an das öffentliche Netz angeschlossen.\n",
+                result.getPlotDescription());
+
     }
 
 }
