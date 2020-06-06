@@ -78,6 +78,8 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
 
         auction.setExpertDescription(collectDescription(description, EXPRETISE_DESCRIPTON_NAME));
         auction.setPlotDescription(collectDescription(description, PLOT_DESCRIPTON_NAME));
+        auction.setBuildingDescription(collectDescription(description, BUILDING_DESCRIPTON_NAME));
+        auction.setOutdoorDescription(collectDescription(description, OUTDOOR_DESCRIPTON_NAME));
 
         return auction;
     }
