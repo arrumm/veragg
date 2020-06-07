@@ -1,21 +1,18 @@
 package com.veragg.website.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum State {
-    BW("Baden Wurt"),
-        BE("Berlin"),
-        BY("Bayern");
-    //    BB,
-    //    HB,
-    //    HH
+    BW("Baden-Württemberg"),
+    BE("Berlin"),
+    BY("Bayern"),
+    RP("Rheinland-Pfalz");
 
     private String name;
 
     State(final String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
 }

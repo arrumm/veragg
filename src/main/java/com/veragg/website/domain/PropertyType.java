@@ -6,10 +6,10 @@ import java.util.Set;
 
 public enum PropertyType {
 
-    ONE_FAMILY_HOUSE("Einfamilienhaus", "one"),
-    FLAT("Wohnung", ""),
-    MORE_FAMILY_HOUSE("Mehrfamilienhaus", ""),
-    TWO_FAMILIES_HOUSE("Zweifamilienhaus", "");
+    ONE_FAMILY_HOUSE("Einfamilienhaus"),
+    FLAT("Wohnung"),
+    MORE_FAMILY_HOUSE("Mehrfamilienhaus"),
+    TWO_FAMILIES_HOUSE("Zweifamilienhaus");
 
     private String name;
 

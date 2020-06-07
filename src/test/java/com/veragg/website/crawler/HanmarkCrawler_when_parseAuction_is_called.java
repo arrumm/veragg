@@ -4,19 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
 
 import static com.veragg.website.domain.PropertyType.ONE_FAMILY_HOUSE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 class HanmarkCrawler_when_parseAuction_is_called {
 
@@ -28,7 +25,7 @@ class HanmarkCrawler_when_parseAuction_is_called {
     }
 
     @Test
-    void and_valid_pageData_is_passed_then_auction_returned() throws IOException {
+    public void and_valid_pageData_is_passed_then_auction_returned() throws IOException {
         // Arrange
         InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-house.html");
 

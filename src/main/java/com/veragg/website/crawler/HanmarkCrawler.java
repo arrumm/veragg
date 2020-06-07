@@ -63,9 +63,9 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
     @Override
     HanmarkAuctionModel parseAuction(final String url, final InputStream pageData) throws IOException {
 
-        final HanmarkAuctionModel auction = new HanmarkAuctionModel();
         Document doc = Jsoup.parse(pageData, "UTF-8", url);
 
+        final HanmarkAuctionModel auction = new HanmarkAuctionModel();
         auction.setCourtName(getElementTextByPath(doc, COURT_XPATH));
         auction.setFileNumber(getElementTextByPath(doc, FILE_CSS_PATH));
         auction.setPropertyTypeName(getElementTextByPath(doc, TYPE_CSS_PATH));
@@ -75,7 +75,6 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
         auction.setAppointmentDate(getElementTextByPath(doc, APPOINTMENT_DATE_CSS_PATH));
 
         Element description = getElementsChildrenByPath(doc, DESCRIPTION_BLOCK_CSS_PATH);
-
         auction.setExpertDescription(collectDescription(description, EXPRETISE_DESCRIPTON_NAME));
         auction.setPlotDescription(collectDescription(description, PLOT_DESCRIPTON_NAME));
         auction.setBuildingDescription(collectDescription(description, BUILDING_DESCRIPTON_NAME));
