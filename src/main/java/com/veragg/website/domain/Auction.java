@@ -19,17 +19,17 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class Auction {
 
     @Id
@@ -43,7 +43,7 @@ public class Auction {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "auction_drafts", joinColumns = @JoinColumn(name = "auction_id"), inverseJoinColumns = @JoinColumn(name = "auction_draft_id"))
-    @Builder.Default
+    //    @Builder.Default
     private Set<AuctionDraft> drafts = new HashSet<>();
 
     //aktenzeichen
@@ -78,19 +78,16 @@ public class Auction {
     private String expertiseDescription;
 
     @OneToMany
-    @Builder.Default
+//    @Builder.Default
     private List<Document> pictures = new ArrayList<>();
 
     @OneToMany
-    @Builder.Default
+//    @Builder.Default
     private List<Document> tilePictures = new ArrayList<>();
 
     @OneToMany
-    @Builder.Default
+//    @Builder.Default
     private List<Document> expertiseReports = new ArrayList<>();
-
-    public Auction() {
-    }
 
     @Override
     public boolean equals(final Object o) {
