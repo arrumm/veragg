@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -30,15 +30,15 @@ class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     public void map() {
         // Arrange
         // @formatter:off
-        final HanmarkAuctionModel auctionModel = HanmarkAuctionModel.builder()
-                .amount("161.700,00 EUR")
-                .appointmentDate("16.06.2020 14:00 Uhr")
-                .courtName("Wittlich")
-                .fileNumber("12b K 3/19")
-                .propertyTypeName("Einfamilienhaus")
-                .cityAddress("54538 Hontheim")
-                .streetAddress("Bergweg 7")
-                .build();
+        HanmarkAuctionModel auctionModel = HanmarkAuctionModel.builder().build();
+//                .fileNumber("12b K 3/19")
+//                .amount("161.700,00 EUR")
+//                .appointmentDate("16.06.2020 14:00 Uhr")
+//                .courtName("Wittlich")
+//                .propertyTypeName("Einfamilienhaus")
+//                .cityAddress("54538 Hontheim")
+//                .streetAddress("Bergweg 7")
+//                .build();
         // @formatter:on
 
         auctionModel.setLimitDescription("keine Angabe");
