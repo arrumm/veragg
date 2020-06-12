@@ -15,21 +15,32 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private static final String HOUSE_NUMBER_REGEX = "\\d+(\\/\\d+)*$";
     private static final String ZIPCODE_REGEX = "^\\d{5}";
     private static final String AMOUNT_REGEX = "([0-9.,]+)";
+    private static final String AMOUNT_CENT_REGEX = ",.+";
 
     @Override
     public AuctionDraft map(final HanmarkAuctionModel auctionModel) {
 
-        AuctionDraft draft = new AuctionDraft();
-        draft.setFileNumber(auctionModel.getFileNumber());
-        draft.setLimit(getLimit(auctionModel.getLimitDescription()));
-        draft.setAddress(getAddress(auctionModel.getStreetAddress(), auctionModel.getCityAddress()));
-        draft.setAmount(Integer.parseInt(extractByPattern(Pattern.compile(AMOUNT_REGEX), auctionModel.getAmount())));
-        draft.setExpertiseDescription(auctionModel.getExpertDescription());
-        draft.setPropertyBuildingDescription(auctionModel.getBuildingDescription());
-        draft.setOutdoorDescription(auctionModel.getOutdoorDescription());
-        draft.setPropertyPlotDescription(auctionModel.getPlotDescription());
+        //@formatter:off
+        AuctionDraft draft = AuctionDraft.draftBuilder()
+                                .fileNumber(auctionModel.getFileNumber())
+                                .limit(getLimit(auctionModel.getLimitDescription()))
+                                .address(getAddress(auctionModel.getStreetAddress(), auctionModel.getCityAddress()))
+                                .amount(Integer.parseInt(getNormalizedAmount(auctionModel.getAmount())))
+                                .expertiseDescription(auctionModel.getExpertDescription())
+                                .propertyBuildingDescription(auctionModel.getBuildingDescription())
+                                .outdoorDescription(auctionModel.getOutdoorDescription())
+                                .propertyPlotDescription(auctionModel.getPlotDescription()).build();
+
+        draft.setCourt(null);
+        //@formatter:on
 
         return draft;
+    }
+
+    private String getNormalizedAmount(final String amount) {
+        String extractedAmount = extractByPattern(Pattern.compile(AMOUNT_REGEX), amount);
+        extractedAmount = extractedAmount.replaceAll(AMOUNT_CENT_REGEX, "");
+        return extractedAmount.replaceAll("\\.", "");
     }
 
     private Address getAddress(String streetAddress, String cityAddress) {

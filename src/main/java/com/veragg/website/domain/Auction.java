@@ -19,7 +19,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -27,9 +27,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
 @NoArgsConstructor
-@AllArgsConstructor
+@Entity
 public class Auction {
 
     @Id
@@ -43,7 +42,6 @@ public class Auction {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "auction_drafts", joinColumns = @JoinColumn(name = "auction_id"), inverseJoinColumns = @JoinColumn(name = "auction_draft_id"))
-    //    @Builder.Default
     private Set<AuctionDraft> drafts = new HashSet<>();
 
     //aktenzeichen
@@ -62,32 +60,49 @@ public class Auction {
     //termin
     @NonNull
     private Date appointment;
-
     //Verkehrswert
+
     @NonNull
     private Integer amount;
-
     //zuschlag
+
     @Enumerated(EnumType.STRING)
     @NonNull
     private Limit limit;
-
     private String outdoorDescription;
+
     private String propertyBuildingDescription;
     private String propertyPlotDescription;
     private String expertiseDescription;
-
     @OneToMany
-//    @Builder.Default
     private List<Document> pictures = new ArrayList<>();
 
     @OneToMany
-//    @Builder.Default
     private List<Document> tilePictures = new ArrayList<>();
 
     @OneToMany
-//    @Builder.Default
     private List<Document> expertiseReports = new ArrayList<>();
+
+    @Builder
+    public Auction(@NonNull final Court court, final Set<AuctionDraft> drafts, @NonNull final String fileNumber, @NonNull final PropertyType propertyType, @NonNull final Address address,
+            @NonNull final Date appointment, @NonNull final Integer amount, @NonNull final Limit limit, final String outdoorDescription, final String propertyBuildingDescription,
+            final String propertyPlotDescription, final String expertiseDescription, final List<Document> pictures, final List<Document> tilePictures, final List<Document> expertiseReports) {
+        this.court = court;
+        this.drafts = drafts;
+        this.fileNumber = fileNumber;
+        this.propertyType = propertyType;
+        this.address = address;
+        this.appointment = appointment;
+        this.amount = amount;
+        this.limit = limit;
+        this.outdoorDescription = outdoorDescription;
+        this.propertyBuildingDescription = propertyBuildingDescription;
+        this.propertyPlotDescription = propertyPlotDescription;
+        this.expertiseDescription = expertiseDescription;
+        this.pictures = pictures;
+        this.tilePictures = tilePictures;
+        this.expertiseReports = expertiseReports;
+    }
 
     @Override
     public boolean equals(final Object o) {

@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -21,24 +21,24 @@ class HanmarkAuctionMapperServiceImpl_when_map_is_called {
 
     private HanmarkAuctionMapperServiceImpl sut;
 
-    @Before
-    void setUp() {
+    @BeforeEach
+    public void setUp() {
         sut = new HanmarkAuctionMapperServiceImpl();
     }
 
     @Test
-    public void map() {
+    public void and_valid_model_passed_then_draft_should_return() {
         // Arrange
         // @formatter:off
-        HanmarkAuctionModel auctionModel = HanmarkAuctionModel.builder().build();
-//                .fileNumber("12b K 3/19")
-//                .amount("161.700,00 EUR")
-//                .appointmentDate("16.06.2020 14:00 Uhr")
-//                .courtName("Wittlich")
-//                .propertyTypeName("Einfamilienhaus")
-//                .cityAddress("54538 Hontheim")
-//                .streetAddress("Bergweg 7")
-//                .build();
+        HanmarkAuctionModel auctionModel = HanmarkAuctionModel.builder()
+                .fileNumber("12b K 3/19")
+                .amount("161.700,00 EUR")
+                .appointmentDate("16.06.2020 14:00 Uhr")
+                .courtName("Wittlich")
+                .propertyTypeName("Einfamilienhaus")
+                .cityAddress("54538 Hontheim")
+                .streetAddress("Bergweg 7")
+                .build();
         // @formatter:on
 
         auctionModel.setLimitDescription("keine Angabe");
@@ -51,7 +51,7 @@ class HanmarkAuctionMapperServiceImpl_when_map_is_called {
         // Assert
         assertEquals("Wittlich", result.getCourt().getName());
         //TODO add when State by zip code service will be implemented
-//        assertEquals(State.RP, result.getCourt().getState());
+        //        assertEquals(State.RP, result.getCourt().getState());
         assertEquals("12b K 3/19", result.getFileNumber());
         assertEquals(PropertyType.ONE_FAMILY_HOUSE, result.getPropertyType());
         assertEquals("Hontheim", result.getAddress().getCity());

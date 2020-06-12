@@ -65,14 +65,16 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
 
         Document doc = Jsoup.parse(pageData, "UTF-8", url);
 
-        final HanmarkAuctionModel auction = new HanmarkAuctionModel();
-        auction.setCourtName(getElementTextByPath(doc, COURT_XPATH));
-        auction.setFileNumber(getElementTextByPath(doc, FILE_CSS_PATH));
-        auction.setPropertyTypeName(getElementTextByPath(doc, TYPE_CSS_PATH));
-        auction.setStreetAddress(getElementTextByPath(doc, STREET_CSS_PATH));
-        auction.setCityAddress(getElementTextByPath(doc, CITY_CSS_PATH));
-        auction.setAmount(getElementTextByPath(doc, AMOUNT_CSS_PATH));
-        auction.setAppointmentDate(getElementTextByPath(doc, APPOINTMENT_DATE_CSS_PATH));
+        //@formatter:off
+        final HanmarkAuctionModel auction = HanmarkAuctionModel.builder()
+                .courtName(getElementTextByPath(doc, COURT_XPATH))
+                .fileNumber(getElementTextByPath(doc, FILE_CSS_PATH))
+                .propertyTypeName(getElementTextByPath(doc, TYPE_CSS_PATH))
+                .streetAddress(getElementTextByPath(doc, STREET_CSS_PATH))
+                .cityAddress(getElementTextByPath(doc, CITY_CSS_PATH))
+                .amount(getElementTextByPath(doc, AMOUNT_CSS_PATH))
+                .appointmentDate(getElementTextByPath(doc, APPOINTMENT_DATE_CSS_PATH)).build();
+        //@formatter:on
 
         Element description = getElementsChildrenByPath(doc, DESCRIPTION_BLOCK_CSS_PATH);
         auction.setExpertDescription(collectDescription(description, EXPRETISE_DESCRIPTON_NAME));

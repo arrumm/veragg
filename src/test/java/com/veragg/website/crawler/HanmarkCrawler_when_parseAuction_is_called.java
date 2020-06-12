@@ -3,10 +3,10 @@ package com.veragg.website.crawler;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
 
@@ -14,14 +14,14 @@ import static com.veragg.website.domain.PropertyType.ONE_FAMILY_HOUSE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 class HanmarkCrawler_when_parseAuction_is_called {
 
-    @Autowired
     private HanmarkCrawler sut;
 
-    @Before
+    @BeforeEach
     public void setup() {
+        sut = new HanmarkCrawler();
     }
 
     @Test
