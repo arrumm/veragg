@@ -5,6 +5,8 @@ import com.veragg.website.domain.State;
 
 public interface CourtService {
 
-    Court get(String name, State state);
+    Court findBy(String name, State state);
+
+    Court findBy(String name, String zipCode);
 
 }

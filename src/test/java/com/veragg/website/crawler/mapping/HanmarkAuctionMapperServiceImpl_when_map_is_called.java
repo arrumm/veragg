@@ -1,5 +1,6 @@
 package com.veragg.website.crawler.mapping;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -7,27 +8,48 @@ import java.util.GregorianCalendar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
 import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.Court;
 import com.veragg.website.domain.Limit;
 import com.veragg.website.domain.PropertyType;
+import com.veragg.website.domain.State;
+import com.veragg.website.services.CourtService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
 class HanmarkAuctionMapperServiceImpl_when_map_is_called {
 
     private HanmarkAuctionMapperServiceImpl sut;
 
+    @Mock
+    private CourtService courtService;
+
+    @Mock
+    private Court court;
+
+    @Mock
+    private State state;
+
     @BeforeEach
     public void setUp() {
-        sut = new HanmarkAuctionMapperServiceImpl();
+        initMocks(this);
+        sut = new HanmarkAuctionMapperServiceImpl(courtService);
+        when(court.getName()).thenReturn("Wittlich");
+        when(court.getState()).thenReturn(state);
+        when(state.getId()).thenReturn("RP");
+        when(courtService.findBy(eq("Wittlich"), eq("54538"))).thenReturn(court);
     }
 
     @Test
-    public void and_valid_model_passed_then_draft_should_return() {
+    public void and_valid_model_passed_then_draft_should_return() throws ParseException {
         // Arrange
         // @formatter:off
         HanmarkAuctionModel auctionModel = HanmarkAuctionModel.builder()
@@ -50,8 +72,7 @@ class HanmarkAuctionMapperServiceImpl_when_map_is_called {
 
         // Assert
         assertEquals("Wittlich", result.getCourt().getName());
-        //TODO add when State by zip code service will be implemented
-        //        assertEquals(State.RP, result.getCourt().getState());
+        assertEquals("RP", result.getCourt().getState().getId());
         assertEquals("12b K 3/19", result.getFileNumber());
         assertEquals(PropertyType.ONE_FAMILY_HOUSE, result.getPropertyType());
         assertEquals("Hontheim", result.getAddress().getCity());

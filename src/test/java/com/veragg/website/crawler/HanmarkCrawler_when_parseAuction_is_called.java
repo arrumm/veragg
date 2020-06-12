@@ -6,9 +6,11 @@ import java.io.InputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
+import com.veragg.website.services.CourtService;
 
 import static com.veragg.website.domain.PropertyType.ONE_FAMILY_HOUSE;
 import static org.junit.Assert.assertEquals;
@@ -19,9 +21,12 @@ class HanmarkCrawler_when_parseAuction_is_called {
 
     private HanmarkCrawler sut;
 
+    @Mock
+    private CourtService courtService;
+
     @BeforeEach
     public void setup() {
-        sut = new HanmarkCrawler();
+        sut = new HanmarkCrawler(courtService);
     }
 
     @Test

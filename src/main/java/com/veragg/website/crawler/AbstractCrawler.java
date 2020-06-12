@@ -3,6 +3,7 @@ package com.veragg.website.crawler;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -49,6 +50,8 @@ public abstract class AbstractCrawler implements Crawling {
                 //  or compare in the service and persist then
             } catch (IOException e) {
                 LOGGER.error("Page data fetch error", e);
+            } catch (ParseException e) {
+                LOGGER.error("Fetched data parse error", e);
             }
         }
 

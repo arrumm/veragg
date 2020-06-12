@@ -13,12 +13,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import com.veragg.website.crawler.mapping.HanmarkAuctionMapperServiceImpl;
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
+import com.veragg.website.services.CourtService;
 
 import static java.util.Objects.isNull;
 
@@ -42,17 +44,18 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
 
     private static final String DESCRIPTION_BLOCK_CSS_PATH = "#excerpt";
 
-    private static final String EXPRETISE_DESCRIPTON_NAME = "Gutachten";
-    private static final String PLOT_DESCRIPTON_NAME = "Grundstücksbeschreibung";
-    private static final String BUILDING_DESCRIPTON_NAME = "Gebäudebeschreibung";
-    private static final String OUTDOOR_DESCRIPTON_NAME = "Außenanlagen";
+    private static final String EXPERTISE_DESCRIPTION_NAME = "Gutachten";
+    private static final String PLOT_DESCRIPTION_NAME = "Grundstücksbeschreibung";
+    private static final String BUILDING_DESCRIPTION_NAME = "Gebäudebeschreibung";
+    private static final String OUTDOOR_DESCRIPTION_NAME = "Außenanlagen";
 
     private static final String PARAGRAPH_TAG_NAME = "p";
 
-    private static final Set<String> DESCRIPTION_KEYWORDS = new HashSet<>(Arrays.asList(EXPRETISE_DESCRIPTON_NAME, PLOT_DESCRIPTON_NAME, BUILDING_DESCRIPTON_NAME, OUTDOOR_DESCRIPTON_NAME));
+    private static final Set<String> DESCRIPTION_KEYWORDS = new HashSet<>(Arrays.asList(EXPERTISE_DESCRIPTION_NAME, PLOT_DESCRIPTION_NAME, BUILDING_DESCRIPTION_NAME, OUTDOOR_DESCRIPTION_NAME));
 
-    public HanmarkCrawler() {
-        this.mapperService = new HanmarkAuctionMapperServiceImpl();
+    @Autowired
+    public HanmarkCrawler(CourtService courtService) {
+        this.mapperService = new HanmarkAuctionMapperServiceImpl(courtService);
     }
 
     @Override
@@ -77,10 +80,10 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
         //@formatter:on
 
         Element description = getElementsChildrenByPath(doc, DESCRIPTION_BLOCK_CSS_PATH);
-        auction.setExpertDescription(collectDescription(description, EXPRETISE_DESCRIPTON_NAME));
-        auction.setPlotDescription(collectDescription(description, PLOT_DESCRIPTON_NAME));
-        auction.setBuildingDescription(collectDescription(description, BUILDING_DESCRIPTON_NAME));
-        auction.setOutdoorDescription(collectDescription(description, OUTDOOR_DESCRIPTON_NAME));
+        auction.setExpertDescription(collectDescription(description, EXPERTISE_DESCRIPTION_NAME));
+        auction.setPlotDescription(collectDescription(description, PLOT_DESCRIPTION_NAME));
+        auction.setBuildingDescription(collectDescription(description, BUILDING_DESCRIPTION_NAME));
+        auction.setOutdoorDescription(collectDescription(description, OUTDOOR_DESCRIPTION_NAME));
 
         return auction;
     }
