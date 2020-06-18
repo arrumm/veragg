@@ -32,10 +32,12 @@ public class CourtServiceImpl implements CourtService {
     }
 
     @Override
-    public Court findBy(final String courtName, final String zipCode) {
+    public Court findBy(String courtName, final String zipCode) {
         List<Court> courts = courtRepo.findAllByName(courtName);
         if (!courts.isEmpty()) {
+
             if (courts.size() > 1) {
+                //TODO: implement tests for more than one court found
                 State draftState = stateRepo.getByZip(zipCode);
                 if (nonNull(draftState)) {
                     Court courtFound = courtRepo.findByNameAndState(courtName, draftState);
@@ -48,12 +50,13 @@ public class CourtServiceImpl implements CourtService {
             } else {
                 return courts.get(0);
             }
+
         }
 
         return createCourt(courtName, stateRepo.getByZip(zipCode));
     }
 
-    private Court createCourt(String name, @NonNull State state) {
+    private Court createCourt(@NonNull String name, @NonNull State state) {
         Court court = new Court(name, state);
         return courtRepo.save(court);
     }

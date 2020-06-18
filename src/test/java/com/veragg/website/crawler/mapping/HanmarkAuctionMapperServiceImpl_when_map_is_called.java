@@ -5,8 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
-class HanmarkAuctionMapperServiceImpl_when_map_is_called {
+public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
 
     private HanmarkAuctionMapperServiceImpl sut;
 
@@ -38,7 +38,7 @@ class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     @Mock
     private State state;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         initMocks(this);
         sut = new HanmarkAuctionMapperServiceImpl(courtService);
