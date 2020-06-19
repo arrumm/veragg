@@ -32,6 +32,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     private static final String ZIP_CODE = "79098";
     private static final String COURT_NOT_EXISTED_NAME = "court not existed";
     private static final String COURT_NAME = "Freiburg";
+
     private CourtService sut;
 
     @Mock
