@@ -11,6 +11,6 @@ public interface StateRepo extends CrudRepository<State, String> {
     State getById(String id);
 
     @Query(value = "from State s where :zip >= s.zipCodeRanges.from AND :zip <= s.zipCodeRanges.to")
-    State getByZip(@Param("zip") String zip);
+    State findByZip(@Param("zip") String zip);
 
 }

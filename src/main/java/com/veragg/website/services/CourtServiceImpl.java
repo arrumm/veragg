@@ -35,12 +35,10 @@ public class CourtServiceImpl implements CourtService {
     public Court findBy(String courtName, final String zipCode) {
         List<Court> courts = courtRepo.findAllByName(courtName);
         if (!courts.isEmpty()) {
-
             if (courts.size() > 1) {
-                //TODO: implement tests for more than one court found
-                State draftState = stateRepo.getByZip(zipCode);
-                if (nonNull(draftState)) {
-                    Court courtFound = courtRepo.findByNameAndState(courtName, draftState);
+                State state = stateRepo.findByZip(zipCode);
+                if (nonNull(state)) {
+                    Court courtFound = courtRepo.findByNameAndState(courtName, state);
                     if (nonNull(courtFound)) {
                         return courtFound;
                     }
@@ -50,10 +48,9 @@ public class CourtServiceImpl implements CourtService {
             } else {
                 return courts.get(0);
             }
-
         }
 
-        return createCourt(courtName, stateRepo.getByZip(zipCode));
+        return createCourt(courtName, stateRepo.findByZip(zipCode));
     }
 
     private Court createCourt(@NonNull String name, @NonNull State state) {
