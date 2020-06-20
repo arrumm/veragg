@@ -69,11 +69,12 @@ public class Auction {
     @Enumerated(EnumType.STRING)
     @NonNull
     private Limit limit;
-    private String outdoorDescription;
 
+    private String outdoorDescription;
     private String propertyBuildingDescription;
     private String propertyPlotDescription;
     private String expertiseDescription;
+
     @OneToMany
     private List<Document> pictures = new ArrayList<>();
 

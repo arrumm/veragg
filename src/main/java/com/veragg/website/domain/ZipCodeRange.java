@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ZipCodeRange {
     @Id
-    String from;
+    String start;
 
-    @NonNull String to;
+    @NonNull String end;
 
 }
