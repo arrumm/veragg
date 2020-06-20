@@ -8,7 +8,7 @@ import com.veragg.website.domain.State;
 
 public interface StateRepo extends CrudRepository<State, String> {
 
-    @Query(value = "from State s LEFT JOIN state_zip_ranges zr ON s.id = zr.state_id WHERE :zip >= zr.start AND :zip <= zr.end")
+    @Query(value = "SELECT s from State s JOIN state_zip_ranges zr ON s.id = zr.state_id WHERE :zip >= zr.start AND :zip <= zr.end")
     State findByZip(@Param("zip") String zip);
 
 }
