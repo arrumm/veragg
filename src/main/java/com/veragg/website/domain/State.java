@@ -17,10 +17,6 @@ import lombok.Getter;
 @Getter
 @Table(name = "states")
 public class State {
-    //    BW("Baden-Württemberg"),
-    //    BE("Berlin"),
-    //    BY("Bayern"),
-    //    RP("Rheinland-Pfalz");
 
     @Id
     private String id;

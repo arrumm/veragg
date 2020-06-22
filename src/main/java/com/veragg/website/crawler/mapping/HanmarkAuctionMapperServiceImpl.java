@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
 import com.veragg.website.domain.Address;
 import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
-import com.veragg.website.domain.Limit;
 import com.veragg.website.domain.PropertyType;
 import com.veragg.website.services.CourtService;
 
@@ -52,7 +52,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .propertyType(propertyType)
                 .appointment(getAppointmentDate(auctionModel.getAppointmentDate()))
                 .fileNumber(auctionModel.getFileNumber())
-                .limit(getLimit(auctionModel.getLimitDescription()))
+                .buyLimit(getLimit(auctionModel.getLimitDescription()))
                 .amount(Integer.parseInt(getNormalizedAmount(auctionModel.getAmount())))
                 .expertiseDescription(auctionModel.getExpertDescription())
                 .propertyBuildingDescription(auctionModel.getBuildingDescription())
@@ -106,13 +106,13 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         return "";
     }
 
-    private Limit getLimit(final String limitDescription) {
-        Limit limit;
+    private BuyLimit getLimit(final String limitDescription) {
+        BuyLimit buyLimit;
         try {
-            limit = Limit.valueOf(limitDescription);
+            buyLimit = BuyLimit.valueOf(limitDescription);
         } catch (IllegalArgumentException e) {
-            return Limit.findBySynonym(limitDescription);
+            return BuyLimit.findBySynonym(limitDescription);
         }
-        return limit;
+        return buyLimit;
     }
 }

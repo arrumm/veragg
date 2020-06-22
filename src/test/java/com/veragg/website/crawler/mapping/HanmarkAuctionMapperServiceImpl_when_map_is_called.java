@@ -13,8 +13,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
 import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
-import com.veragg.website.domain.Limit;
 import com.veragg.website.domain.PropertyType;
 import com.veragg.website.domain.State;
 import com.veragg.website.services.CourtService;
@@ -81,7 +81,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
         assertEquals("Bergweg", result.getAddress().getStreet());
         assertEquals(161700, result.getAmount());
         assertEquals(dateJune16.getTime(), result.getAppointment().getTime());
-        assertEquals(Limit.L100, result.getLimit());
+        assertEquals(BuyLimit.L100, result.getBuyLimit());
 
     }
 }

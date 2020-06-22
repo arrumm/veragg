@@ -68,7 +68,7 @@ public class Auction {
 
     @Enumerated(EnumType.STRING)
     @NonNull
-    private Limit limit;
+    private BuyLimit buyLimit;
 
     private String outdoorDescription;
     private String propertyBuildingDescription;
@@ -86,7 +86,7 @@ public class Auction {
 
     @Builder
     public Auction(@NonNull final Court court, final Set<AuctionDraft> drafts, @NonNull final String fileNumber, @NonNull final PropertyType propertyType, @NonNull final Address address,
-            @NonNull final Date appointment, @NonNull final Integer amount, @NonNull final Limit limit, final String outdoorDescription, final String propertyBuildingDescription,
+            @NonNull final Date appointment, @NonNull final Integer amount, @NonNull final BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
             final String propertyPlotDescription, final String expertiseDescription, final List<Document> pictures, final List<Document> tilePictures, final List<Document> expertiseReports) {
         this.court = court;
         this.drafts = drafts;
@@ -95,7 +95,7 @@ public class Auction {
         this.address = address;
         this.appointment = appointment;
         this.amount = amount;
-        this.limit = limit;
+        this.buyLimit = buyLimit;
         this.outdoorDescription = outdoorDescription;
         this.propertyBuildingDescription = propertyBuildingDescription;
         this.propertyPlotDescription = propertyPlotDescription;

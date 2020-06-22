@@ -7,7 +7,7 @@ import java.util.Set;
 import lombok.Getter;
 
 @Getter
-public enum Limit {
+public enum BuyLimit {
     L50(50),
     L70(70),
     L100(100, "keine Grenze", "keine Angabe");
@@ -15,15 +15,15 @@ public enum Limit {
     private Integer value;
     private Set<String> synonyms = new HashSet<>();
 
-    Limit(final Integer value, final String... synonyms) {
+    BuyLimit(final Integer value, final String... synonyms) {
         this.value = value;
         this.synonyms.addAll(Arrays.asList(synonyms));
     }
 
-    public static Limit findBySynonym(String synonym) {
-        for (Limit limit : Limit.values()) {
-            if (limit.getSynonyms().contains(synonym)) {
-                return limit;
+    public static BuyLimit findBySynonym(String synonym) {
+        for (BuyLimit buyLimit : BuyLimit.values()) {
+            if (buyLimit.getSynonyms().contains(synonym)) {
+                return buyLimit;
             }
         }
         return null;
