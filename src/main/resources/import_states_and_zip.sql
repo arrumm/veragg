@@ -1,12 +1,4 @@
 -- states with zip code ranges
-INSERT INTO states (id, name) VALUES ('SL', 'Saarland');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('SL', '66000', '66999');
-
-INSERT INTO states (id, name) VALUES ('ST', 'Sachsen-Anhalt');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06000', '06999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '29400', '29499');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '38000', '38999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '39000', '39999');
 
 INSERT INTO states (id, name) VALUES ('BB', 'Brandenburg');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '01000', '01999');

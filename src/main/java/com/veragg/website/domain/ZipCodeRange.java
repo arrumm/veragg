@@ -1,6 +1,8 @@
 package com.veragg.website.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,8 +23,10 @@ import lombok.RequiredArgsConstructor;
 public class ZipCodeRange {
 
     @Id
-    private String start;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
+    private String start;
     private String end;
 
     @NonNull
