@@ -1,6 +1,5 @@
 package com.veragg.website.domain;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -60,12 +59,12 @@ public class Auction {
     //termin
     @NonNull
     private Date appointment;
-    //Verkehrswert
 
+    //Verkehrswert
     @NonNull
     private Integer amount;
-    //zuschlag
 
+    //zuschlag
     @Enumerated(EnumType.STRING)
     @NonNull
     private BuyLimit buyLimit;
@@ -75,21 +74,20 @@ public class Auction {
     private String propertyPlotDescription;
     private String expertiseDescription;
 
-    @OneToMany
-    private List<Document> pictures = new ArrayList<>();
-
-    @OneToMany
-    private List<Document> tilePictures = new ArrayList<>();
-
-    @OneToMany
-    private List<Document> expertiseReports = new ArrayList<>();
+    //    @OneToMany
+    //    private List<Document> pictures = new ArrayList<>();
+    //
+    //    @OneToMany
+    //    private List<Document> tilePictures = new ArrayList<>();
+    //
+    //    @OneToMany
+    //    private List<Document> expertiseReports = new ArrayList<>();
 
     @Builder
     public Auction(@NonNull final Court court, final Set<AuctionDraft> drafts, @NonNull final String fileNumber, @NonNull final PropertyType propertyType, @NonNull final Address address,
             @NonNull final Date appointment, @NonNull final Integer amount, @NonNull final BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
             final String propertyPlotDescription, final String expertiseDescription, final List<Document> pictures, final List<Document> tilePictures, final List<Document> expertiseReports) {
         this.court = court;
-        this.drafts = drafts;
         this.fileNumber = fileNumber;
         this.propertyType = propertyType;
         this.address = address;
@@ -100,9 +98,10 @@ public class Auction {
         this.propertyBuildingDescription = propertyBuildingDescription;
         this.propertyPlotDescription = propertyPlotDescription;
         this.expertiseDescription = expertiseDescription;
-        this.pictures = pictures;
-        this.tilePictures = tilePictures;
-        this.expertiseReports = expertiseReports;
+        this.drafts = drafts;
+        //        this.pictures = pictures;
+        //        this.tilePictures = tilePictures;
+        //        this.expertiseReports = expertiseReports;
     }
 
     @Override

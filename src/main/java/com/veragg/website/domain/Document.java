@@ -15,19 +15,19 @@ import lombok.Setter;
 @Setter
 public class Document {
 
+    //should be base entity without table
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-//    @GeneratedValue(generator = "hibernate-uuid")
-//    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String id;
+    private Long id;
 
     private String path;
 
     @Enumerated(EnumType.STRING)
     private DocumentType type;
 
-    private String name;
+    private String originalName;
 
-    private Integer order;
+    private Integer sortOrder;
 
 }

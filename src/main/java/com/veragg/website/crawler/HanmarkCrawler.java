@@ -60,7 +60,7 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
 
     @Override
     public void onApplicationEvent(final ContextRefreshedEvent event) {
-        process();
+//        process();
     }
 
     @Override

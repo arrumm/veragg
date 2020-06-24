@@ -3,11 +3,10 @@ package com.veragg.website.domain;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,8 +22,7 @@ public class State {
 
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "state_zip_ranges", joinColumns = @JoinColumn(name = "state_id"))
-    private Set<ZipCodeRange> zipCodeRanges = new HashSet<>();
+    @OneToMany(mappedBy = "state", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final Set<ZipCodeRange> zipCodeRanges = new HashSet<>();
 
 }

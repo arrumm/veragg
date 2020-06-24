@@ -2,6 +2,9 @@ package com.veragg.website.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,10 +17,17 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode
 @NoArgsConstructor
 @RequiredArgsConstructor
+@Table(name = "state_zip_ranges")
 public class ZipCodeRange {
-    @Id
-    String start;
 
-    @NonNull String end;
+    @Id
+    private String start;
+
+    private String end;
+
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name = "state_id")
+    private State state;
 
 }
