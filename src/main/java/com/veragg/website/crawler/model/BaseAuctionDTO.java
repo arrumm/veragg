@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class BaseAuctionModel {
+public class BaseAuctionDTO {
     private String fileNumber;
     private String courtName;
     private String propertyTypeName;

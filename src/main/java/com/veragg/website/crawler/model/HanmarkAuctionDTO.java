@@ -9,5 +9,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
-public class HanmarkAuctionModel extends BaseAuctionModel {
+public class HanmarkAuctionDTO extends BaseAuctionDTO {
 }
