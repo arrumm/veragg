@@ -1,4 +1,4 @@
-INSERT INTO states (id, name) VALUES (('HH', 'Hamburg');
+INSERT INTO states (id, name) VALUES ('HH', 'Hamburg');
 
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HH', '20095', '27499');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HH', '20144', '22529');
