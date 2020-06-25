@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.veragg.website.crawler.model.HanmarkAuctionModel;
+import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.services.CourtService;
 
 import static com.veragg.website.domain.PropertyType.ONE_FAMILY_HOUSE;
@@ -35,7 +35,7 @@ class HanmarkCrawler_when_parseAuction_is_called {
         InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-house.html");
 
         // Act
-        HanmarkAuctionModel result = sut.parseAuction("pagePath", houseInputStream);
+        HanmarkAuctionDTO result = sut.parseAuction("pagePath", houseInputStream);
 
         // Assert
         assertNotNull(result);

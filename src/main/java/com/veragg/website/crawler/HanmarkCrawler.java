@@ -19,7 +19,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import com.veragg.website.crawler.mapping.HanmarkAuctionMapperServiceImpl;
-import com.veragg.website.crawler.model.HanmarkAuctionModel;
+import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.services.CourtService;
 
 import static java.util.Objects.isNull;
@@ -64,12 +64,12 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
     }
 
     @Override
-    HanmarkAuctionModel parseAuction(final String url, final InputStream pageData) throws IOException {
+    HanmarkAuctionDTO parseAuction(final String url, final InputStream pageData) throws IOException {
 
         Document doc = Jsoup.parse(pageData, "UTF-8", url);
 
         //@formatter:off
-        final HanmarkAuctionModel auction = HanmarkAuctionModel.builder()
+        final HanmarkAuctionDTO auction = HanmarkAuctionDTO.builder()
                 .courtName(getElementTextByPath(doc, COURT_XPATH))
                 .fileNumber(getElementTextByPath(doc, FILE_CSS_PATH))
                 .propertyTypeName(getElementTextByPath(doc, TYPE_CSS_PATH))

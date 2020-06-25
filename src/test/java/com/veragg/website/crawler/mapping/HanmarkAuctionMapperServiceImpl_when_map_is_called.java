@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.veragg.website.crawler.model.HanmarkAuctionModel;
+import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
@@ -52,7 +52,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     public void and_valid_model_passed_then_draft_should_return() throws ParseException {
         // Arrange
         // @formatter:off
-        HanmarkAuctionModel auctionModel = HanmarkAuctionModel.builder()
+        HanmarkAuctionDTO auctionModel = HanmarkAuctionDTO.builder()
                 .fileNumber("12b K 3/19")
                 .amount("161.700,00 EUR")
                 .appointmentDate("16.06.2020 14:00 Uhr")

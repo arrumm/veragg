@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
-import com.veragg.website.crawler.model.BaseAuctionModel;
+import com.veragg.website.crawler.model.BaseAuctionDTO;
 import com.veragg.website.domain.AuctionDraft;
 
 //TODO: should be regular job
@@ -44,7 +44,7 @@ public abstract class AbstractCrawler implements Crawling {
         for (String url : urlsToFetch) {
             try {
                 String pageData = getPageContent(url);
-                BaseAuctionModel auctionModel = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
+                BaseAuctionDTO auctionModel = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
                 AuctionDraft auctionDraft = mapperService.map(auctionModel);
                 //TODO: AuctionRepository.save(auction)
                 //  or compare in the service and persist then
@@ -133,11 +133,11 @@ public abstract class AbstractCrawler implements Crawling {
     }
 
     /**
-     * Parse the page and map it to {@link BaseAuctionModel} specific to {@link AbstractCrawler} implementation
+     * Parse the page and map it to {@link BaseAuctionDTO} specific to {@link AbstractCrawler} implementation
      *
      * @param pageData
      */
-    abstract BaseAuctionModel parseAuction(String url, InputStream pageData) throws IOException;
+    abstract BaseAuctionDTO parseAuction(String url, InputStream pageData) throws IOException;
 
     abstract String getStartURL();
 
