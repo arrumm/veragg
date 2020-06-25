@@ -1,5 +1,6 @@
 package com.veragg.website.crawler.mapping;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -48,7 +49,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     }
 
     @Test
-    public void and_valid_model_passed_then_draft_should_return() {
+    public void and_valid_model_passed_then_draft_should_return() throws ParseException {
         // Arrange
         // @formatter:off
         HanmarkAuctionModel auctionModel = HanmarkAuctionModel.builder()
@@ -67,7 +68,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
         Date dateJune16 = new GregorianCalendar(2020, Calendar.JUNE, 16, 14, 0).getTime();
 
         // Act
-        final AuctionDraft result = sut.convert(auctionModel);
+        final AuctionDraft result = sut.map(auctionModel);
 
         // Assert
         assertEquals("Wittlich", result.getCourt().getName());
