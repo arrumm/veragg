@@ -3,7 +3,6 @@ package com.veragg.website.crawler;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -18,8 +17,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.converter.Converter;
 
-import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.BaseAuctionModel;
 import com.veragg.website.domain.AuctionDraft;
 
@@ -31,7 +30,7 @@ public abstract class AbstractCrawler implements Crawling {
     private Set<String> visitedUrls = new HashSet<>();
     //TODO: add repository
 
-    AuctionMapperService mapperService;
+    Converter<BaseAuctionModel, AuctionDraft> mapperService;
 
     public AbstractCrawler() {
     }
@@ -45,13 +44,13 @@ public abstract class AbstractCrawler implements Crawling {
             try {
                 String pageData = getPageContent(url);
                 BaseAuctionModel auctionModel = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
-                AuctionDraft auctionDraft = mapperService.map(auctionModel);
+                AuctionDraft auctionDraft = mapperService.convert(auctionModel);
                 //TODO: AuctionRepository.save(auction)
                 //  or compare in the service and persist then
             } catch (IOException e) {
                 LOGGER.error("Page data fetch error", e);
-            } catch (ParseException e) {
-                LOGGER.error("Fetched data parse error", e);
+                //            } catch (ParseException e) {
+                //                LOGGER.error("Fetched data parse error", e);
             }
         }
 

@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
 
 import com.veragg.website.crawler.model.HanmarkAuctionModel;
@@ -19,10 +20,12 @@ import com.veragg.website.domain.Court;
 import com.veragg.website.domain.PropertyType;
 import com.veragg.website.services.CourtService;
 
+import lombok.SneakyThrows;
+
 import static java.util.Objects.isNull;
 
 @Service
-public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<HanmarkAuctionModel> {
+public class HanmarkAuctionMapperServiceImpl implements Converter<HanmarkAuctionModel, AuctionDraft> {
 
     private static final String HOUSE_NUMBER_REGEX = "\\d+(\\/\\d+)*$";
     private static final String ZIPCODE_REGEX = "^\\d{5}";
@@ -38,9 +41,10 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         this.courtService = courtService;
     }
 
+    //TODO check how to catch SneakyThrows
+    @SneakyThrows(ParseException.class)
     @Override
-    public AuctionDraft map(final HanmarkAuctionModel auctionModel) throws ParseException {
-
+    public AuctionDraft convert(final HanmarkAuctionModel auctionModel) {
         Address address = getAddress(auctionModel.getStreetAddress(), auctionModel.getCityAddress());
         Court court = courtService.findBy(auctionModel.getCourtName(), address.getZipCode());
         PropertyType propertyType = getPropertyType(auctionModel.getPropertyTypeName());
