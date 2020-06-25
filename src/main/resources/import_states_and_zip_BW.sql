@@ -574,7 +574,7 @@ INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '75443', NULL)
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '75446', NULL);
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '75447', NULL);
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '75449', NULL);
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '76131', '76229', NULL);
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '76131', '76229');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '76275', NULL);
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '76287', NULL);
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BW', '76297', NULL);
