@@ -10,7 +10,7 @@ public interface StateRepo extends CrudRepository<State, String> {
 
     @Query(value = "SELECT s from State s " +//
             "INNER JOIN s.zipCodeRanges zr " +//
-            "WHERE ((:zip >= zr.start AND :zip <= zr.end) OR (:zip = zr.start AND zr.end IS NULL)) ")
+            "WHERE ((:zip >= zr.start AND :zip <= zr.end) OR (:zip = zr.start AND zr.end IS NULL)) " + "ORDER BY s.id")
     State findByZip(@Param("zip") String zip);
 
 }
