@@ -1,37 +1,24 @@
 -- states with zip code ranges
 
-INSERT INTO states (id, name) VALUES ('BB', 'Brandenburg');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '01000', '01999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '03000', '03999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '04000', '04999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '14000', '14999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '15000', '15999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '16000', '16999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '17000', '17999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('BB', '19000', '19999');
-
 INSERT INTO states (id, name) VALUES ('MV', 'Mecklenburg-Vorpommern');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('MV', '17000', '17999');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('MV', '18000', '18999');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('MV', '19000', '19999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('MV', '23000', '23999');
 
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('MV', '23000', '23999');
 INSERT INTO states (id, name) VALUES ('HH', 'Hamburg');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HH', '20000', '20999');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HH', '21000', '21999');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HH', '22000', '22999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HH', '27000', '27999');
 
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HH', '27000', '27999');
 INSERT INTO states (id, name) VALUES ('SH', 'Schleswig-Holstein');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('SH', '21000', '21999');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('SH', '22000', '22999');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('SH', '23000', '23999');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('SH', '24000', '24999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('SH', '25000', '25999');
 
-INSERT INTO states (id, name) VALUES ('HB', 'Freie Hansestadt Bremen');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '27000', '27999');
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28000', '28999');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('SH', '25000', '25999');
 
 INSERT INTO states (id, name) VALUES ('NI', 'Niedersachsen');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('NI', '19000', '19999');

@@ -1,0 +1,22 @@
+INSERT INTO states (id, name) VALUES (('HB', 'Freie Hansestadt Bremen');
+
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '27568', '28237');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28195', '28215');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28197', NULL);
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28199', '28277');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28203', '28205');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28207', '28329');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28209', '28329');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28215', '28219');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28217', '28237');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28237', '28239');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28237', '28759');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28259', NULL);
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28277', '28279');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28307', '28327');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28325', '28355');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28327', '28329');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28357', NULL);
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28357', '28359');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28755', '28759');
+INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('HB', '28755', '28779');
