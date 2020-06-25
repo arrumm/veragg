@@ -36,7 +36,6 @@ INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06456', null)
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06458', null);
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06484', '06485');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06493', null);
-INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06502', '38895');
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06526', null);
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06528', null);
 INSERT INTO state_zip_ranges (state_id, start, end) VALUES ('ST', '06536', null);
