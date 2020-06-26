@@ -18,9 +18,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.veragg.website.crawler.mapping.HanmarkAuctionMapperServiceImpl;
+import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
-import com.veragg.website.services.CourtService;
 
 import static java.util.Objects.isNull;
 
@@ -54,8 +53,8 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
     private static final Set<String> DESCRIPTION_KEYWORDS = new HashSet<>(Arrays.asList(EXPERTISE_DESCRIPTION_NAME, PLOT_DESCRIPTION_NAME, BUILDING_DESCRIPTION_NAME, OUTDOOR_DESCRIPTION_NAME));
 
     @Autowired
-    public HanmarkCrawler(CourtService courtService) {
-        this.mapperService = new HanmarkAuctionMapperServiceImpl(courtService);
+    public HanmarkCrawler(AuctionMapperService<HanmarkAuctionDTO> mapperService) {
+        this.mapperService = mapperService;
     }
 
     @Override

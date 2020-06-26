@@ -39,25 +39,25 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     }
 
     @Override
-    public AuctionDraft map(final HanmarkAuctionDTO auctionModel) throws ParseException {
+    public AuctionDraft map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
 
-        Address address = getAddress(auctionModel.getStreetAddress(), auctionModel.getCityAddress());
-        Court court = courtService.findBy(auctionModel.getCourtName(), address.getZipCode());
-        PropertyType propertyType = getPropertyType(auctionModel.getPropertyTypeName());
+        Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
+        Court court = courtService.findBy(auctionDTO.getCourtName(), address.getZipCode());
+        PropertyType propertyType = getPropertyType(auctionDTO.getPropertyTypeName());
 
         //@formatter:off
         return AuctionDraft.draftBuilder()
                 .court(court)
                 .address(address)
                 .propertyType(propertyType)
-                .appointment(getAppointmentDate(auctionModel.getAppointmentDate()))
-                .fileNumber(auctionModel.getFileNumber())
-                .buyLimit(getLimit(auctionModel.getLimitDescription()))
-                .amount(Integer.parseInt(getNormalizedAmount(auctionModel.getAmount())))
-                .expertiseDescription(auctionModel.getExpertDescription())
-                .propertyBuildingDescription(auctionModel.getBuildingDescription())
-                .outdoorDescription(auctionModel.getOutdoorDescription())
-                .propertyPlotDescription(auctionModel.getPlotDescription())
+                .appointment(getAppointmentDate(auctionDTO.getAppointmentDate()))
+                .fileNumber(auctionDTO.getFileNumber())
+                .buyLimit(getLimit(auctionDTO.getLimitDescription()))
+                .amount(Integer.parseInt(getNormalizedAmount(auctionDTO.getAmount())))
+                .expertiseDescription(auctionDTO.getExpertDescription())
+                .propertyBuildingDescription(auctionDTO.getBuildingDescription())
+                .outdoorDescription(auctionDTO.getOutdoorDescription())
+                .propertyPlotDescription(auctionDTO.getPlotDescription())
                 .build();
         //@formatter:on
     }
