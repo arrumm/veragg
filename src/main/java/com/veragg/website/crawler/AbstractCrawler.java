@@ -31,7 +31,7 @@ public abstract class AbstractCrawler implements Crawling {
     private Set<String> visitedUrls = new HashSet<>();
     //TODO: add repository
 
-    AuctionMapperService mapperService;
+    AuctionMapperService auctionMapper;
 
     public AbstractCrawler() {
     }
@@ -45,7 +45,7 @@ public abstract class AbstractCrawler implements Crawling {
             try {
                 String pageData = getPageContent(url);
                 BaseAuctionDTO auctionModel = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
-                AuctionDraft auctionDraft = mapperService.map(auctionModel);
+                AuctionDraft auctionDraft = auctionMapper.map(auctionModel);
                 //TODO: AuctionRepository.save(auction)
                 //  or compare in the service and persist then
             } catch (IOException e) {

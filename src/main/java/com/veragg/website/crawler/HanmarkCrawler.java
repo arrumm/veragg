@@ -54,7 +54,7 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
 
     @Autowired
     public HanmarkCrawler(AuctionMapperService<HanmarkAuctionDTO> mapperService) {
-        this.mapperService = mapperService;
+        this.auctionMapper = mapperService;
     }
 
     @Override
