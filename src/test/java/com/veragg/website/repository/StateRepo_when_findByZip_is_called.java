@@ -29,7 +29,7 @@ public class StateRepo_when_findByZip_is_called {
 
         //Assert
         assertNotNull(result);
-        assertEquals(result.getId(), "BE");
+        assertEquals("BE", result.getId());
 
     }
 
