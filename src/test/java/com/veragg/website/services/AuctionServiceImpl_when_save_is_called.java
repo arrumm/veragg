@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.veragg.website.domain.AuctionDraft;
-import com.veragg.website.repository.AuctionDraftRepo;
+import com.veragg.website.domain.Auction;
+import com.veragg.website.repository.AuctionRepo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,37 +15,37 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AuctionDraftServiceImpl_when_save_is_called {
+public class AuctionServiceImpl_when_save_is_called {
 
-    AuctionDraftServiceImpl auctionDraftService;
-
-    @Mock
-    AuctionDraftRepo auctionDraftRepo;
+    AuctionServiceImpl auctionService;
 
     @Mock
-    AuctionDraft draftMock;
+    AuctionRepo auctionRepo;
+
+    @Mock
+    Auction auctionMock;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        auctionDraftService = new AuctionDraftServiceImpl(auctionDraftRepo);
+        auctionService = new AuctionServiceImpl(auctionRepo);
     }
 
     @Test
     public void given_draft_to_save_then_save_should_called() {
 
         //Arrange
-        AuctionDraft draft = new AuctionDraft();
-        when(auctionDraftRepo.save(any(AuctionDraft.class))).thenReturn(draftMock);
+        Auction auction = new Auction();
+        when(auctionRepo.save(any(Auction.class))).thenReturn(auctionMock);
 
         //Act
-        AuctionDraft result = auctionDraftService.save(draft);
+        Auction result = auctionService.save(auction);
 
         //Assert
         assertNotNull(result);
-        assertEquals(draftMock, result);
-        verify(auctionDraftRepo).save(eq(draft));
+        assertEquals(auctionMock, result);
+        verify(auctionRepo).save(eq(auction));
 
     }
 
@@ -53,10 +53,10 @@ public class AuctionDraftServiceImpl_when_save_is_called {
     public void given_null_draft_to_save_then_throw_IAE() {
 
         //Arrange
-        when(auctionDraftRepo.save(any())).thenThrow(new IllegalArgumentException());
+        when(auctionRepo.save(any())).thenThrow(new IllegalArgumentException());
 
         //Act
-        auctionDraftService.save(null);
+        auctionService.save(null);
 
         //Assert
 
