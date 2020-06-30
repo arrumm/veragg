@@ -9,29 +9,25 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.BaseAuctionDTO;
 import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.services.AuctionDraftServiceImpl;
 
-//TODO: should be regular job
+import static com.veragg.website.crawler.InternetUtils.getPageContent;
+
 public abstract class AbstractCrawler implements Crawling {
 
     protected Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private Set<String> visitedUrls = new HashSet<>();
-    //TODO: add repository
+    private final Set<String> visitedUrls = new HashSet<>();
 
     AuctionMapperService auctionMapper;
+
+    AuctionDraftServiceImpl auctionService;
 
     public AbstractCrawler() {
     }
@@ -44,10 +40,9 @@ public abstract class AbstractCrawler implements Crawling {
         for (String url : urlsToFetch) {
             try {
                 String pageData = getPageContent(url);
-                BaseAuctionDTO auctionModel = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
-                AuctionDraft auctionDraft = auctionMapper.map(auctionModel);
-                //TODO: AuctionRepository.save(auction)
-                //  or compare in the service and persist then
+                BaseAuctionDTO auctionDTO = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
+                AuctionDraft auctionDraft = auctionMapper.map(auctionDTO);
+                auctionService.save(auctionDraft);
             } catch (IOException e) {
                 LOGGER.error("Page data fetch error", e);
             } catch (ParseException e) {
@@ -107,29 +102,6 @@ public abstract class AbstractCrawler implements Crawling {
             urls.add(m.group());
         }
         return urls;
-    }
-
-    public String getPageContent(String url) throws IOException {
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-
-            HttpGet request = new HttpGet(url);
-
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-
-                int status = response.getStatusLine().getStatusCode();
-                if (status == 200) {
-                    HttpEntity entity = response.getEntity();
-                    if (entity != null) {
-                        return EntityUtils.toString(entity);
-                    }
-                } else {
-                    LOGGER.warn("Page data from url {} cannot be fetched, status {}", url, status);
-                }
-
-            }
-        }
-        return Strings.EMPTY;
     }
 
     /**

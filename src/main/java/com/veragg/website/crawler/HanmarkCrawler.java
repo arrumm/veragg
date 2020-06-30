@@ -14,8 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
@@ -24,7 +23,7 @@ import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import static java.util.Objects.isNull;
 
 @Component
-public class HanmarkCrawler extends AbstractCrawler implements ApplicationListener<ContextRefreshedEvent> {
+public class HanmarkCrawler extends AbstractCrawler {
 
     private Pattern LINK_CRAWL_PATTERN;
     private Pattern LINK_EXTRACT_PATTERN;
@@ -57,9 +56,9 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
         this.auctionMapper = mapperService;
     }
 
-    @Override
-    public void onApplicationEvent(final ContextRefreshedEvent event) {
-//        process();
+    @Scheduled(fixedDelay = 10 * 60 * 1_000)
+    public void start() {
+        process();
     }
 
     @Override
@@ -78,7 +77,7 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
                 .appointmentDate(getElementTextByPath(doc, APPOINTMENT_DATE_CSS_PATH)).build();
         //@formatter:on
 
-        Element description = getElementsChildrenByPath(doc, DESCRIPTION_BLOCK_CSS_PATH);
+        Element description = getDescription(doc);
         auction.setExpertDescription(collectDescription(description, EXPERTISE_DESCRIPTION_NAME));
         auction.setPlotDescription(collectDescription(description, PLOT_DESCRIPTION_NAME));
         auction.setBuildingDescription(collectDescription(description, BUILDING_DESCRIPTION_NAME));
@@ -133,8 +132,8 @@ public class HanmarkCrawler extends AbstractCrawler implements ApplicationListen
         return "";
     }
 
-    Element getElementsChildrenByPath(Document document, String pathQuery) {
-        Elements elements = document.select(pathQuery);
+    Element getDescription(Document document) {
+        Elements elements = document.select(DESCRIPTION_BLOCK_CSS_PATH);
         if (!elements.isEmpty()) {
             return elements.get(0);
         }
