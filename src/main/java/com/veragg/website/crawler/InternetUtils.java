@@ -35,7 +35,6 @@ public class InternetUtils {
                 } else {
                     LOGGER.warn("Page data from url [{}] cannot be fetched, response status [{}]", url, status);
                 }
-
             }
         }
         return Strings.EMPTY;
