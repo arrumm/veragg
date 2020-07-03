@@ -20,17 +20,15 @@ import org.springframework.stereotype.Component;
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 
-import static java.util.Objects.isNull;
-
 @Component
 public class HanmarkCrawler extends AbstractCrawler {
-
-    private Pattern LINK_CRAWL_PATTERN;
-    private Pattern LINK_EXTRACT_PATTERN;
 
     private static final String START_URL = "https://www.hanmark.de/amtsgerichte.html";
     private static final String LINK_CRAWL_REGEXP = "(https://www.hanmark.de/).+(.html)";
     private static final String LINK_EXTRACT_REGEXP = "(https://www.hanmark.de/wertgutachten-)([0-9])+(.html)";
+
+    private final Pattern LINK_CRAWL_PATTERN = Pattern.compile(LINK_CRAWL_REGEXP);
+    private final Pattern LINK_EXTRACT_PATTERN = Pattern.compile(LINK_EXTRACT_REGEXP);
 
     private static final String COURT_XPATH = ".block > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > strong:nth-child(1)";
     private static final String FILE_CSS_PATH = ".block > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2) > strong:nth-child(1)";
@@ -152,18 +150,12 @@ public class HanmarkCrawler extends AbstractCrawler {
     }
 
     @Override
-    Pattern getExtractLinkPattern() {
-        if (isNull(LINK_EXTRACT_PATTERN)) {
-            LINK_EXTRACT_PATTERN = Pattern.compile(LINK_EXTRACT_REGEXP);
-        }
+    Pattern getAuctionUrlPattern() {
         return LINK_EXTRACT_PATTERN;
     }
 
     @Override
-    Pattern getCrawlLinkPattern() {
-        if (isNull(LINK_CRAWL_PATTERN)) {
-            LINK_CRAWL_PATTERN = Pattern.compile(LINK_CRAWL_REGEXP);
-        }
+    Pattern getContainerPageUrlPattern() {
         return LINK_CRAWL_PATTERN;
     }
 }
