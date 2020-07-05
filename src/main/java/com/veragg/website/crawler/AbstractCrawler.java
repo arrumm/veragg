@@ -55,14 +55,14 @@ public abstract class AbstractCrawler implements Crawling {
     }
 
     /**
-     * @param currentUrl              url to fetch auctions urls from / crawl further
-     * @param currentDepth            of recursive call
-     * @param maxDepth                allowed to recursive call
-     * @param containerPageUrlPattern to get urls of pages possibly contains auction urls
-     * @param auctionUrlPattern       to get auction urls
+     * @param currentUrl         url to fetch auctions urls from / crawl further
+     * @param currentDepth       of recursive call
+     * @param maxDepth           allowed to recursive call
+     * @param urlsToCrawlPattern to get urls of pages possibly contains auction urls
+     * @param auctionUrlPattern  to get auction urls
      * @return set of auction urls
      */
-    Set<String> collectAuctionUrls(@NonNull String currentUrl, int currentDepth, int maxDepth, @NonNull Pattern containerPageUrlPattern, @NonNull Pattern auctionUrlPattern) {
+    Set<String> collectAuctionUrls(@NonNull String currentUrl, int currentDepth, int maxDepth, @NonNull Pattern urlsToCrawlPattern, @NonNull Pattern auctionUrlPattern) {
 
         if (currentDepth < 0 || maxDepth < 0 || currentDepth > maxDepth) {
             throw new IllegalArgumentException("Current depth of crawling shouldn't be more than maximum depth");
@@ -89,9 +89,9 @@ public abstract class AbstractCrawler implements Crawling {
                         return fetchedUrls;
                     }
 
-                    Set<String> urlsToCrawl = fetchUrls(containerPageUrlPattern, currentPageContent);
+                    Set<String> urlsToCrawl = fetchUrls(urlsToCrawlPattern, currentPageContent);
                     urlsToCrawl.removeAll(visitedUrls);
-                    urlsToCrawl.forEach(url -> fetchedUrls.addAll(collectAuctionUrls(url, currentDepth + 1, maxDepth, containerPageUrlPattern, auctionUrlPattern)));
+                    urlsToCrawl.forEach(url -> fetchedUrls.addAll(collectAuctionUrls(url, currentDepth + 1, maxDepth, urlsToCrawlPattern, auctionUrlPattern)));
                 }
 
             } catch (IOException e) {
@@ -109,7 +109,7 @@ public abstract class AbstractCrawler implements Crawling {
      * @param pageContent to fetch urls from
      * @return set of urls
      */
-    private Set<String> fetchUrls(final Pattern pattern, final String pageContent) {
+    Set<String> fetchUrls(final Pattern pattern, final String pageContent) {
         Matcher m = pattern.matcher(pageContent);
         Set<String> urls = new HashSet<>();
         while (m.find()) {
