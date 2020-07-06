@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.util.Strings;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,6 +38,11 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class AbstractCrawler_when_collectAuctionUrls_is_called {
 
     private static final Pattern EMPTY_PATTERN = Pattern.compile("");
+    private static final String CRAWL = "crawl";
+    private static final String COLLECT = "collect";
+    private static final String START_URL_CONTENT = "startUrlContent";
+    private static final String URL_FIRST_CONTENT = "urlFirstContent";
+    private static final String URL_SECOND_CONTENT = "urlSecondContent";
     private AbstractCrawler sut;
     private HanmarkCrawler hanmarkCrawler;
 
@@ -52,66 +58,68 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     }
 
     //exception is thrown
-
-    //max depth reached and urls collected
-
     //some urls repeated
+
     @Ignore
     @Test
-    public void given_urls_collected_on_second_attempt_then_return_set_of_urls_and_fetchUrls_called_four_times_and_repeated_urls_excluded() throws IOException {
+    public void given_urls_collected_some_repeated_then_return_urls_set() throws IOException {
 
         //Arrange
-        Pattern crawlPattern = Pattern.compile("crawl");
-        Pattern collectPattern = Pattern.compile("collect");
+        Pattern crawlPattern = Pattern.compile(CRAWL);
+        Pattern collectPattern = Pattern.compile(COLLECT);
 
-        String firstLevelPageContent = "nextUrl startUrl anotherNextUrl";
-        PowerMockito.when(InternetUtils.getPageContent(eq("startUrl"))).thenReturn(firstLevelPageContent);//done
+        PowerMockito.when(InternetUtils.getPageContent(eq("startUrl"))).thenReturn(START_URL_CONTENT);
+        Set<String> urls = new HashSet<String>() {{
+            add("urlSecond");
+            add("urlFirst");
+        }};
+        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(START_URL_CONTENT));
+        doReturn(urls).when(sut).fetchUrls(eq(crawlPattern), eq(START_URL_CONTENT));
 
-        String secondLevelPageContent1 = "nextNextUrl nextUrl anotherNextUrl";
-        PowerMockito.when(InternetUtils.getPageContent(eq("nextUrl"))).thenReturn(secondLevelPageContent1);
-        String secondLevelPageContent2 = "anotherNextUrlNextUrl anotherNextUrl";
-        PowerMockito.when(InternetUtils.getPageContent(eq("anotherNextUrl"))).thenReturn(secondLevelPageContent2);
+        Set<String> urlsFromFirst = new HashSet<String>() {{
+            add("urlFirst2");
+            add("urlFirst1");
+        }};
+        PowerMockito.when(InternetUtils.getPageContent(eq("urlFirst"))).thenReturn(URL_FIRST_CONTENT);
+        doReturn(urlsFromFirst).when(sut).fetchUrls(eq(collectPattern), eq(URL_FIRST_CONTENT));
+        Set<String> urlsFromSecond = new HashSet<String>() {{
+            add("urlSecond2");
+            add("urlSecond1");
+            add("urlSecond3");
+        }};
+        PowerMockito.when(InternetUtils.getPageContent(eq("urlSecond"))).thenReturn(URL_SECOND_CONTENT);
+        doReturn(urlsFromSecond).when(sut).fetchUrls(eq(collectPattern), eq(URL_SECOND_CONTENT));
 
-        String lastLevelPageContent1 = "anotherUrlNot anotherNotToCollect";
-        PowerMockito.when(InternetUtils.getPageContent(eq("nextNextUrl"))).thenReturn(lastLevelPageContent1);
-        String lastLevelPageContent2 = "noUrls";
-        PowerMockito.when(InternetUtils.getPageContent(eq("anotherNextUrlNextUrl"))).thenReturn(lastLevelPageContent2);
+        //Act
+        Set<String> result = sut.collectAuctionUrls("startUrl", 0, 2, crawlPattern, collectPattern);
 
-        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(firstLevelPageContent));
-        Set<String> urls1Level = new HashSet<String>() {{
-            add("nextUrl");
+        //Assert
+        assertNotNull(result);
+        assertEquals(0, result.size());
+
+    }
+
+    @Test
+    public void given_urls_collected_all_repeated_then_return_empty_set() throws IOException {
+
+        //Arrange
+        Pattern crawlPattern = Pattern.compile(CRAWL);
+        Pattern collectPattern = Pattern.compile(COLLECT);
+
+        PowerMockito.when(InternetUtils.getPageContent(eq("startUrl"))).thenReturn(START_URL_CONTENT);
+        Set<String> sameUrls = new HashSet<String>() {{
+            add("urlSecond");
+            add("urlFirst");
             add("startUrl");
-            add("anotherNextUrl");
         }};
-        doReturn(urls1Level).when(sut).fetchUrls(eq(crawlPattern), eq(firstLevelPageContent));
+        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(START_URL_CONTENT));
+        doReturn(sameUrls).when(sut).fetchUrls(eq(crawlPattern), eq(START_URL_CONTENT));
 
-        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(secondLevelPageContent1));
-        Set<String> urls2Level1 = new HashSet<String>() {{
-            add("nextNextUrl");
-            add("nextUrl");
-            add("anotherNextUrl");
-        }};
-        doReturn(urls2Level1).when(sut).fetchUrls(eq(crawlPattern), eq(secondLevelPageContent1));
+        PowerMockito.when(InternetUtils.getPageContent(eq("urlFirst"))).thenReturn(URL_FIRST_CONTENT);
+        doReturn(sameUrls).when(sut).fetchUrls(eq(collectPattern), eq(URL_FIRST_CONTENT));
 
-        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(secondLevelPageContent2));
-        Set<String> urls2Level2 = new HashSet<String>() {{
-            add("anotherNextUrlNextUrl");
-            add("anotherNextUrl");
-        }};
-        doReturn(urls2Level2).when(sut).fetchUrls(eq(crawlPattern), eq(secondLevelPageContent2));
-
-        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(lastLevelPageContent1));
-        Set<String> urls3Level1 = new HashSet<String>() {{
-            add("anotherUrlNot");
-            add("anotherNotToCollect");
-        }};
-        doReturn(urls3Level1).when(sut).fetchUrls(eq(crawlPattern), eq(lastLevelPageContent1));
-
-        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(lastLevelPageContent2));
-        Set<String> urls3Level2 = new HashSet<String>() {{
-            add("noUrls");
-        }};
-        doReturn(urls3Level2).when(sut).fetchUrls(eq(crawlPattern), eq(lastLevelPageContent2));
+        PowerMockito.when(InternetUtils.getPageContent(eq("urlSecond"))).thenReturn(URL_SECOND_CONTENT);
+        doReturn(sameUrls).when(sut).fetchUrls(eq(collectPattern), eq(URL_SECOND_CONTENT));
 
         //Act
         Set<String> result = sut.collectAuctionUrls("startUrl", 0, 2, crawlPattern, collectPattern);
@@ -126,30 +134,30 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     public void given_urls_collected_on_second_attempt_then_return_set_of_urls_and_fetchUrls_called_four_times() throws IOException {
 
         //Arrange
-        Pattern crawlPattern = Pattern.compile("crawl");
-        Pattern collectPattern = Pattern.compile("collect");
+        Pattern crawlPattern = Pattern.compile(CRAWL);
+        Pattern collectPattern = Pattern.compile(COLLECT);
 
-        PowerMockito.when(InternetUtils.getPageContent(eq("startUrl"))).thenReturn("startUrlContent");
+        PowerMockito.when(InternetUtils.getPageContent(eq("startUrl"))).thenReturn(START_URL_CONTENT);
         Set<String> urls = new HashSet<String>() {{
             add("urlSecond");
             add("urlFirst");
         }};
-        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq("startUrlContent"));
-        doReturn(urls).when(sut).fetchUrls(eq(crawlPattern), eq("startUrlContent"));
+        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(START_URL_CONTENT));
+        doReturn(urls).when(sut).fetchUrls(eq(crawlPattern), eq(START_URL_CONTENT));
 
         Set<String> urlsFromFirst = new HashSet<String>() {{
             add("urlFirst2");
             add("urlFirst1");
         }};
-        PowerMockito.when(InternetUtils.getPageContent(eq("urlFirst"))).thenReturn("urlFirstContent");
-        doReturn(urlsFromFirst).when(sut).fetchUrls(eq(collectPattern), eq("urlFirstContent"));
+        PowerMockito.when(InternetUtils.getPageContent(eq("urlFirst"))).thenReturn(URL_FIRST_CONTENT);
+        doReturn(urlsFromFirst).when(sut).fetchUrls(eq(collectPattern), eq(URL_FIRST_CONTENT));
         Set<String> urlsFromSecond = new HashSet<String>() {{
             add("urlSecond2");
             add("urlSecond1");
             add("urlSecond3");
         }};
-        PowerMockito.when(InternetUtils.getPageContent(eq("urlSecond"))).thenReturn("urlSecondContent");
-        doReturn(urlsFromSecond).when(sut).fetchUrls(eq(collectPattern), eq("urlSecondContent"));
+        PowerMockito.when(InternetUtils.getPageContent(eq("urlSecond"))).thenReturn(URL_SECOND_CONTENT);
+        doReturn(urlsFromSecond).when(sut).fetchUrls(eq(collectPattern), eq(URL_SECOND_CONTENT));
 
         //Act
         Set<String> result = sut.collectAuctionUrls("startUrl", 0, 2, crawlPattern, collectPattern);
@@ -165,7 +173,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     public void given_urls_collected_on_first_attempt_then_return_set_of_urls_and_fetchUrls_called_once() throws IOException {
 
         //Arrange
-        PowerMockito.when(InternetUtils.getPageContent(anyString())).thenReturn("");
+        PowerMockito.when(InternetUtils.getPageContent(anyString())).thenReturn(Strings.EMPTY);
         Set<String> urls = new HashSet<String>() {{
             add("url1");
             add("url2");
@@ -187,8 +195,8 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     public void given_no_urls_on_last_level_then_empty_set_returned() throws IOException {
 
         //Arrange
-        Pattern crawlPattern = Pattern.compile("crawl");
-        Pattern collectPattern = Pattern.compile("collect");
+        Pattern crawlPattern = Pattern.compile(CRAWL);
+        Pattern collectPattern = Pattern.compile(COLLECT);
 
         PowerMockito.when(InternetUtils.getPageContent(anyString())).thenReturn("pageContent");
 
