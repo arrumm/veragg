@@ -48,6 +48,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     private static final String URL_FIRST_CONTENT = "urlFirstContent";
     private static final String URL_SECOND_CONTENT = "urlSecondContent";
     private static final String VISITED_URL = "visitedUrl";
+
     private AbstractCrawler sut;
     private HanmarkCrawler hanmarkCrawler;
 
@@ -127,7 +128,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     }
 
     @Test
-    public void given_already_visited_url_visited_only_once() {
+    public void given_already_visited_url_visited_only_once() throws IOException {
 
         //Arrange
         Pattern crawlPattern = Pattern.compile(CRAWL);
@@ -143,7 +144,8 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
         //Assert
         assertNotNull(result);
         assertEquals(0, result.size());
-        verify(sut, never()).fetchUrls(any(Pattern.class), anyString());
+        PowerMockito.verifyStatic(InternetUtils.class, never());
+        InternetUtils.getPageContent(anyString());
 
     }
 
