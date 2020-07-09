@@ -11,6 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
+import com.veragg.website.services.AuctionService;
 
 import static com.veragg.website.domain.PropertyType.ONE_FAMILY_HOUSE;
 import static org.junit.Assert.assertEquals;
@@ -24,9 +25,12 @@ class HanmarkCrawler_when_parseAuction_is_called {
     @Mock
     private AuctionMapperService<HanmarkAuctionDTO> mapperService;
 
+    @Mock
+    AuctionService auctionService;
+
     @BeforeEach
     public void setup() {
-        sut = new HanmarkCrawler(mapperService);
+        sut = new HanmarkCrawler(mapperService, auctionService);
     }
 
     @Test

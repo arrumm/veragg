@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.BaseAuctionDTO;
 import com.veragg.website.domain.AuctionDraft;
-import com.veragg.website.services.AuctionDraftServiceImpl;
+import com.veragg.website.services.AuctionService;
 
 import lombok.NonNull;
 
@@ -29,7 +29,7 @@ public abstract class AbstractCrawler implements Crawling {
 
     AuctionMapperService auctionMapper;
 
-    AuctionDraftServiceImpl auctionService;
+    AuctionService<AuctionDraft> auctionService;
 
     public AbstractCrawler() {
     }

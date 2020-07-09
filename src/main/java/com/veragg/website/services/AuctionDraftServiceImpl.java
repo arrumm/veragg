@@ -1,10 +1,12 @@
 package com.veragg.website.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.repository.AuctionDraftRepo;
 
+@Service
 public class AuctionDraftServiceImpl implements AuctionService<AuctionDraft> {
 
     private final AuctionDraftRepo auctionRepo;
