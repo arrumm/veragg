@@ -12,13 +12,15 @@ import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.NonNull;
+
 import static java.util.Objects.nonNull;
 
 public class InternetUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InternetUtils.class);
 
-    public static String getPageContent(String url) throws IOException {
+    public static String getPageContent(@NonNull String url) throws IOException {
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 

@@ -155,4 +155,16 @@ public class InternetUtils_when_getPageContent_is_called {
 
     }
 
+    @Test(expected = NullPointerException.class)
+    public void given_null_url_then_IllegalArgumentException_expected() throws IOException {
+
+        //Arrange
+
+        //Act
+        InternetUtils.getPageContent(null);
+
+        //Assert
+
+    }
+
 }
