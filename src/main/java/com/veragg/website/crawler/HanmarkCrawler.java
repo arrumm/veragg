@@ -63,9 +63,9 @@ public class HanmarkCrawler extends AbstractCrawler {
     }
 
     @Override
-    HanmarkAuctionDTO parseAuction(final String url, final InputStream pageData) throws IOException {
+    HanmarkAuctionDTO fetchAuction(final InputStream pageData, final String baseUri) throws IOException {
 
-        Document doc = Jsoup.parse(pageData, "UTF-8", url);
+        Document doc = Jsoup.parse(pageData, "UTF-8", baseUri);
 
         //@formatter:off
         final HanmarkAuctionDTO auction = HanmarkAuctionDTO.builder()

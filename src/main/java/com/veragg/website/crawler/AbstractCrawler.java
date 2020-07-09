@@ -42,7 +42,7 @@ public abstract class AbstractCrawler implements Crawling {
         for (String url : urlsToFetch) {
             try {
                 String pageData = getPageContent(url);
-                BaseAuctionDTO auctionDTO = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
+                BaseAuctionDTO auctionDTO = fetchAuction(new ByteArrayInputStream(pageData.getBytes()), url);
                 AuctionDraft auctionDraft = auctionMapper.map(auctionDTO);
                 auctionService.save(auctionDraft);
             } catch (IOException e) {
@@ -115,7 +115,7 @@ public abstract class AbstractCrawler implements Crawling {
      *
      * @param pageData input stream of page data
      */
-    abstract BaseAuctionDTO parseAuction(String url, InputStream pageData) throws IOException;
+    abstract BaseAuctionDTO fetchAuction(InputStream pageData, String baseUri) throws IOException;
 
     abstract String getStartURL();
 

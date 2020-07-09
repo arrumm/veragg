@@ -39,7 +39,7 @@ class HanmarkCrawler_when_parseAuction_is_called {
         InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-house.html");
 
         // Act
-        HanmarkAuctionDTO result = sut.parseAuction("pagePath", houseInputStream);
+        HanmarkAuctionDTO result = sut.fetchAuction(houseInputStream, "pagePath");
 
         // Assert
         assertNotNull(result);
