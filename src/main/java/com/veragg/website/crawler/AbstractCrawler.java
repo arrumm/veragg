@@ -37,14 +37,14 @@ public abstract class AbstractCrawler implements Crawling {
     @Override
     public void process() {
 
-        Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());//test the method
+        Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
 
         for (String url : urlsToFetch) {
             try {
-                String pageData = getPageContent(url);//tested, check call
-                BaseAuctionDTO auctionDTO = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));//tested, just check call
-                AuctionDraft auctionDraft = auctionMapper.map(auctionDTO);//tested, just check call
-                auctionService.save(auctionDraft);//tested, just check call
+                String pageData = getPageContent(url);
+                BaseAuctionDTO auctionDTO = parseAuction(url, new ByteArrayInputStream(pageData.getBytes()));
+                AuctionDraft auctionDraft = auctionMapper.map(auctionDTO);
+                auctionService.save(auctionDraft);
             } catch (IOException e) {
                 LOGGER.error("Page data fetch error", e);//TODO roman: test exception
             } catch (ParseException e) {
