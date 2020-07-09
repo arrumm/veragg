@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
+import com.veragg.website.crawler.model.HanmarkAuctionDTO;
+import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.services.AuctionService;
 
 import static org.junit.Assert.assertEquals;
@@ -51,13 +53,12 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     private static final String VISITED_URL = "visitedUrl";
 
     private AbstractCrawler sut;
-    private HanmarkCrawler hanmarkCrawler;
 
     @Mock
-    AuctionMapperService mapper;
+    AuctionMapperService<HanmarkAuctionDTO> mapperService;
 
     @Mock
-    AuctionService auctionService;
+    AuctionService<AuctionDraft> auctionService;
 
     @Mock
     Logger logger;
@@ -68,7 +69,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     @Before
     public void setUp() {
         initMocks(this);
-        hanmarkCrawler = new HanmarkCrawler(mapper, auctionService);
+        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService);
         sut = Mockito.spy(hanmarkCrawler);
         when(sut.getMaxCrawlDepth()).thenReturn(2);
         PowerMockito.mockStatic(InternetUtils.class);

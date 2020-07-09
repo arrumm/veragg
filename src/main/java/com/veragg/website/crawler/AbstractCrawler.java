@@ -38,17 +38,18 @@ public abstract class AbstractCrawler implements Crawling {
     public void process() {
 
         Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
+        BaseAuctionDTO auctionDTO = null;
 
         for (String url : urlsToFetch) {
             try {
                 String pageData = getPageContent(url);
-                BaseAuctionDTO auctionDTO = fetchAuction(new ByteArrayInputStream(pageData.getBytes()), url);
+                auctionDTO = fetchAuction(new ByteArrayInputStream(pageData.getBytes()), url);
                 AuctionDraft auctionDraft = auctionMapper.map(auctionDTO);
                 auctionService.save(auctionDraft);
             } catch (IOException e) {
-                LOGGER.error("Page data fetch error", e);//TODO roman: test exception
+                LOGGER.error("Page data fetch from [{}] failed", url, e);
             } catch (ParseException e) {
-                LOGGER.error("Fetched data parse error", e);//TODO roman: test exception
+                LOGGER.error("Auction draft parse from [{}] failed", auctionDTO, e);
             }
         }
 
