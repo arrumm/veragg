@@ -37,7 +37,7 @@ public abstract class AbstractCrawler implements Crawling {
     @Override
     public void process() {
 
-        Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getMaxCrawlDepth(), getContainerPageUrlPattern(), getAuctionUrlPattern());//test the method
+        Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());//test the method
 
         for (String url : urlsToFetch) {
             try {
@@ -56,22 +56,20 @@ public abstract class AbstractCrawler implements Crawling {
 
     /**
      * @param currentUrl               url to fetch auctions urls from / crawl further
-     * @param currentDepth             of recursive call
-     * @param maxDepth                 allowed to recursive call
+     * @param startDepth               start level of depth of recursive call
      * @param urlsToCrawlPattern       to get urls of pages possibly contains auction urls
      * @param extractAuctionUrlPattern to get auction urls
      * @return set of auction urls
      */
-    Set<String> collectAuctionUrls(@NonNull String currentUrl, int currentDepth, int maxDepth, @NonNull Pattern urlsToCrawlPattern, @NonNull Pattern extractAuctionUrlPattern) {
+    Set<String> collectAuctionUrls(@NonNull String currentUrl, int startDepth, @NonNull Pattern urlsToCrawlPattern, @NonNull Pattern extractAuctionUrlPattern) {
 
-        if (currentDepth < 0 || maxDepth < 0 || currentDepth > maxDepth) {
+        if (startDepth < 0 || getMaxCrawlDepth() < 0 || startDepth > getMaxCrawlDepth()) {
             throw new IllegalArgumentException("Current depth of crawling shouldn't be more than maximum depth");
         }
 
         final Set<String> fetchedUrls = new HashSet<>();
 
         if (!visitedUrls.contains(currentUrl)) {
-
             final String currentPageContent;
             try {
                 currentPageContent = getPageContent(currentUrl);
@@ -81,14 +79,14 @@ public abstract class AbstractCrawler implements Crawling {
                 fetchedUrls.removeAll(visitedUrls);
 
                 //if urls not found continue crawling
-                if (fetchedUrls.isEmpty() && currentDepth != maxDepth) {
+                if (fetchedUrls.isEmpty() && startDepth != getMaxCrawlDepth()) {
                     Set<String> urlsToCrawl = fetchUrls(urlsToCrawlPattern, currentPageContent);
                     urlsToCrawl.removeAll(visitedUrls);
-                    urlsToCrawl.forEach(url -> fetchedUrls.addAll(collectAuctionUrls(url, currentDepth + 1, maxDepth, urlsToCrawlPattern, extractAuctionUrlPattern)));
+                    urlsToCrawl.forEach(url -> fetchedUrls.addAll(collectAuctionUrls(url, startDepth + 1, urlsToCrawlPattern, extractAuctionUrlPattern)));
                 }
 
             } catch (IOException e) {
-                LOGGER.error("Error while get page content", e);
+                LOGGER.error("Error get content of [{}]", currentUrl, e);
             }
         }
 
