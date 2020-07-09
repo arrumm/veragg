@@ -119,7 +119,7 @@ public class AbstractCrawler_when_process_is_called {
     }
 
     @Test
-    public void when_fetch_auction_throw_exception_for_one_url_then_exception_caught_and_process_continue() throws IOException, ParseException {
+    public void given_fetch_auction_throw_exception_for_one_url_then_exception_caught_and_process_continue() throws IOException, ParseException {
 
         //Arrange
         doReturn(new HashSet<String>() {{
@@ -143,7 +143,7 @@ public class AbstractCrawler_when_process_is_called {
     }
 
     @Test
-    public void when_map_auction_throw_exception_then_exception_caught_and_logged() throws IOException, ParseException {
+    public void given_map_auction_throw_exception_then_exception_caught_and_logged() throws IOException, ParseException {
 
         //Arrange
         doReturn(new HashSet<>(Collections.singletonList(AUCTION_URL))).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
@@ -161,7 +161,7 @@ public class AbstractCrawler_when_process_is_called {
     }
 
     @Test
-    public void when_fetch_auction_throw_exception_then_exception_caught_and_logged() throws IOException {
+    public void given_fetch_auction_throw_exception_then_exception_caught_and_logged() throws IOException {
 
         //Arrange
         doReturn(new HashSet<>(Collections.singletonList(AUCTION_URL))).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
