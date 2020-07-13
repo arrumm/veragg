@@ -10,9 +10,13 @@ import com.veragg.website.domain.State;
 @Repository
 public interface StateRepo extends JpaRepository<State, String> {
 
+    State findByZipCodeLocations_zipCode(String zip);
+
+    //todo: add prio by location = 1, and location with addition = 0 and sort by it, take first one
+
     @Query(value = "SELECT s from State s " +//
-            "INNER JOIN s.zipCodeRanges zr " +//
-            "WHERE ((:zip >= zr.start AND :zip <= zr.end) OR (:zip = zr.start AND zr.end IS NULL)) ORDER BY s.id")
-    State findByZip(@Param("zip") String zip);
+            "INNER JOIN s.zipCodeLocations zr " +//
+            "WHERE (:location = zr.location OR :location = CONCAT(zr.location, zr.locationAddition)) GROUP BY s")
+    State findByZipCodeLocations_location(@Param("location") String location);
 
 }

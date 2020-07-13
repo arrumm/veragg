@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.veragg.website.domain.Court;
@@ -28,8 +29,9 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class CourtServiceImpl_when_findBy_name_zip_is_called {
 
-    private static final String NEW_COURT_NAME = "new court";
+    private static final String NEW_COURT_NAME = "Freiburg_new";
     private static final String ZIP_CODE = "79098";
+    private static final String LOCATION_NAME = "Landshut";
     private static final String COURT_NOT_EXISTED_NAME = "court not existed";
     private static final String COURT_NAME = "Freiburg";
 
@@ -53,13 +55,86 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     }
 
     @Test
+    public void and_no_courts_found_by_name_and_state_not_found_by_zip_and_found_by_location_then_new_court_should_return() {
+
+        // Arrange
+        Court newCourt = mock(Court.class);
+        when(courtRepo.findAllByName(eq(COURT_NOT_EXISTED_NAME))).thenReturn(Collections.emptyList());
+        when(courtRepo.save(any(Court.class))).thenReturn(newCourt);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
+        when(stateRepo.findByZipCodeLocations_location(eq(COURT_NOT_EXISTED_NAME))).thenReturn(state);
+
+        // Act
+        Court courtFound = sut.findBy(COURT_NOT_EXISTED_NAME, ZIP_CODE);
+
+        // Assert
+        assertNotNull(courtFound);
+        assertEquals(newCourt, courtFound);
+
+    }
+
+    @Test
+    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_found_by_location_then_court_should_return() {
+
+        // Arrange
+        Court newCourt = mock(Court.class);
+        List<Court> courtsFound = Arrays.asList(court, court);
+        when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
+        when(stateRepo.findByZipCodeLocations_location(eq(COURT_NAME))).thenReturn(state);
+        when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(state))).thenReturn(newCourt);
+
+        // Act
+        Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
+
+        // Assert
+        assertNotNull(courtFound);
+        assertEquals(newCourt, courtFound);
+
+    }
+
+    @Test
+    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_by_location_then_return_null() {
+
+        // Arrange
+        List<Court> courtsFound = Arrays.asList(court, court);
+        when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
+        when(stateRepo.findByZipCodeLocations_location(eq(COURT_NAME))).thenReturn(null);
+
+        // Act
+        Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
+
+        // Assert
+        assertNull(courtFound);
+
+    }
+
+    @Test
+    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_found_several_by_location_then_return_null() {
+
+        // Arrange
+        List<Court> courtsFound = Arrays.asList(court, court);
+        when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
+        when(stateRepo.findByZipCodeLocations_location(eq(COURT_NAME))).thenThrow(IncorrectResultSizeDataAccessException.class);
+
+        // Act
+        Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
+
+        // Assert
+        assertNull(courtFound);
+
+    }
+
+    @Test
     public void and_several_courts_found_by_name_and_state_found_and_court_found_by_name_state_then_court_should_return() {
 
         // Arrange
         Court newCourt = mock(Court.class);
         List<Court> courtsFound = Arrays.asList(court, court);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
-        when(stateRepo.findByZip(eq(ZIP_CODE))).thenReturn(state);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(state);
         when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(state))).thenReturn(newCourt);
 
         // Act
@@ -79,7 +154,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
         List<Court> courtsFound = Arrays.asList(court, court);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
         when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(state))).thenReturn(null);
-        when(stateRepo.findByZip(eq(ZIP_CODE))).thenReturn(state);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(state);
         when(courtRepo.save(any(Court.class))).thenReturn(newCourt);
 
         // Act
@@ -97,7 +172,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
         // Arrange
         List<Court> courtsFound = Arrays.asList(court, court);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
-        when(stateRepo.findByZip(eq(ZIP_CODE))).thenReturn(null);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
 
         // Act
         Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
@@ -128,7 +203,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
         // Arrange
         when(courtRepo.findAllByName(eq(COURT_NOT_EXISTED_NAME))).thenReturn(Collections.emptyList());
         when(courtRepo.save(any(Court.class))).thenReturn(court);
-        when(stateRepo.findByZip(eq(ZIP_CODE))).thenReturn(state);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(state);
 
         // Act
         Court courtFound = sut.findBy(COURT_NOT_EXISTED_NAME, ZIP_CODE);
@@ -146,7 +221,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
         ArgumentCaptor<Court> courtArgumentCaptor = ArgumentCaptor.forClass(Court.class);
         when(courtRepo.findAllByName(eq(NEW_COURT_NAME))).thenReturn(Collections.emptyList());
         when(courtRepo.save(any(Court.class))).thenReturn(court);
-        when(stateRepo.findByZip(eq(ZIP_CODE))).thenReturn(state);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(state);
 
         // Act
         Court courtFound = sut.findBy(NEW_COURT_NAME, ZIP_CODE);
@@ -165,7 +240,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
 
         // Arrange
         when(courtRepo.findAllByName(eq(COURT_NOT_EXISTED_NAME))).thenReturn(Collections.emptyList());
-        when(stateRepo.findByZip(eq(ZIP_CODE))).thenReturn(null);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
 
         // Act
         Court courtFound = sut.findBy(COURT_NOT_EXISTED_NAME, ZIP_CODE);

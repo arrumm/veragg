@@ -14,24 +14,10 @@ import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class StateRepo_when_findByZip_is_called {
+public class StateRepo_when_findByZipCodes_zipCode_is_called {
 
     @Autowired
     StateRepo stateRepo;
-
-    @Test
-    public void given_valid_zip_code_then_state_should_return() {
-
-        //Arrange
-
-        //Act
-        State result = stateRepo.findByZip("12439");
-
-        //Assert
-        assertNotNull(result);
-        assertEquals("BE", result.getId());
-
-    }
 
     @Test
     public void given_invalid_zip_code_then_null_should_return() {
@@ -39,7 +25,7 @@ public class StateRepo_when_findByZip_is_called {
         //Arrange
 
         //Act
-        State result = stateRepo.findByZip("999999");
+        State result = stateRepo.findByZipCodeLocations_zipCode("999999");
 
         //Assert
         assertNull(result);
@@ -47,15 +33,41 @@ public class StateRepo_when_findByZip_is_called {
     }
 
     @Test
-    public void given_null_zip_code_then_NPE_should_thrown() {
+    public void given_null_zip_code_then_return_null() {
 
         //Arrange
 
         //Act
-        State result = stateRepo.findByZip(null);
+        State result = stateRepo.findByZipCodeLocations_zipCode(null);
 
         //Assert
         assertNull(result);
+
+    }
+
+    public void given_zip_code_no_states_then_return_null() {
+
+        //Arrange
+
+        //Act
+        State result = stateRepo.findByZipCodeLocations_zipCode("12345");
+
+        //Assert
+        assertNull(result);
+
+    }
+
+    @Test
+    public void given_valid_zip_code_then_state_should_return() {
+
+        //Arrange
+
+        //Act
+        State result = stateRepo.findByZipCodeLocations_zipCode("12527");
+
+        //Assert
+        assertNotNull(result);
+        assertEquals("BE", result.getId());
 
     }
 

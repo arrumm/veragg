@@ -1,5 +1,6 @@
 package com.veragg.website.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,15 +20,20 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "state_zip_ranges")
-public class ZipCodeRange {
+@Table(name = "state_zip_codes")
+public class ZipCodeLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String start;
-    private String end;
+    @Column(name = "zip_code")
+    private String zipCode;
+
+    private String location;
+
+    @Column(name = "location_addition")
+    private String locationAddition;
 
     @NonNull
     @ManyToOne

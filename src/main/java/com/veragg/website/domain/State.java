@@ -23,6 +23,6 @@ public class State {
     private String name;
 
     @OneToMany(mappedBy = "state", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final Set<ZipCodeRange> zipCodeRanges = new HashSet<>();
+    private final Set<ZipCodeLocation> zipCodeLocations = new HashSet<>();
 
 }
