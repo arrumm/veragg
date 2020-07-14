@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.veragg.website.domain.Court;
@@ -44,7 +43,10 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     private StateRepo stateRepo;
 
     @Mock
-    private Court court;
+    private Court courtFound;
+
+    @Mock
+    private Court newCourt;
 
     @Mock
     private State state;
@@ -52,17 +54,18 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     @Before
     public void setup() {
         sut = new CourtServiceImpl(courtRepo, stateRepo);
+        when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(state))).thenReturn(newCourt);
+        when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(null))).thenReturn(null);
     }
 
     @Test
-    public void and_no_courts_found_by_name_and_state_not_found_by_zip_and_found_by_location_then_new_court_should_return() {
+    public void and_no_courts_found_by_name_and_state_not_found_by_zip_but_found_by_full_location_then_new_court_should_return() {
 
         // Arrange
-        Court newCourt = mock(Court.class);
         when(courtRepo.findAllByName(eq(COURT_NOT_EXISTED_NAME))).thenReturn(Collections.emptyList());
         when(courtRepo.save(any(Court.class))).thenReturn(newCourt);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
-        when(stateRepo.findByZipCodeLocations_location(eq(COURT_NOT_EXISTED_NAME))).thenReturn(state);
+        when(stateRepo.findByFullLocation(eq(COURT_NOT_EXISTED_NAME))).thenReturn(state);
 
         // Act
         Court courtFound = sut.findBy(COURT_NOT_EXISTED_NAME, ZIP_CODE);
@@ -74,15 +77,13 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     }
 
     @Test
-    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_found_by_location_then_court_should_return() {
+    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_found_by_full_location_then_court_should_return() {
 
         // Arrange
-        Court newCourt = mock(Court.class);
-        List<Court> courtsFound = Arrays.asList(court, court);
+        List<Court> courtsFound = Arrays.asList(courtFound, courtFound);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
-        when(stateRepo.findByZipCodeLocations_location(eq(COURT_NAME))).thenReturn(state);
-        when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(state))).thenReturn(newCourt);
+        when(stateRepo.findByFullLocation(eq(COURT_NAME))).thenReturn(state);
 
         // Act
         Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
@@ -94,30 +95,35 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     }
 
     @Test
-    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_by_location_then_return_null() {
+    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_found_several_by_full_location_but_one_by_location_then_return_court() {
 
         // Arrange
-        List<Court> courtsFound = Arrays.asList(court, court);
+        State stateFoundByFullLocation = mock(State.class);
+        List<Court> courtsFound = Arrays.asList(courtFound, courtFound);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
-        when(stateRepo.findByZipCodeLocations_location(eq(COURT_NAME))).thenReturn(null);
+        when(stateRepo.findDistinctByZipCodeLocations_locationWithAddition(eq(COURT_NAME))).thenReturn(Arrays.asList(stateFoundByFullLocation, stateFoundByFullLocation));
+        when(stateRepo.findByLocation(eq(COURT_NAME))).thenReturn(state);
 
         // Act
         Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
 
         // Assert
-        assertNull(courtFound);
+        assertNotNull(courtFound);
+        assertEquals(newCourt, courtFound);
 
     }
 
     @Test
-    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_found_several_by_location_then_return_null() {
+    public void and_several_courts_found_by_name_and_state_not_found_by_zip_and_found_several_by_both_locations_then_return_null() {
 
         // Arrange
-        List<Court> courtsFound = Arrays.asList(court, court);
+        State stateFoundByFullLocation = mock(State.class);
+        List<Court> courtsFound = Arrays.asList(courtFound, courtFound);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
-        when(stateRepo.findByZipCodeLocations_location(eq(COURT_NAME))).thenThrow(IncorrectResultSizeDataAccessException.class);
+        when(stateRepo.findDistinctByZipCodeLocations_locationWithAddition(eq(COURT_NAME))).thenReturn(Arrays.asList(stateFoundByFullLocation, stateFoundByFullLocation));
+        when(stateRepo.findDistinctByZipCodeLocations_location(eq(COURT_NAME))).thenReturn(Arrays.asList(stateFoundByFullLocation, stateFoundByFullLocation));
 
         // Act
         Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
@@ -131,11 +137,9 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     public void and_several_courts_found_by_name_and_state_found_and_court_found_by_name_state_then_court_should_return() {
 
         // Arrange
-        Court newCourt = mock(Court.class);
-        List<Court> courtsFound = Arrays.asList(court, court);
+        List<Court> courtsFound = Arrays.asList(courtFound, courtFound);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(state);
-        when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(state))).thenReturn(newCourt);
 
         // Act
         Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
@@ -147,14 +151,13 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     }
 
     @Test
-    public void and_several_courts_found_by_name_and_state_found_and_no_court_found_then_new_court_should_return() {
+    public void and_several_courts_found_by_name_and_state_found_and_no_court_found_then_new_court_created_and_return() {
 
         // Arrange
-        Court newCourt = mock(Court.class);
-        List<Court> courtsFound = Arrays.asList(court, court);
+        List<Court> courtsFound = Arrays.asList(courtFound, courtFound);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
-        when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(state))).thenReturn(null);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(state);
+        when(courtRepo.findByNameAndState(eq(COURT_NAME), eq(state))).thenReturn(null);
         when(courtRepo.save(any(Court.class))).thenReturn(newCourt);
 
         // Act
@@ -167,10 +170,28 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     }
 
     @Test
+    public void and_several_courts_found_by_name_and_state_not_found_by_any_then_return_null() {
+
+        // Arrange
+        List<Court> courtsFound = Arrays.asList(courtFound, courtFound);
+        when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
+        when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
+        when(stateRepo.findByFullLocation(eq(COURT_NAME))).thenReturn(null);
+        when(stateRepo.findByLocation(eq(COURT_NAME))).thenReturn(null);
+
+        // Act
+        Court courtFound = sut.findBy(COURT_NAME, ZIP_CODE);
+
+        // Assert
+        assertNull(courtFound);
+
+    }
+
+    @Test
     public void and_several_courts_found_by_name_and_no_state_found_then_null_should_return() {
 
         // Arrange
-        List<Court> courtsFound = Arrays.asList(court, court);
+        List<Court> courtsFound = Arrays.asList(courtFound, courtFound);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(null);
 
@@ -186,7 +207,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     public void and_only_one_court_found_by_name_then_court_should_return() {
 
         // Arrange
-        List<Court> courtsFound = Collections.singletonList(court);
+        List<Court> courtsFound = Collections.singletonList(courtFound);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
 
         // Act
@@ -202,7 +223,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
 
         // Arrange
         when(courtRepo.findAllByName(eq(COURT_NOT_EXISTED_NAME))).thenReturn(Collections.emptyList());
-        when(courtRepo.save(any(Court.class))).thenReturn(court);
+        when(courtRepo.save(any(Court.class))).thenReturn(courtFound);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(state);
 
         // Act
@@ -210,7 +231,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
 
         // Assert
         assertNotNull(courtFound);
-        assertEquals(court, courtFound);
+        assertEquals(this.courtFound, courtFound);
 
     }
 
@@ -220,7 +241,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
         // Arrange
         ArgumentCaptor<Court> courtArgumentCaptor = ArgumentCaptor.forClass(Court.class);
         when(courtRepo.findAllByName(eq(NEW_COURT_NAME))).thenReturn(Collections.emptyList());
-        when(courtRepo.save(any(Court.class))).thenReturn(court);
+        when(courtRepo.save(any(Court.class))).thenReturn(courtFound);
         when(stateRepo.findByZipCodeLocations_zipCode(eq(ZIP_CODE))).thenReturn(state);
 
         // Act
@@ -231,7 +252,6 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
         verify(courtRepo).save(courtArgumentCaptor.capture());
         assertEquals(NEW_COURT_NAME, courtArgumentCaptor.getValue().getName());
         assertEquals(state, courtArgumentCaptor.getValue().getState());
-
 
     }
 
@@ -254,7 +274,7 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
     public void and_null_name_passed_with_only_one_court_found_then_NPE_expected() {
 
         // Arrange
-        List<Court> courtsFound = Collections.singletonList(court);
+        List<Court> courtsFound = Collections.singletonList(courtFound);
         when(courtRepo.findAllByName(eq(COURT_NAME))).thenReturn(courtsFound);
 
         // Act
@@ -264,6 +284,5 @@ public class CourtServiceImpl_when_findBy_name_zip_is_called {
         assertNull(courtFound);
 
     }
-
 
 }

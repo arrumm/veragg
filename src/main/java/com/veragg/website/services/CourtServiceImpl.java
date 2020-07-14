@@ -57,12 +57,11 @@ public class CourtServiceImpl implements CourtService {
     private State findState(String zipCode, String location) {
         State state = stateRepo.findByZipCodeLocations_zipCode(zipCode);
         if (isNull(state)) {
-            try {
-                //TODO: court location handle, e.g. Sankt -> St., im -> i., Kreis -> Kr, Gemeinde -> Gem
-                return stateRepo.findByZipCodeLocations_location(location);
-            } catch (Exception e) {
-                return null;
+            State stateByFullLocation = stateRepo.findByFullLocation(location);
+            if (isNull(stateByFullLocation)) {
+                return stateRepo.findByLocation(location);
             }
+            return stateByFullLocation;
         }
         return state;
     }

@@ -1,8 +1,8 @@
 package com.veragg.website.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.veragg.website.domain.State;
@@ -12,11 +12,28 @@ public interface StateRepo extends JpaRepository<State, String> {
 
     State findByZipCodeLocations_zipCode(String zip);
 
-    //todo: add prio by location = 1, and location with addition = 0 and sort by it, take first one
+    default State findByFullLocation(String location) {
+        List<State> states = findDistinctByZipCodeLocations_locationWithAddition(location);
+        if (!states.isEmpty()) {
+            if (states.size() == 1) {
+                return states.get(0);
+            }
+        }
+        return null;
+    }
 
-    @Query(value = "SELECT s from State s " +//
-            "INNER JOIN s.zipCodeLocations zr " +//
-            "WHERE (:location = zr.location OR :location = CONCAT(zr.location, zr.locationAddition)) GROUP BY s")
-    State findByZipCodeLocations_location(@Param("location") String location);
+    List<State> findDistinctByZipCodeLocations_locationWithAddition(String location);
+
+    default State findByLocation(String location) {
+        List<State> states = findDistinctByZipCodeLocations_location(location);
+        if (!states.isEmpty()) {
+            if (states.size() == 1) {
+                return states.get(0);
+            }
+        }
+        return null;
+    }
+
+    List<State> findDistinctByZipCodeLocations_location(String location);
 
 }
