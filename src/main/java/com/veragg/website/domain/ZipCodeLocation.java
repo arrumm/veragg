@@ -35,6 +35,9 @@ public class ZipCodeLocation {
     @Column(name = "location_addition")
     private String locationAddition;
 
+    @Column(name = "location_with_addition")
+    private String locationWithAddition;
+
     @NonNull
     @ManyToOne
     @JoinColumn(name = "state_id")

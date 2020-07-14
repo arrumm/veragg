@@ -51,7 +51,6 @@ public class CourtServiceImpl implements CourtService {
             }
         }
 
-        //test that it's created wby
         return createCourt(courtLocation, findState(zipCode, courtLocation));
     }
 
