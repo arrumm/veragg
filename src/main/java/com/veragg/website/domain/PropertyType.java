@@ -9,7 +9,11 @@ public enum PropertyType {
     ONE_FAMILY_HOUSE("Einfamilienhaus"),
     FLAT("Wohnung"),
     MORE_FAMILY_HOUSE("Mehrfamilienhaus"),
-    TWO_FAMILIES_HOUSE("Zweifamilienhaus");
+    TWO_FAMILIES_HOUSE("Zweifamilienhaus"),
+    AGRICULTURAL_PLOT("Landwirtschaftsfläche"),
+    FOREST_PLOT("land-/ forstwirtschtl. Flächen"),
+    BUILDING_PLOT("Baugrundstück"),
+    FARM_PLOT("Ackerland");
 
     private String name;
 
