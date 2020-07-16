@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,8 +14,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -28,10 +32,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Auction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
     @NonNull
@@ -49,8 +54,9 @@ public class Auction {
 
     //objekttyp
     @NonNull
+    @ElementCollection
     @Enumerated(EnumType.STRING)
-    private PropertyType propertyType;
+    private Set<PropertyType> propertyTypes = new HashSet<>();
 
     @Embedded
     @NonNull
@@ -69,9 +75,16 @@ public class Auction {
     @NonNull
     private BuyLimit buyLimit;
 
+    @Lob
     private String outdoorDescription;
+
+    @Lob
     private String propertyBuildingDescription;
+
+    @Lob
     private String propertyPlotDescription;
+
+    @Lob
     private String expertiseDescription;
 
     //    @OneToMany
@@ -84,12 +97,12 @@ public class Auction {
     //    private List<Document> expertiseReports = new ArrayList<>();
 
     @Builder
-    public Auction(@NonNull final Court court, final Set<AuctionDraft> drafts, @NonNull final String fileNumber, @NonNull final PropertyType propertyType, @NonNull final Address address,
+    public Auction(@NonNull final Court court, final Set<AuctionDraft> drafts, @NonNull final String fileNumber, @NonNull final Set<PropertyType> propertyTypes, @NonNull final Address address,
             @NonNull final Date appointment, @NonNull final Integer amount, @NonNull final BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
             final String propertyPlotDescription, final String expertiseDescription, final List<Document> pictures, final List<Document> tilePictures, final List<Document> expertiseReports) {
         this.court = court;
         this.fileNumber = fileNumber;
-        this.propertyType = propertyType;
+        this.propertyTypes = propertyTypes;
         this.address = address;
         this.appointment = appointment;
         this.amount = amount;

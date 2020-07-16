@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode(exclude = {"id", "address"})
 @Entity
 @RequiredArgsConstructor
+@NoArgsConstructor
 public class Court {
 
     @Id

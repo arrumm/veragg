@@ -22,6 +22,8 @@ public class InternetUtils {
 
     public static String getPageContent(@NonNull String url) throws IOException {
 
+        LOGGER.info("Get page content from {}", url);
+
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
             HttpGet request = new HttpGet(url);

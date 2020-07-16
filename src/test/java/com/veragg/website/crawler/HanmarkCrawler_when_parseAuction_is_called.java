@@ -50,6 +50,7 @@ class HanmarkCrawler_when_parseAuction_is_called {
         assertEquals("54538 Hontheim", result.getCityAddress());
         assertEquals("161.700,00 EUR", result.getAmount());
         assertEquals("16.06.2020 14:00 Uhr", result.getAppointmentDate());
+        assertEquals("keine Grenze", result.getLimitDescription());
 
         assertEquals(
                 "der Sachverständigen über den Verkehrswert für das mit einem Wohnhaus mit Garage bebaute Grundstück in 54538 Hontheim, Bergweg 7\n" + "· Grundbuch Hontheim\n" + "· Blatt 2297\n" +

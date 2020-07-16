@@ -20,6 +20,7 @@ import com.veragg.website.domain.State;
 import com.veragg.website.services.CourtService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -74,7 +75,8 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
         assertEquals("Wittlich", result.getCourt().getName());
         assertEquals("RP", result.getCourt().getState().getId());
         assertEquals("12b K 3/19", result.getFileNumber());
-        assertEquals(PropertyType.ONE_FAMILY_HOUSE, result.getPropertyType());
+        assertEquals(1, result.getPropertyTypes().size());
+        assertTrue(result.getPropertyTypes().contains(PropertyType.ONE_FAMILY_HOUSE));
         assertEquals("Hontheim", result.getAddress().getCity());
         assertEquals("54538", result.getAddress().getZipCode());
         assertEquals("7", result.getAddress().getNumber());

@@ -39,6 +39,7 @@ public class HanmarkCrawler extends AbstractCrawler {
     private static final String CITY_CSS_PATH = ".block > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(2) > strong:nth-child(1)";
     private static final String AMOUNT_CSS_PATH = ".block > tbody:nth-child(1) > tr:nth-child(6) > td:nth-child(2) > strong:nth-child(1)";
     private static final String APPOINTMENT_DATE_CSS_PATH = ".block > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(2) > strong:nth-child(1)";
+    private static final String LIMIT_CSS_PATH = ".block > tbody:nth-child(1) > tr:nth-child(8) > td:nth-child(2) > strong:nth-child(1)";
 
     private static final String DESCRIPTION_BLOCK_CSS_PATH = "#excerpt";
 
@@ -75,7 +76,8 @@ public class HanmarkCrawler extends AbstractCrawler {
                 .streetAddress(getElementTextByPath(doc, STREET_CSS_PATH))
                 .cityAddress(getElementTextByPath(doc, CITY_CSS_PATH))
                 .amount(getElementTextByPath(doc, AMOUNT_CSS_PATH))
-                .appointmentDate(getElementTextByPath(doc, APPOINTMENT_DATE_CSS_PATH)).build();
+                .appointmentDate(getElementTextByPath(doc, APPOINTMENT_DATE_CSS_PATH))
+                .limitDescription(getElementTextByPath(doc, LIMIT_CSS_PATH)).build();
         //@formatter:on
 
         Element description = getDescription(doc);

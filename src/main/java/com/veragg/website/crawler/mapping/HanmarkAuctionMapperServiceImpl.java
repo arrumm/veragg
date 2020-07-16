@@ -3,6 +3,8 @@ package com.veragg.website.crawler.mapping;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +21,7 @@ import com.veragg.website.domain.Court;
 import com.veragg.website.domain.PropertyType;
 import com.veragg.website.services.CourtService;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<HanmarkAuctionDTO> {
@@ -43,13 +45,13 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
 
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
         Court court = courtService.findBy(auctionDTO.getCourtName(), address.getZipCode());
-        PropertyType propertyType = getPropertyType(auctionDTO.getPropertyTypeName());
+        Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName());
 
         //@formatter:off
         return AuctionDraft.draftBuilder()
                 .court(court)
                 .address(address)
-                .propertyType(propertyType)
+                .propertyTypes(propertyTypes)
                 .appointment(getAppointmentDate(auctionDTO.getAppointmentDate()))
                 .fileNumber(auctionDTO.getFileNumber())
                 .buyLimit(getLimit(auctionDTO.getLimitDescription()))
@@ -69,13 +71,14 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         return dateFormatter.parse(normalizedDate);
     }
 
-    private PropertyType getPropertyType(final String propertyTypeName) {
-        PropertyType propertyType = PropertyType.getByName(propertyTypeName);
-        if (isNull(propertyType)) {
-            propertyType = PropertyType.getBySynonym(propertyTypeName);
+    private Set<PropertyType> getPropertyTypes(final String propertyTypeName) {
+        Set<PropertyType> propertyTypes = new HashSet<>();
+        PropertyType propertyTypeByName = PropertyType.getByName(propertyTypeName);
+        if (nonNull(propertyTypeByName)) {
+            propertyTypes.add(propertyTypeByName);
         }
-
-        return propertyType;
+        propertyTypes.addAll(PropertyType.getBySynonym(propertyTypeName));
+        return propertyTypes;
     }
 
     private String getNormalizedAmount(final String amount) {

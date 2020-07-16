@@ -6,14 +6,19 @@ import java.util.Set;
 
 public enum PropertyType {
 
-    ONE_FAMILY_HOUSE("Einfamilienhaus"),
-    FLAT("Wohnung"),
+    FLAT("Wohnung", "Einzimmerwohnung", "Zweizimmerwohnung", "Dreizimmerwohnung", "Vierzimmerwohnung", "Fünfzimmerwohnung und mehr", "Sonstige Wohnung", "Wohn- und Geschäftsräume"),
+    //house
+    ONE_FAMILY_HOUSE("Einfamilienhaus", "Wohn- und Geschäftshaus"),
     MORE_FAMILY_HOUSE("Mehrfamilienhaus"),
     TWO_FAMILIES_HOUSE("Zweifamilienhaus"),
+    //plot
     AGRICULTURAL_PLOT("Landwirtschaftsfläche"),
     FOREST_PLOT("land-/ forstwirtschtl. Flächen"),
     BUILDING_PLOT("Baugrundstück"),
-    FARM_PLOT("Ackerland");
+    FARM_PLOT("Ackerland"),
+
+    COMMERCIAL_PROPERTY("Gewerbe", "Wohn-/Gewerbeimmobilie", "Wohn- und Geschäftshaus", "Büro-/Werkstatt-/Lagergebäude", "Büro/Laden", "Büro", "Lagerfläche", "Hotel", "Pension", "Klinik/Pflegeheim",
+            "Halle/Werkstatt", "Lagerhalle", "Ladengeschäft", "Halle", "Wohn- und Geschäftsräume", "Sonstige (Gewerbeobjekt)", "Freizeitanlage");
 
     private String name;
 
@@ -41,13 +46,10 @@ public enum PropertyType {
         return null;
     }
 
-    public static PropertyType getBySynonym(String synonym) {
-        for (PropertyType propertyType : PropertyType.values()) {
-            if (propertyType.getSynonyms().contains(synonym)) {
-                return propertyType;
-            }
-        }
-        return null;
+    public static Set<PropertyType> getBySynonym(String synonym) {
+        Set<PropertyType> propertyTypes = new HashSet<>();
+        Arrays.stream(PropertyType.values()).filter(propertyType -> propertyType.getSynonyms().contains(synonym)).forEach(propertyTypes::add);
+        return propertyTypes;
     }
 
 }

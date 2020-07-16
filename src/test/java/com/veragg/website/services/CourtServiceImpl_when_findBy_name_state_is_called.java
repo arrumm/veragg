@@ -40,20 +40,20 @@ public class CourtServiceImpl_when_findBy_name_state_is_called {
         sut = new CourtServiceImpl(courtRepo, stateRepo);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void and_name_null_then_return_null() {
 
         // Arrange
         when(courtRepo.findByNameAndState(eq(null), eq(state))).thenReturn(null);
 
         // Act
-        Court courtFound = sut.findBy(null, state);
+        sut.findBy(null, state);
 
         // Assert
-        assertNull(courtFound);
 
     }
 
+    //    TODO: exception thrown
     @Test
     public void and_state_null_then_return_null() {
 
@@ -68,8 +68,9 @@ public class CourtServiceImpl_when_findBy_name_state_is_called {
 
     }
 
-    public @Test
-    void and_both_state_name_null_then_return_null() {
+    //TODO: exception thrown
+    @Test
+    public void and_both_state_name_null_then_return_null() {
 
         // Arrange
         when(courtRepo.findByNameAndState(eq("name"), eq(null))).thenReturn(null);
@@ -82,8 +83,8 @@ public class CourtServiceImpl_when_findBy_name_state_is_called {
 
     }
 
-    public @Test
-    void and_both_state_name_not_null_then_return_null() {
+    @Test
+    public void and_both_state_name_not_null_then_return_court_found() {
 
         // Arrange
         when(courtRepo.findByNameAndState(eq("name"), eq(state))).thenReturn(court);
