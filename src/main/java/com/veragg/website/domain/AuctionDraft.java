@@ -1,6 +1,6 @@
 package com.veragg.website.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +24,7 @@ public class AuctionDraft extends Auction {
 
     @Builder(builderMethodName = "draftBuilder")
     public AuctionDraft(final @NonNull Court court, final Set<AuctionDraft> drafts, final @NonNull String fileNumber, final @NonNull Set<PropertyType> propertyTypes, final @NonNull Address address,
-            final @NonNull Date appointment, final @NonNull Integer amount, final @NonNull BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
+            final LocalDateTime appointment, final @NonNull Integer amount, final @NonNull BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
             final String propertyPlotDescription, final String expertiseDescription, final List<Document> pictures, final List<Document> tilePictures, final List<Document> expertiseReports,
             final Auction conflictAuction) {
         super(court, drafts, fileNumber, propertyTypes, address, appointment, amount, buyLimit, outdoorDescription, propertyBuildingDescription, propertyPlotDescription, expertiseDescription,

@@ -1,10 +1,11 @@
 package com.veragg.website.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -21,6 +22,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -64,7 +68,7 @@ public class Auction {
 
     //termin
     @NonNull
-    private Date appointment;
+    private LocalDateTime appointment;
 
     //Verkehrswert
     @NonNull
@@ -87,6 +91,14 @@ public class Auction {
     @Lob
     private String expertiseDescription;
 
+    @Column(name = "created_on")
+    @CreationTimestamp
+    private LocalDateTime createdOn;
+
+    @Column(name = "updated_on")
+    @UpdateTimestamp
+    private LocalDateTime updatedOn;
+
     //    @OneToMany
     //    private List<Document> pictures = new ArrayList<>();
     //
@@ -98,7 +110,7 @@ public class Auction {
 
     @Builder
     public Auction(@NonNull final Court court, final Set<AuctionDraft> drafts, @NonNull final String fileNumber, @NonNull final Set<PropertyType> propertyTypes, @NonNull final Address address,
-            @NonNull final Date appointment, @NonNull final Integer amount, @NonNull final BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
+            final LocalDateTime appointment, @NonNull final Integer amount, @NonNull final BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
             final String propertyPlotDescription, final String expertiseDescription, final List<Document> pictures, final List<Document> tilePictures, final List<Document> expertiseReports) {
         this.court = court;
         this.fileNumber = fileNumber;

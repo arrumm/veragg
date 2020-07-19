@@ -1,9 +1,7 @@
 package com.veragg.website.crawler.mapping;
 
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.Month;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -66,8 +64,6 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
 
         auctionModel.setLimitDescription("keine Angabe");
 
-        Date dateJune16 = new GregorianCalendar(2020, Calendar.JUNE, 16, 14, 0).getTime();
-
         // Act
         final AuctionDraft result = sut.map(auctionModel);
 
@@ -82,7 +78,10 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
         assertEquals("7", result.getAddress().getNumber());
         assertEquals("Bergweg", result.getAddress().getStreet());
         assertEquals(161700, result.getAmount());
-        assertEquals(dateJune16.getTime(), result.getAppointment().getTime());
+        assertEquals(2020, result.getAppointment().getYear());
+        assertEquals(Month.JUNE.getValue(), result.getAppointment().getMonthValue());
+        assertEquals(16, result.getAppointment().getDayOfMonth());
+        assertEquals(14, result.getAppointment().getHour());
         assertEquals(BuyLimit.L100, result.getBuyLimit());
 
     }
