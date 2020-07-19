@@ -25,13 +25,11 @@ public class AuctionDraft extends Auction {
     @Builder(builderMethodName = "draftBuilder")
     public AuctionDraft(final @NonNull Court court, final Set<AuctionDraft> drafts, final @NonNull String fileNumber, final @NonNull Set<PropertyType> propertyTypes, final @NonNull Address address,
             final LocalDateTime appointment, final @NonNull Integer amount, final @NonNull BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
-            final String propertyPlotDescription, final String expertiseDescription, final List<Document> pictures, final List<Document> tilePictures, final List<Document> expertiseReports,
+            final String propertyPlotDescription, final String expertiseDescription, final List<String> imageLinks, final List<String> expertiseReportLinks, final Set<String> otherFileLinks,
             final Auction conflictAuction) {
         super(court, drafts, fileNumber, propertyTypes, address, appointment, amount, buyLimit, outdoorDescription, propertyBuildingDescription, propertyPlotDescription, expertiseDescription,
-                pictures, tilePictures, expertiseReports);
+                imageLinks, expertiseReportLinks, otherFileLinks);
         this.conflictAuction = conflictAuction;
     }
-
-    //TODO: some timestamp auto set
 
 }
