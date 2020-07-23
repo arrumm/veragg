@@ -13,9 +13,10 @@ import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.services.AuctionService;
 
-import static com.veragg.website.domain.PropertyType.ONE_FAMILY_HOUSE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 class HanmarkCrawler_when_parseAuction_is_called {
@@ -45,12 +46,12 @@ class HanmarkCrawler_when_parseAuction_is_called {
         assertNotNull(result);
         assertEquals("12b K 3/19", result.getFileNumber());
         assertEquals("Wittlich", result.getCourtName());
-        assertEquals(ONE_FAMILY_HOUSE.getName(), result.getPropertyTypeName());
+        assertEquals("Einfamilienhaus", result.getPropertyTypeName());
         assertEquals("Bergweg 7", result.getStreetAddress());
         assertEquals("54538 Hontheim", result.getCityAddress());
         assertEquals("161.700,00 EUR", result.getAmount());
         assertEquals("16.06.2020 14:00 Uhr", result.getAppointmentDate());
-        assertEquals("keine Grenze", result.getLimitDescription());
+        assertEquals("keine Angabe", result.getLimitDescription());
 
         assertEquals(
                 "der Sachverständigen über den Verkehrswert für das mit einem Wohnhaus mit Garage bebaute Grundstück in 54538 Hontheim, Bergweg 7\n" + "· Grundbuch Hontheim\n" + "· Blatt 2297\n" +
@@ -124,6 +125,44 @@ class HanmarkCrawler_when_parseAuction_is_called {
 
         assertEquals("Versorgungsleitungen, wie Wasser, Abwasser und Strom vom Hausanschluss bis an das öffentliche Netz\n" + "Hofbefestigung vor dem Haus aus Betonsteinpflaster\n" +
                 "Terrasse aus Betonplatten\n" + "Gartenmauern bei der Terrasse\n" + "Metallschiebetor\n" + "Anpflanzungen wie Wiese, Bäume und Sträucher\n", result.getOutdoorDescription());
+
+    }
+
+    @Test
+    public void and_valid_pageData_is_passed_with_file_links_then_auction_returned() throws IOException {
+        // Arrange
+        InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-gewerbe.html");
+
+        // Act
+        HanmarkAuctionDTO result = sut.fetchAuction(houseInputStream, "pagePath");
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("6 K 27/18", result.getFileNumber());
+        assertEquals("Husum", result.getCourtName());
+        assertEquals("Gewerbeimmobilie", result.getPropertyTypeName());
+        assertEquals("Markt 5", result.getStreetAddress());
+        assertEquals("25813 Husum", result.getCityAddress());
+        assertEquals("1.070.000,00 EUR", result.getAmount());
+        assertEquals("19.08.2020 09:30 Uhr", result.getAppointmentDate());
+        assertEquals("keine Angabe", result.getLimitDescription());
+
+        assertFalse(result.getExpertiseLinks().isEmpty());
+        assertEquals(1, result.getExpertiseLinks().size());
+        assertEquals("https://www.hanmark.de/wertgutachten-29362.pdf", result.getExpertiseLinks().get(0));
+
+        assertFalse(result.getOtherDocumentLinks().isEmpty());
+        assertEquals(1, result.getOtherDocumentLinks().size());
+        assertTrue(result.getOtherDocumentLinks().contains("https://www.hanmark.de/termin-29362.pdf"));
+
+        assertFalse(result.getImageLinks().isEmpty());
+        assertEquals(6, result.getImageLinks().size());
+        assertEquals("https://www.hanmark.de/titelbild-29362.jpg", result.getImageLinks().get(0));
+        assertEquals("https://www.hanmark.de/abbildung-198080.jpg", result.getImageLinks().get(1));
+        assertEquals("https://www.hanmark.de/abbildung-198081.jpg", result.getImageLinks().get(2));
+        assertEquals("https://www.hanmark.de/abbildung-198082.jpg", result.getImageLinks().get(3));
+        assertEquals("https://www.hanmark.de/abbildung-198083.jpg", result.getImageLinks().get(4));
+        assertEquals("https://www.hanmark.de/abbildung-198084.jpg", result.getImageLinks().get(5));
 
     }
 
