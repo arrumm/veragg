@@ -1,11 +1,10 @@
 package com.veragg.website.crawler.mapping;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,11 +63,12 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         //@formatter:on
     }
 
-    private Date getAppointmentDate(String appointmentDate) throws ParseException {
+    private LocalDateTime getAppointmentDate(String appointmentDate) throws ParseException {
         String normalizedDate = extractByPattern(Pattern.compile(DATE_REGEX), appointmentDate);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-        dateFormatter.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-        return dateFormatter.parse(normalizedDate);
+        //        dateFormatter.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        LocalDateTime dateTime = LocalDateTime.parse(normalizedDate, formatter);
+        return dateTime;
     }
 
     private Set<PropertyType> getPropertyTypes(final String propertyTypeName) {

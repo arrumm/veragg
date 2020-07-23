@@ -10,7 +10,8 @@ import lombok.Getter;
 public enum BuyLimit {
     L50(50),
     L70(70),
-    L100(100, "keine Grenze", "keine Angabe");
+    L100(100, "keine Grenze"),
+    NA(100, "keine Angabe");
 
     private Integer value;
     private Set<String> synonyms = new HashSet<>();

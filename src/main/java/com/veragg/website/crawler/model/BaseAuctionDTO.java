@@ -1,6 +1,9 @@
 package com.veragg.website.crawler.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,4 +31,7 @@ public class BaseAuctionDTO {
     private List<String> tileImages;
     private String courtAppointmentDescriptionUrl;
     private String limitDescription;
+    private List<String> imageLinks = new ArrayList<>();
+    private List<String> expertiseLinks = new ArrayList<>();
+    private Set<String> otherDocumentLinks = new HashSet<>();
 }
