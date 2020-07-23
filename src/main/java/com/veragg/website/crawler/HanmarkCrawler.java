@@ -127,6 +127,10 @@ public class HanmarkCrawler extends AbstractCrawler {
         return imageLinks;
     }
 
+    String getElementSourceByPath(Document document, String pathQuery) {
+        return getAttributeValueFromPath(document, pathQuery, "src");
+    }
+
     private List<String> getFilesLinks(Document doc, Pattern extractLinkPattern) {
         List<String> fileLinks = new ArrayList<>();
 
@@ -142,6 +146,15 @@ public class HanmarkCrawler extends AbstractCrawler {
         }
 
         return fileLinks;
+    }
+
+    String getElementLinkByPath(Document document, String pathQuery) {
+        return getAttributeValueFromPath(document, pathQuery, "href");
+    }
+
+    private String getAttributeValueFromPath(Document document, String pathQuery, String href) {
+        Element elementFound = document.selectFirst(pathQuery);
+        return nonNull(elementFound) ? elementFound.attr(href) : StringUtils.EMPTY;
     }
 
     private String collectDescription(final Element description, final String descriptionName) {
@@ -179,19 +192,6 @@ public class HanmarkCrawler extends AbstractCrawler {
             return descriptionBuilder.toString();
         }
         return StringUtils.EMPTY;
-    }
-
-    String getElementSourceByPath(Document document, String pathQuery) {
-        return getAttributeValueFromPath(document, pathQuery, "src");
-    }
-
-    String getElementLinkByPath(Document document, String pathQuery) {
-        return getAttributeValueFromPath(document, pathQuery, "href");
-    }
-
-    private String getAttributeValueFromPath(Document document, String pathQuery, String href) {
-        Element elementFound = document.selectFirst(pathQuery);
-        return nonNull(elementFound) ? elementFound.attr(href) : StringUtils.EMPTY;
     }
 
     String getElementTextByPath(Document document, String pathQuery) {
