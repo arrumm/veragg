@@ -194,19 +194,6 @@ public class HanmarkCrawler extends AbstractCrawler {
         return StringUtils.EMPTY;
     }
 
-    String getElementSourceByPath(Document document, String pathQuery) {
-        return getAttributeValueFromPath(document, pathQuery, "src");
-    }
-
-    String getElementLinkByPath(Document document, String pathQuery) {
-        return getAttributeValueFromPath(document, pathQuery, "href");
-    }
-
-    private String getAttributeValueFromPath(Document document, String pathQuery, String href) {
-        Element elementFound = document.selectFirst(pathQuery);
-        return nonNull(elementFound) ? elementFound.attr(href) : StringUtils.EMPTY;
-    }
-
     String getElementTextByPath(Document document, String pathQuery) {
         Element elementFound = document.selectFirst(pathQuery);
         return nonNull(elementFound) ? elementFound.ownText() : StringUtils.EMPTY;
