@@ -107,7 +107,7 @@ public class Auction {
     private List<String> expertiseLinks = new ArrayList<>();
 
     @ElementCollection
-    private Set<String> otherFileLinks = new HashSet<>();
+    private Set<String> otherDocumentLinks = new HashSet<>();
 
     //    @OneToMany
     //    private List<Document> pictures = new ArrayList<>();
@@ -121,7 +121,7 @@ public class Auction {
     @Builder
     public Auction(@NonNull final Court court, final Set<AuctionDraft> drafts, @NonNull final String fileNumber, @NonNull final Set<PropertyType> propertyTypes, @NonNull final Address address,
             final LocalDateTime appointment, @NonNull final Integer amount, @NonNull final BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
-            final String propertyPlotDescription, final String expertiseDescription, final List<String> imageLinks, final List<String> expertiseLinks, final Set<String> otherFileLinks) {
+            final String propertyPlotDescription, final String expertiseDescription, final List<String> imageLinks, final List<String> expertiseLinks, final Set<String> otherDocumentLinks) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;
@@ -136,7 +136,7 @@ public class Auction {
         this.drafts = drafts;
         this.imageLinks = imageLinks;
         this.expertiseLinks = expertiseLinks;
-        this.otherFileLinks = otherFileLinks;
+        this.otherDocumentLinks = otherDocumentLinks;
     }
 
     @Override
