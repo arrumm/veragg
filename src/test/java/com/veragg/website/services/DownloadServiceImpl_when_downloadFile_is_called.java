@@ -7,7 +7,6 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import com.veragg.website.domain.Document;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -68,7 +65,7 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
     @Before
     public void setup() throws Exception {
         downloadService = new DownloadServiceImpl(fileManager);
-        when(fileManager.saveFile(anyString(), any())).thenReturn(SAVED_FILE_PATH);
+        when(fileManager.saveToFile(anyString(), any())).thenReturn(SAVED_FILE_PATH);
         when(document.getUrl()).thenReturn(FILE_URL_STRING);
         when(document.getStoreName()).thenReturn(FILE_NAME_UUID);
         whenNew(URL.class).withAnyArguments().thenReturn(downloadUrl);
@@ -82,19 +79,17 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
     }
 
     @Test
-    public void given_document_saveFile_throw_FileManagementException_then_error_logged_and_empty_string_returned() {
+    public void given_document_saveFile_throw_FileManagementException_then_error_logged() {
 
         //Arrange
         FileManagementException exception = mock(FileManagementException.class);
-        when(fileManager.saveFile(anyString(), any())).thenThrow(exception);
+        when(fileManager.saveToFile(anyString(), any())).thenThrow(exception);
 
         //Act
-        String result = downloadService.downloadFile(document);
+        downloadService.downloadFile(document);
 
         //Assert
         verify(logger).error(eq("Unable to save save the file from url {}"), eq(FILE_URL_STRING), eq(exception));
-        assertNotNull(result);
-        assertEquals(StringUtils.EMPTY, result);
 
     }
 
@@ -103,7 +98,7 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
 
         //Arrange
         NullPointerException exception = mock(NullPointerException.class);
-        when(fileManager.saveFile(anyString(), any())).thenThrow(exception);
+        when(fileManager.saveToFile(anyString(), any())).thenThrow(exception);
 
         //Act
         //Assert
@@ -111,34 +106,30 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
     }
 
     @Test
-    public void given_document_openStream_throw_exception_then_no_interaction_with_fileManager_and_error_logged_and_empty_string_return() throws IOException {
+    public void given_document_openStream_throw_exception_then_no_interaction_with_fileManager_and_error_logged() throws IOException {
 
         //Arrange
         IOException exception = mock(IOException.class);
         when(downloadUrl.openStream()).thenThrow(exception);
 
         //Act
-        String result = downloadService.downloadFile(document);
+        downloadService.downloadFile(document);
 
         //Assert
-        assertNotNull(result);
-        assertEquals(StringUtils.EMPTY, result);
         verify(logger).error(eq("Unable to download file from url {}"), eq(FILE_URL_STRING), eq(exception));
         verifyNoInteractions(fileManager);
     }
 
     @Test
-    public void given_document_URL_null_then_no_interaction_with_fileManager_and_empty_string_return() throws Exception {
+    public void given_document_URL_null_then_no_interaction_with_fileManager() throws Exception {
 
         //Arrange
         whenNew(URL.class).withParameterTypes(String.class).withArguments(FILE_URL_STRING).thenReturn(null);
 
         //Act
-        String result = downloadService.downloadFile(document);
+        downloadService.downloadFile(document);
 
         //Assert
-        assertNotNull(result);
-        assertEquals(StringUtils.EMPTY, result);
         verifyNoInteractions(fileManager);
     }
 
@@ -152,21 +143,19 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
     }
 
     @Test
-    public void given_document_and_file_saved_then_saveFile_called_and_saved_path_return() {
+    public void given_document_and_file_saved_then_saveFile_called() {
 
         //Arrange
         //Act
-        String result = downloadService.downloadFile(document);
+        downloadService.downloadFile(document);
 
         //Assert
-        assertNotNull(result);
-        assertEquals(SAVED_FILE_PATH, result);
-        verify(fileManager).saveFile(eq(FILE_NAME_UUID), eq(readableByteChannel));
+        verify(fileManager).saveToFile(eq(FILE_NAME_UUID), eq(readableByteChannel));
 
     }
 
     @Test
-    public void given_document_and_URL_malformed_then_error_logged_and_no_interaction_with_fileManager_and_empty_string_return() throws Exception {
+    public void given_document_and_URL_malformed_then_error_logged_and_no_interaction_with_fileManager() throws Exception {
 
         //Arrange
         MalformedURLException exception = mock(MalformedURLException.class);
@@ -174,11 +163,9 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
         whenNew(URL.class).withParameterTypes(String.class).withArguments(FILE_MALFORMED_URL_STRING).thenThrow(exception);
 
         //Act
-        String result = downloadService.downloadFile(document);
+        downloadService.downloadFile(document);
 
         //Assert
-        assertNotNull(result);
-        assertEquals(StringUtils.EMPTY, result);
         verify(logger).error(eq("URL is wrong and cannot be fetched: {}"), eq(FILE_MALFORMED_URL_STRING), eq(exception));
         verifyNoInteractions(fileManager);
     }
