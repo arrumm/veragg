@@ -4,6 +4,6 @@ import com.veragg.website.domain.Document;
 
 public interface DownloadService {
 
-    String downloadFile(Document document);
+    void downloadFile(Document document);
 
 }

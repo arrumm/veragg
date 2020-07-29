@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class DownloadServiceImpl implements DownloadService {
     }
 
     @Override
-    public String downloadFile(@NonNull Document document) {
+    public void downloadFile(@NonNull Document document) {
 
         URL downloadFileUrl = null;
         try {
@@ -42,15 +41,13 @@ public class DownloadServiceImpl implements DownloadService {
 
         if (nonNull(downloadFileUrl)) {
             try (ReadableByteChannel readableByteChannel = Channels.newChannel(downloadFileUrl.openStream())) {
-                return fileManager.saveFile(document.getStoreName(), readableByteChannel);
+                fileManager.saveToFile(document.getStoreName(), readableByteChannel);
             } catch (FileManagementException e) {
                 LOGGER.error("Unable to save save the file from url {}", document.getUrl(), e);
             } catch (IOException e) {
                 LOGGER.error("Unable to download file from url {}", document.getUrl(), e);
             }
         }
-
-        return StringUtils.EMPTY;
 
     }
 }
