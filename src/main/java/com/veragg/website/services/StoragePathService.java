@@ -6,9 +6,9 @@ import java.nio.file.Paths;
 
 import lombok.NonNull;
 
-public class FileManagerUtil {
+public class StoragePathService {
 
-    static Path generateFilesystemPath(@NonNull String storageRootPath, @NonNull String storeName) {
+    public static Path generateFilesystemPath(@NonNull String storageRootPath, @NonNull String storeName) {
         StringBuilder storagePath = new StringBuilder(storageRootPath);
         if (!storageRootPath.endsWith(File.separator)) {
             storagePath.append(File.separator);
@@ -22,6 +22,6 @@ public class FileManagerUtil {
         return Paths.get(storagePath.toString());
     }
 
-    private FileManagerUtil() {
+    private StoragePathService() {
     }
 }

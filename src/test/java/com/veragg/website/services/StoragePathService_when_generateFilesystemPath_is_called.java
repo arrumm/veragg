@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
-public class FileManagerUtil_when_generateFilesystemPath_is_called {
+public class StoragePathService_when_generateFilesystemPath_is_called {
 
     @Test
     public void given_valid_parameters_then_path_return() {
@@ -18,7 +18,7 @@ public class FileManagerUtil_when_generateFilesystemPath_is_called {
         String storageRootPath = File.separator + "storage" + File.separator + "rootPath" + File.separator;
 
         //Act
-        Path result = FileManagerUtil.generateFilesystemPath(storageRootPath, "storageFileName");
+        Path result = StoragePathService.generateFilesystemPath(storageRootPath, "storageFileName");
 
         //Assert
         assertNotNull(result);
@@ -38,7 +38,7 @@ public class FileManagerUtil_when_generateFilesystemPath_is_called {
         String storageRootPathEndNoSeparator = File.separator + "storage" + File.separator + "rootPath";
 
         //Act
-        Path result = FileManagerUtil.generateFilesystemPath(storageRootPathEndNoSeparator, "storageFileName");
+        Path result = StoragePathService.generateFilesystemPath(storageRootPathEndNoSeparator, "storageFileName");
 
         //Assert
         assertNotNull(result);
@@ -58,7 +58,7 @@ public class FileManagerUtil_when_generateFilesystemPath_is_called {
         //Act
 
         //Assert
-        assertThrows(NullPointerException.class, () -> FileManagerUtil.generateFilesystemPath(null, "storageName"));
+        assertThrows(NullPointerException.class, () -> StoragePathService.generateFilesystemPath(null, "storageName"));
 
     }
 
@@ -69,7 +69,7 @@ public class FileManagerUtil_when_generateFilesystemPath_is_called {
         //Act
 
         //Assert
-        assertThrows(NullPointerException.class, () -> FileManagerUtil.generateFilesystemPath("storageRootPath", null));
+        assertThrows(NullPointerException.class, () -> StoragePathService.generateFilesystemPath("storageRootPath", null));
 
     }
 
