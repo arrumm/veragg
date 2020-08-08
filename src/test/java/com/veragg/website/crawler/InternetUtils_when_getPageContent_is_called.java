@@ -59,9 +59,9 @@ public class InternetUtils_when_getPageContent_is_called {
 
     @Before
     public void setUp() {
-        PowerMockito.mockStatic(HttpClients.class);
+        mockStatic(HttpClients.class);
         PowerMockito.when(HttpClients.createDefault()).thenReturn(httpClient);
-        PowerMockito.mockStatic(EntityUtils.class);
+        mockStatic(EntityUtils.class);
 
         mockStatic(LoggerFactory.class);
         PowerMockito.when(LoggerFactory.getLogger(InternetUtils.class)).thenReturn(logger);
