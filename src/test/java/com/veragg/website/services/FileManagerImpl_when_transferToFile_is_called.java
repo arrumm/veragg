@@ -71,6 +71,8 @@ public class FileManagerImpl_when_transferToFile_is_called {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    private FileManagerImpl sut;
+
     @Before
     public void setup() throws Exception {
         mockStatic(StoragePathService.class);
@@ -89,14 +91,48 @@ public class FileManagerImpl_when_transferToFile_is_called {
 
         when(savedPath.toFile()).thenReturn(savedFile);
         when(savedFile.getName()).thenReturn("storagePathFullPath");
+
+        sut = new FileManagerImpl();
+        ReflectionTestUtils.setField(sut, "storageRootPath", STORAGE_ROOT_PATH, String.class);
+    }
+
+    @Test
+    public void given_file_exist_and_deleteFile_throw_exception_then_FileManagementException_expected() throws IOException {
+
+        //Arrange
+        when(storagePathFile.exists()).thenReturn(Boolean.TRUE);
+        IOException exception = mock(IOException.class);
+        PowerMockito.doThrow(exception).when(Files.class);
+        Files.delete(eq(storagePath));
+
+        //Act
+        //Assert
+        assertThrows(FileManagementException.class, () -> sut.transferToFile(FILE_STORE_NAME, readableByteChannel));
+
+    }
+
+    @Test
+    public void given_file_exists_then_deleteFile_is_called_and_update_logged() throws Exception {
+
+        //Arrange
+        sut = PowerMockito.spy(sut);
+        when(storagePathFile.exists()).thenReturn(Boolean.TRUE);
+
+        //Act
+        sut.transferToFile(FILE_STORE_NAME, readableByteChannel);
+
+        //Assert
+        PrivateMethodVerification privateMethodInvocation = verifyPrivate(sut);
+        privateMethodInvocation.invoke("deleteFile", storagePath);
+
+        //TODO: add logging verification
+
     }
 
     @Test
     public void given_path_parent_not_exist_and_create_directories_throw_exception_then_FileManagementException_expected() throws IOException {
 
         //Arrange
-        FileManagerImpl sut = new FileManagerImpl();
-        ReflectionTestUtils.setField(sut, "storageRootPath", STORAGE_ROOT_PATH, String.class);
         IOException exception = mock(IOException.class);
         when(storageParentPathFile.exists()).thenReturn(Boolean.FALSE);
         when(Files.createDirectories(any(Path.class))).thenThrow(exception);
@@ -111,17 +147,13 @@ public class FileManagerImpl_when_transferToFile_is_called {
     public void given_path_parent_not_exist_then_create_directories_called() throws Exception {
 
         //Arrange
-        FileManagerImpl sut = new FileManagerImpl();
         sut = PowerMockito.spy(sut);
-
-        ReflectionTestUtils.setField(sut, "storageRootPath", STORAGE_ROOT_PATH, String.class);
         when(storageParentPathFile.exists()).thenReturn(Boolean.FALSE);
 
         //Act
         sut.transferToFile(FILE_STORE_NAME, readableByteChannel);
 
         //Assert
-
         PrivateMethodVerification privateMethodInvocation = verifyPrivate(sut);
         privateMethodInvocation.invoke("createDirectories", storagePathParent);
 
@@ -131,7 +163,6 @@ public class FileManagerImpl_when_transferToFile_is_called {
     public void given_fileStoreName_null_then_NPE_expected() {
 
         //Arrange
-        FileManagerImpl sut = new FileManagerImpl();
 
         //Act
         //Assert
@@ -143,7 +174,6 @@ public class FileManagerImpl_when_transferToFile_is_called {
     public void given_byteChannel_null_then_NPE_expected() {
 
         //Arrange
-        FileManagerImpl sut = new FileManagerImpl();
 
         //Act
         //Assert
