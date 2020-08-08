@@ -9,7 +9,7 @@ public interface FileManager {
 
     boolean deleteFile(Document file);
 
-    String saveFile(String filePath, ReadableByteChannel readableByteChannel);
+    String transferToFile(String filePath, ReadableByteChannel readableByteChannel);
 
     void readFile(Document file, OutputStream outputStream);
 

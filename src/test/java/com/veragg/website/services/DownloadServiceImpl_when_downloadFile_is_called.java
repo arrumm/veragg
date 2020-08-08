@@ -65,7 +65,7 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
     @Before
     public void setup() throws Exception {
         downloadService = new DownloadServiceImpl(fileManager);
-        when(fileManager.saveToFile(anyString(), any())).thenReturn(SAVED_FILE_PATH);
+        when(fileManager.transferToFile(anyString(), any())).thenReturn(SAVED_FILE_PATH);
         when(document.getUrl()).thenReturn(FILE_URL_STRING);
         when(document.getStoreName()).thenReturn(FILE_NAME_UUID);
         whenNew(URL.class).withAnyArguments().thenReturn(downloadUrl);
@@ -79,11 +79,11 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
     }
 
     @Test
-    public void given_document_saveFile_throw_FileManagementException_then_error_logged() {
+    public void given_document_transferToFile_throw_FileManagementException_then_error_logged() {
 
         //Arrange
         FileManagementException exception = mock(FileManagementException.class);
-        when(fileManager.saveToFile(anyString(), any())).thenThrow(exception);
+        when(fileManager.transferToFile(anyString(), any())).thenThrow(exception);
 
         //Act
         downloadService.downloadFile(document);
@@ -94,11 +94,11 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
     }
 
     @Test
-    public void given_document_saveFile_throw_NPE_then_NPE_expected() {
+    public void given_document_transferToFile_throw_NPE_then_NPE_expected() {
 
         //Arrange
         NullPointerException exception = mock(NullPointerException.class);
-        when(fileManager.saveToFile(anyString(), any())).thenThrow(exception);
+        when(fileManager.transferToFile(anyString(), any())).thenThrow(exception);
 
         //Act
         //Assert
@@ -143,14 +143,14 @@ public class DownloadServiceImpl_when_downloadFile_is_called {
     }
 
     @Test
-    public void given_document_and_file_saved_then_saveFile_called() {
+    public void given_document_and_file_saved_then_transferToFile_called() {
 
         //Arrange
         //Act
         downloadService.downloadFile(document);
 
         //Assert
-        verify(fileManager).saveToFile(eq(FILE_NAME_UUID), eq(readableByteChannel));
+        verify(fileManager).transferToFile(eq(FILE_NAME_UUID), eq(readableByteChannel));
 
     }
 

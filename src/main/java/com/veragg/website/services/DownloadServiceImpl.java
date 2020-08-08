@@ -41,7 +41,7 @@ public class DownloadServiceImpl implements DownloadService {
 
         if (nonNull(downloadFileUrl)) {
             try (ReadableByteChannel readableByteChannel = Channels.newChannel(downloadFileUrl.openStream())) {
-                fileManager.saveToFile(document.getStoreName(), readableByteChannel);
+                fileManager.transferToFile(document.getStoreName(), readableByteChannel);
             } catch (FileManagementException e) {
                 LOGGER.error("Unable to save save the file from url {}", document.getUrl(), e);
             } catch (IOException e) {
