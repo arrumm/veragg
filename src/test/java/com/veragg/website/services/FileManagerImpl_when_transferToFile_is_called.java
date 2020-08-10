@@ -1,6 +1,7 @@
 package com.veragg.website.services;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -18,6 +19,9 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.api.mockito.verification.PrivateMethodVerification;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertThrows;
@@ -25,6 +29,8 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
@@ -34,7 +40,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest({
         StoragePathService.class,
         Files.class,
-        FileManagerImpl.class
+        FileManagerImpl.class,
+        LoggerFactory.class
 })
 public class FileManagerImpl_when_transferToFile_is_called {
 
@@ -68,6 +75,9 @@ public class FileManagerImpl_when_transferToFile_is_called {
     @Mock
     File storageParentPathFile;
 
+    @Mock
+    Logger logger;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -94,6 +104,71 @@ public class FileManagerImpl_when_transferToFile_is_called {
 
         sut = new FileManagerImpl();
         ReflectionTestUtils.setField(sut, "storageRootPath", STORAGE_ROOT_PATH, String.class);
+
+        mockStatic(LoggerFactory.class);
+        PowerMockito.when(LoggerFactory.getLogger(FileManagerImpl.class)).thenReturn(logger);
+        Whitebox.setInternalState(FileManagerImpl.class, logger);
+    }
+
+    @Test
+    public void given_newFOS_successful_then_transferFrom_is_called() throws Exception {
+
+        //Arrange
+        //Act
+        sut.transferToFile(FILE_STORE_NAME, readableByteChannel);
+
+        //Assert
+        verify(fileChannel, times(1)).transferFrom(eq(readableByteChannel), anyLong(), anyLong());
+    }
+
+    @Test
+    public void given_transferFrom_throw_exception_then_FileManagementException_expected() throws Exception {
+
+        //Arrange
+        when(fileChannel.transferFrom(eq(readableByteChannel), anyLong(), anyLong())).thenThrow(IOException.class);
+
+        //Act
+        //Assert
+        assertThrows(FileManagementException.class, () -> sut.transferToFile(FILE_STORE_NAME, readableByteChannel));
+    }
+
+    @Test
+    public void given_newFOS_throw_exception_then_FileManagementException_expected() throws Exception {
+
+        //Arrange
+        PowerMockito.whenNew(FileOutputStream.class).withParameterTypes(File.class).withArguments(eq(storagePathFile)).thenThrow(FileNotFoundException.class);
+
+        //Act
+        //Assert
+        assertThrows(FileManagementException.class, () -> sut.transferToFile(FILE_STORE_NAME, readableByteChannel));
+    }
+
+    @Test
+    public void given_path_and_file_checks_passes_then_createFile_is_called() throws Exception {
+
+        //Arrange
+        sut = PowerMockito.spy(sut);
+
+        //Act
+        sut.transferToFile(FILE_STORE_NAME, readableByteChannel);
+
+        //Assert
+        PrivateMethodVerification privateMethodInvocation = verifyPrivate(sut);
+        privateMethodInvocation.invoke("createFile", storagePath);
+    }
+
+    @Test
+    public void given_createFile_throw_exception_then_FileManagementException_expected() throws IOException {
+
+        //Arrange
+        IOException exception = mock(IOException.class);
+        PowerMockito.doThrow(exception).when(Files.class);
+        Files.createFile(eq(storagePath));
+
+        //Act
+        //Assert
+        assertThrows(FileManagementException.class, () -> sut.transferToFile(FILE_STORE_NAME, readableByteChannel));
+
     }
 
     @Test
@@ -125,8 +200,7 @@ public class FileManagerImpl_when_transferToFile_is_called {
         PrivateMethodVerification privateMethodInvocation = verifyPrivate(sut);
         privateMethodInvocation.invoke("deleteFile", storagePath);
 
-        //TODO: add logging verification
-
+        verify(logger).info(eq("Update mode. File {} already exists. Will be replaced with the new binary content"), eq(storagePath));
     }
 
     @Test
