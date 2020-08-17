@@ -113,6 +113,9 @@ public class Auction {
     @JoinColumn(name = "source_id")
     private AuctionSource source;
 
+    @Column(name = "source_url")
+    private String sourceUrl;
+
     //    @OneToMany
     //    private List<Document> pictures = new ArrayList<>();
     //
@@ -125,7 +128,7 @@ public class Auction {
     @Builder
     public Auction(@NonNull Court court, Set<AuctionDraft> drafts, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment,
             @NonNull Integer amount, @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription,
-            List<String> imageLinks, List<String> expertiseLinks, Set<String> otherDocumentLinks, AuctionSource source) {
+            List<String> imageLinks, List<String> expertiseLinks, Set<String> otherDocumentLinks, String sourceUrl) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;
@@ -141,7 +144,7 @@ public class Auction {
         this.imageLinks = imageLinks;
         this.expertiseLinks = expertiseLinks;
         this.otherDocumentLinks = otherDocumentLinks;
-        this.source = source;
+        this.sourceUrl = sourceUrl;
     }
 
     @Override
