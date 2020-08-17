@@ -97,7 +97,8 @@ public class HanmarkCrawler extends AbstractCrawler {
                 .cityAddress(getElementTextByPath(doc, CITY_CSS_PATH))
                 .amount(getElementTextByPath(doc, AMOUNT_CSS_PATH))
                 .appointmentDate(getElementTextByPath(doc, APPOINTMENT_DATE_CSS_PATH))
-                .limitDescription(getElementTextByPath(doc, LIMIT_CSS_PATH)).build();
+                .limitDescription(getElementTextByPath(doc, LIMIT_CSS_PATH))
+                .sourceUrl(baseUri).build();
         //@formatter:on
 
         Element description = getDescription(doc);

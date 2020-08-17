@@ -34,4 +34,5 @@ public class BaseAuctionDTO {
     private List<String> imageLinks = new ArrayList<>();
     private List<String> expertiseLinks = new ArrayList<>();
     private Set<String> otherDocumentLinks = new HashSet<>();
+    private String sourceUrl;
 }
