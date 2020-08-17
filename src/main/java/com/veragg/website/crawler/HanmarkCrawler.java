@@ -24,12 +24,14 @@ import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.services.AuctionService;
+import com.veragg.website.services.AuctionSourceService;
 
 import static java.util.Objects.nonNull;
 
 @Component
 public class HanmarkCrawler extends AbstractCrawler {
 
+    private static final String SOURCE_NAME = "HANMARK";
     private static final String START_URL = "https://www.hanmark.de/amtsgerichte.html";
     private static final String LINK_CRAWL_REGEXP = "(https://www.hanmark.de/).+(.html)";
     private static final String LINK_EXTRACT_REGEXP = "(https://www.hanmark.de/wertgutachten-)([0-9])+(.html)";
@@ -70,9 +72,10 @@ public class HanmarkCrawler extends AbstractCrawler {
     private static final Set<String> DESCRIPTION_KEYWORDS = new HashSet<>(Arrays.asList(EXPERTISE_DESCRIPTION_NAME, PLOT_DESCRIPTION_NAME, BUILDING_DESCRIPTION_NAME, OUTDOOR_DESCRIPTION_NAME));
 
     @Autowired
-    public HanmarkCrawler(AuctionMapperService<HanmarkAuctionDTO> mapperService, AuctionService<AuctionDraft> auctionService) {
+    public HanmarkCrawler(AuctionMapperService<HanmarkAuctionDTO> mapperService, AuctionService<AuctionDraft> auctionService, AuctionSourceService auctionSourceService) {
         this.auctionMapper = mapperService;
         this.auctionService = auctionService;
+        this.auctionSourceService = auctionSourceService;
     }
 
     @Scheduled(fixedDelay = 10 * 60 * 1_000)
@@ -222,5 +225,10 @@ public class HanmarkCrawler extends AbstractCrawler {
     @Override
     Pattern getContainerPageUrlPattern() {
         return LINK_CRAWL_PATTERN;
+    }
+
+    @Override
+    String getSourceName() {
+        return SOURCE_NAME;
     }
 }

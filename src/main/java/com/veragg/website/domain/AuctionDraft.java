@@ -23,12 +23,11 @@ public class AuctionDraft extends Auction {
     private Auction conflictAuction;
 
     @Builder(builderMethodName = "draftBuilder")
-    public AuctionDraft(final @NonNull Court court, final Set<AuctionDraft> drafts, final @NonNull String fileNumber, final @NonNull Set<PropertyType> propertyTypes, final @NonNull Address address,
-            final LocalDateTime appointment, final @NonNull Integer amount, final @NonNull BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
-            final String propertyPlotDescription, final String expertiseDescription, final List<String> imageLinks, final List<String> expertiseReportLinks, final Set<String> otherFileLinks,
-            final Auction conflictAuction) {
+    public AuctionDraft(@NonNull Court court, Set<AuctionDraft> drafts, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment,
+            @NonNull Integer amount, @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription,
+            List<String> imageLinks, List<String> expertiseReportLinks, Set<String> otherFileLinks, Auction conflictAuction, AuctionSource source) {
         super(court, drafts, fileNumber, propertyTypes, address, appointment, amount, buyLimit, outdoorDescription, propertyBuildingDescription, propertyPlotDescription, expertiseDescription,
-                imageLinks, expertiseReportLinks, otherFileLinks);
+                imageLinks, expertiseReportLinks, otherFileLinks, source);
         this.conflictAuction = conflictAuction;
     }
 

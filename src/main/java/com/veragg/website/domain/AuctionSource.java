@@ -22,10 +22,12 @@ public class AuctionSource {
     @Id
     private Integer id;
 
+    private String name;
+
     @Enumerated(EnumType.STRING)
     @NonNull
     @Column(name = "source_type")
-    private SourceType sourceType;
+    private AuctionSourceType auctionSourceType;
 
     @NonNull
     @Column(name = "base_url")

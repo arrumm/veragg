@@ -3,11 +3,11 @@ package com.veragg.website.domain;
 import lombok.Getter;
 
 @Getter
-public enum SourceType {
+public enum AuctionSourceType {
     WEBSITE(1),
     PDF(2);
 
-    SourceType(final Integer priority) {
+    AuctionSourceType(final Integer priority) {
         this.priority = priority;
     }
 
