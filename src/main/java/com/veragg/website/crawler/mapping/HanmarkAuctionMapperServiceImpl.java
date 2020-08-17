@@ -63,12 +63,10 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         //@formatter:on
     }
 
-    private LocalDateTime getAppointmentDate(String appointmentDate) throws ParseException {
+    private LocalDateTime getAppointmentDate(String appointmentDate) {
         String normalizedDate = extractByPattern(Pattern.compile(DATE_REGEX), appointmentDate);
-        //        dateFormatter.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        LocalDateTime dateTime = LocalDateTime.parse(normalizedDate, formatter);
-        return dateTime;
+        return LocalDateTime.parse(normalizedDate, formatter);
     }
 
     private Set<PropertyType> getPropertyTypes(final String propertyTypeName) {
