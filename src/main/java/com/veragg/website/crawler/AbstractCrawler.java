@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.BaseAuctionDTO;
 import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.services.AuctionService;
+import com.veragg.website.services.AuctionSourceService;
 
 import lombok.NonNull;
 
@@ -31,6 +33,8 @@ public abstract class AbstractCrawler implements Crawling {
 
     AuctionService<AuctionDraft> auctionService;
 
+    AuctionSourceService auctionSourceService;
+
     public AbstractCrawler() {
     }
 
@@ -39,12 +43,14 @@ public abstract class AbstractCrawler implements Crawling {
 
         Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
         BaseAuctionDTO auctionDTO = null;
+        AuctionSource auctionSource = auctionSourceService.findByName(getSourceName());
 
         for (String url : urlsToFetch) {
             try {
                 String pageData = getPageContent(url);
                 auctionDTO = fetchAuction(new ByteArrayInputStream(pageData.getBytes()), url);
                 AuctionDraft auctionDraft = auctionMapper.map(auctionDTO);
+                auctionDraft.setSource(auctionSource);
                 auctionService.save(auctionDraft);
             } catch (IOException e) {
                 LOGGER.error("Page data fetch from [{}] failed", url, e);
@@ -125,5 +131,7 @@ public abstract class AbstractCrawler implements Crawling {
     abstract Pattern getAuctionUrlPattern();
 
     abstract Pattern getContainerPageUrlPattern();
+
+    abstract String getSourceName();
 
 }

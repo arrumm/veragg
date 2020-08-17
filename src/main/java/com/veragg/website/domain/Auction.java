@@ -109,6 +109,13 @@ public class Auction {
     @ElementCollection
     private Set<String> otherDocumentLinks = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "source_id")
+    private AuctionSource source;
+
+    @Column(name = "source_url")
+    private String sourceUrl;
+
     //    @OneToMany
     //    private List<Document> pictures = new ArrayList<>();
     //
@@ -119,9 +126,9 @@ public class Auction {
     //    private List<Document> expertiseReports = new ArrayList<>();
 
     @Builder
-    public Auction(@NonNull final Court court, final Set<AuctionDraft> drafts, @NonNull final String fileNumber, @NonNull final Set<PropertyType> propertyTypes, @NonNull final Address address,
-            final LocalDateTime appointment, @NonNull final Integer amount, @NonNull final BuyLimit buyLimit, final String outdoorDescription, final String propertyBuildingDescription,
-            final String propertyPlotDescription, final String expertiseDescription, final List<String> imageLinks, final List<String> expertiseLinks, final Set<String> otherDocumentLinks) {
+    public Auction(@NonNull Court court, Set<AuctionDraft> drafts, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment,
+            @NonNull Integer amount, @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription,
+            List<String> imageLinks, List<String> expertiseLinks, Set<String> otherDocumentLinks, String sourceUrl) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;
@@ -137,6 +144,7 @@ public class Auction {
         this.imageLinks = imageLinks;
         this.expertiseLinks = expertiseLinks;
         this.otherDocumentLinks = otherDocumentLinks;
+        this.sourceUrl = sourceUrl;
     }
 
     @Override

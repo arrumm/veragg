@@ -12,6 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.services.AuctionService;
+import com.veragg.website.services.AuctionSourceService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,9 +30,12 @@ class HanmarkCrawler_when_parseAuction_is_called {
     @Mock
     AuctionService auctionService;
 
+    @Mock
+    AuctionSourceService auctionSourceService;
+
     @BeforeEach
     public void setup() {
-        sut = new HanmarkCrawler(mapperService, auctionService);
+        sut = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
     }
 
     @Test
@@ -40,7 +44,7 @@ class HanmarkCrawler_when_parseAuction_is_called {
         InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-house.html");
 
         // Act
-        HanmarkAuctionDTO result = sut.fetchAuction(houseInputStream, "pagePath");
+        HanmarkAuctionDTO result = sut.fetchAuction(houseInputStream, "https://www.hanmark.de/house-url.html");
 
         // Assert
         assertNotNull(result);
@@ -52,6 +56,7 @@ class HanmarkCrawler_when_parseAuction_is_called {
         assertEquals("161.700,00 EUR", result.getAmount());
         assertEquals("16.06.2020 14:00 Uhr", result.getAppointmentDate());
         assertEquals("keine Angabe", result.getLimitDescription());
+        assertEquals("https://www.hanmark.de/house-url.html", result.getSourceUrl());
 
         assertEquals(
                 "der Sachverständigen über den Verkehrswert für das mit einem Wohnhaus mit Garage bebaute Grundstück in 54538 Hontheim, Bergweg 7\n" + "· Grundbuch Hontheim\n" + "· Blatt 2297\n" +
@@ -134,7 +139,7 @@ class HanmarkCrawler_when_parseAuction_is_called {
         InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-gewerbe.html");
 
         // Act
-        HanmarkAuctionDTO result = sut.fetchAuction(houseInputStream, "pagePath");
+        HanmarkAuctionDTO result = sut.fetchAuction(houseInputStream, "https://www.hanmark.de/hanmark-gewerbe.html");
 
         // Assert
         assertNotNull(result);
@@ -146,6 +151,7 @@ class HanmarkCrawler_when_parseAuction_is_called {
         assertEquals("1.070.000,00 EUR", result.getAmount());
         assertEquals("19.08.2020 09:30 Uhr", result.getAppointmentDate());
         assertEquals("keine Angabe", result.getLimitDescription());
+        assertEquals("https://www.hanmark.de/hanmark-gewerbe.html", result.getSourceUrl());
 
         assertFalse(result.getExpertiseLinks().isEmpty());
         assertEquals(1, result.getExpertiseLinks().size());

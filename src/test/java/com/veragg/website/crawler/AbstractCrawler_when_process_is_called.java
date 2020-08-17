@@ -20,7 +20,9 @@ import org.slf4j.LoggerFactory;
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.services.AuctionService;
+import com.veragg.website.services.AuctionSourceService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -67,6 +69,12 @@ public class AbstractCrawler_when_process_is_called {
     AuctionDraft auctionDraft;
 
     @Mock
+    AuctionSourceService auctionSourceService;
+
+    @Mock
+    AuctionSource auctionSource;
+
+    @Mock
     IOException ioException;
 
     @Mock
@@ -75,7 +83,7 @@ public class AbstractCrawler_when_process_is_called {
     @Before
     public void setUp() {
         initMocks(this);
-        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService);
+        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
         sut = Mockito.spy(hanmarkCrawler);
         when(sut.getMaxCrawlDepth()).thenReturn(2);
         PowerMockito.mockStatic(InternetUtils.class);
@@ -84,7 +92,51 @@ public class AbstractCrawler_when_process_is_called {
         Whitebox.setInternalState(sut, logger);
     }
 
-    //all urls was ok
+    @Test
+    public void given_source_is_not_null_urls_fetched_mapped_then_auction_draft_saved_with_source() throws IOException, ParseException {
+
+        //Arrange
+        doReturn(new HashSet<String>() {{
+            add(AUCTION_URL);
+        }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
+        PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
+
+        HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
+        doReturn(oneAuctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
+        AuctionDraft oneAuctionDraft = mock(AuctionDraft.class);
+        doReturn(oneAuctionDraft).when(mapperService).map(eq(oneAuctionDTO));
+        doReturn(auctionSource).when(auctionSourceService).findByName(anyString());
+
+        //Act
+        sut.process();
+
+        //Assert
+        verify(oneAuctionDraft).setSource(eq(auctionSource));
+
+    }
+
+    @Test
+    public void given_source_is_null_urls_fetched_mapped_then_auction_draft_saved_null_source() throws IOException, ParseException {
+
+        //Arrange
+        doReturn(new HashSet<String>() {{
+            add(AUCTION_URL);
+        }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
+        PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
+
+        HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
+        doReturn(oneAuctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
+        AuctionDraft oneAuctionDraft = mock(AuctionDraft.class);
+        doReturn(oneAuctionDraft).when(mapperService).map(eq(oneAuctionDTO));
+        doReturn(null).when(auctionSourceService).findByName(anyString());
+
+        //Act
+        sut.process();
+
+        //Assert
+        verify(oneAuctionDraft).setSource(eq(null));
+
+    }
 
     @Test
     public void given_urls_fetched_mapped_then_auction_draft_saved() throws IOException, ParseException {

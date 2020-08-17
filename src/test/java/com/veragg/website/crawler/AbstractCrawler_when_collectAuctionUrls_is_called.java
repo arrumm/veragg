@@ -23,6 +23,7 @@ import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.services.AuctionService;
+import com.veragg.website.services.AuctionSourceService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -61,6 +62,9 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     AuctionService<AuctionDraft> auctionService;
 
     @Mock
+    AuctionSourceService auctionSourceService;
+
+    @Mock
     Logger logger;
 
     @Mock
@@ -69,7 +73,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     @Before
     public void setUp() {
         initMocks(this);
-        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService);
+        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
         sut = Mockito.spy(hanmarkCrawler);
         when(sut.getMaxCrawlDepth()).thenReturn(2);
         PowerMockito.mockStatic(InternetUtils.class);

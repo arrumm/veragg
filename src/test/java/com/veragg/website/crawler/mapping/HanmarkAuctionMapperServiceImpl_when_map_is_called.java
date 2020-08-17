@@ -59,6 +59,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
                 .propertyTypeName("Einfamilienhaus")
                 .cityAddress("54538 Hontheim")
                 .streetAddress("Bergweg 7")
+                .sourceUrl("https://hanmark.de/einfamhausurl.html")
                 .build();
         // @formatter:on
 
@@ -82,7 +83,8 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
         assertEquals(Month.JUNE.getValue(), result.getAppointment().getMonthValue());
         assertEquals(16, result.getAppointment().getDayOfMonth());
         assertEquals(14, result.getAppointment().getHour());
-        assertEquals(BuyLimit.L100, result.getBuyLimit());
+        assertEquals(BuyLimit.NA, result.getBuyLimit());
+        assertEquals("https://hanmark.de/einfamhausurl.html", result.getSourceUrl());
 
     }
 }
