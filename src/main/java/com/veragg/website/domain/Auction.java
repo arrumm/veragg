@@ -12,7 +12,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,7 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -49,9 +48,9 @@ public class Auction {
     @JoinColumn(name = "court_id")
     private Court court;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "auction_drafts", joinColumns = @JoinColumn(name = "auction_id"), inverseJoinColumns = @JoinColumn(name = "auction_draft_id"))
-    private Set<AuctionDraft> drafts = new HashSet<>();
+    @OneToOne
+    @JoinTable(name = "auction_draft", joinColumns = @JoinColumn(name = "auction_id"), inverseJoinColumns = @JoinColumn(name = "auction_draft_id"))
+    private AuctionDraft draft;
 
     //aktenzeichen
     @NonNull
@@ -67,6 +66,7 @@ public class Auction {
     @NonNull
     private Address address;
 
+    //TODO: refactor to normal date/time
     //termin
     @NonNull
     private LocalDateTime appointment;
@@ -126,7 +126,7 @@ public class Auction {
     //    private List<Document> expertiseReports = new ArrayList<>();
 
     @Builder
-    public Auction(@NonNull Court court, Set<AuctionDraft> drafts, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment,
+    public Auction(@NonNull Court court, AuctionDraft draft, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment,
             @NonNull Integer amount, @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription,
             List<String> imageLinks, List<String> expertiseLinks, Set<String> otherDocumentLinks, String sourceUrl) {
         this.court = court;
@@ -140,7 +140,7 @@ public class Auction {
         this.propertyBuildingDescription = propertyBuildingDescription;
         this.propertyPlotDescription = propertyPlotDescription;
         this.expertiseDescription = expertiseDescription;
-        this.drafts = drafts;
+        this.draft = draft;
         this.imageLinks = imageLinks;
         this.expertiseLinks = expertiseLinks;
         this.otherDocumentLinks = otherDocumentLinks;
