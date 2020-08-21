@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 import com.veragg.website.domain.Auction;
 import com.veragg.website.repository.AuctionRepo;
 
+import lombok.NonNull;
+
+import static java.util.Objects.nonNull;
+
 @Service
 public class AuctionServiceImpl implements AuctionService<Auction> {
 
@@ -17,8 +21,13 @@ public class AuctionServiceImpl implements AuctionService<Auction> {
     }
 
     @Override
-    public Auction save(Auction auction) {
-        return auctionRepo.save(auction);
+    public Auction save(@NonNull Auction auction) {
+        Auction existingAuction = auctionRepo.findByFileNumber(auction.getFileNumber());
+        if (nonNull(existingAuction)) {
+            return existingAuction;
+        } else {
+            return auctionRepo.save(auction);
+        }
     }
 
     @Override
