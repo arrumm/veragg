@@ -75,14 +75,14 @@ public class AuctionServiceImpl_when_save_is_called {
     }
 
     @Test
-    public void given_null_draft_to_save_then_throw_IAE() {
+    public void given_save_auction_throw_IAE_then_throw_IAE() {
 
         //Arrange
         when(auctionRepo.save(any())).thenThrow(new IllegalArgumentException());
 
         //Act
         //Assert
-        assertThrows(IllegalArgumentException.class, () -> sut.save(new Auction()));
+        assertThrows(IllegalArgumentException.class, () -> sut.save(auctionMock));
 
     }
 
