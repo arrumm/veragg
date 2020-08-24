@@ -17,7 +17,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
@@ -76,11 +75,6 @@ public class HanmarkCrawler extends AbstractCrawler {
         this.auctionMapper = mapperService;
         this.auctionService = auctionService;
         this.auctionSourceService = auctionSourceService;
-    }
-
-    @Scheduled(fixedDelay = 10 * 60 * 1_000)
-    public void start() {
-        process();
     }
 
     @Override
