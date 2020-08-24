@@ -18,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -49,7 +48,7 @@ public class Auction {
     private Court court;
 
     @OneToOne
-    @JoinTable(name = "auction_draft", joinColumns = @JoinColumn(name = "auction_id"), inverseJoinColumns = @JoinColumn(name = "auction_draft_id"))
+    @JoinColumn(name = "auction_draft_id")
     private AuctionDraft draft;
 
     //aktenzeichen
