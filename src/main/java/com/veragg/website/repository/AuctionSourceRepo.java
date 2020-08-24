@@ -11,6 +11,6 @@ public interface AuctionSourceRepo extends JpaRepository<AuctionSource, Integer>
 
     AuctionSource findByName(String name);
 
-    Set<AuctionSource> findAllBySourceType(AuctionSourceType auctionSourceType);
+    Set<AuctionSource> findAllByAuctionSourceType(AuctionSourceType auctionSourceType);
 
 }

@@ -26,6 +26,6 @@ public class AuctionSourceServiceImpl implements AuctionSourceService {
 
     @Override
     public Set<AuctionSource> findPdfSources() {
-        return auctionSourceRepo.findAllBySourceType(AuctionSourceType.PDF);
+        return auctionSourceRepo.findAllByAuctionSourceType(AuctionSourceType.PDF);
     }
 }
