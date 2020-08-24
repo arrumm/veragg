@@ -11,8 +11,10 @@ import static com.veragg.website.jobs.CrawlerJobConfigurations.CrawlerJobConfigu
 public class CrawlerJobsConfiguratorImpl implements CrawlerJobsConfigurator {
     @Override
     public CrawlerJobConfigurations configure() {
-        //formatter:off
-        return new CrawlerJobConfigurations().job(from(HanmarkCrawler.class).schedule("0 40 0 * * *").name("Hanmark crawler")).job(from(AbstractCrawler.class).schedule("never").name("abstract"));
-        //formatter:on
+        //@formatter:off
+        return new CrawlerJobConfigurations()
+                .job(from(HanmarkCrawler.class).schedule("0 40 0 * * *").name("Hanmark crawler"))
+                .job(from(AbstractCrawler.class).schedule("never").name("abstract"));
+        //@formatter:on
     }
 }
