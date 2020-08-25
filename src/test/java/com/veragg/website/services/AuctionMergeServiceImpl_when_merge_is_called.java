@@ -13,6 +13,7 @@ import com.veragg.website.domain.AuctionDraft;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +23,9 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
 
     @Mock
     AuctionServiceImpl auctionService;
+
+    @Mock
+    AuctionDraftServiceImpl auctionDraftService;
 
     @Mock
     AuctionMapper auctionMapper;
@@ -36,7 +40,7 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
 
     @Before
     public void setUp() {
-        sut = new AuctionMergeServiceImpl(auctionService, auctionMapper);
+        sut = new AuctionMergeServiceImpl(auctionService, auctionMapper, auctionDraftService);
     }
 
     @Test
@@ -63,7 +67,20 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
     }
 
     @Test
-    public void given_auction_mapped_then_return_mapped_auction_and_save_is_called() {
+    public void given_delete_throw_NPE_then_NPE_expected() {
+
+        //Arrange
+        when(auctionMapper.getAuction(draft)).thenReturn(auction);
+        doThrow(NullPointerException.class).when(auctionDraftService).delete(draft);
+
+        //Act
+        //Assert
+        assertThrows(NullPointerException.class, () -> sut.merge(draft));
+
+    }
+
+    @Test
+    public void given_auction_mapped_then_return_mapped_auction_and_save_and_delete_is_called() {
 
         //Arrange
         when(auctionMapper.getAuction(draft)).thenReturn(auction);
@@ -75,6 +92,7 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
         //Assert
         assertEquals(auction, resultAuction);
         verify(auctionService).save(eq(auction));
+        verify(auctionDraftService).delete(eq(draft));
     }
 
 }
