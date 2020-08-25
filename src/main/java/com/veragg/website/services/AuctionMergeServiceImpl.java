@@ -1,11 +1,15 @@
 package com.veragg.website.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.AuctionSource;
+import com.veragg.website.domain.AuctionSourceType;
 
 import lombok.NonNull;
 
@@ -35,4 +39,25 @@ public class AuctionMergeServiceImpl implements AuctionMergeService {
         return savedAuction;
 
     }
+
+    @Override
+    public List<AuctionDraft> getSortedDrafts() {
+
+        List<AuctionDraft> allDrafts = auctionDraftService.findAll();
+
+        allDrafts.sort((a, b) -> {
+            AuctionSource sourceA = a.getSource();
+            AuctionSource sourceB = b.getSource();
+            AuctionSourceType auctionSourceTypeA = sourceA.getAuctionSourceType();
+            AuctionSourceType auctionSourceTypeB = sourceB.getAuctionSourceType();
+            if (auctionSourceTypeA.equals(auctionSourceTypeB)) {
+                return sourceA.getPriority().compareTo(sourceB.getPriority());
+            } else {
+                return Integer.compare(auctionSourceTypeA.ordinal(), auctionSourceTypeB.ordinal());
+            }
+        });
+
+        return allDrafts;
+    }
+
 }

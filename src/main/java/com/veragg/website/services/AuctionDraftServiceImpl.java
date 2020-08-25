@@ -1,5 +1,7 @@
 package com.veragg.website.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,11 @@ public class AuctionDraftServiceImpl implements AuctionService<AuctionDraft> {
     @Override
     public void delete(AuctionDraft auction) {
         auctionRepo.delete(auction);
+    }
+
+    @Override
+    public List<AuctionDraft> findAll() {
+        return auctionRepo.findAll();
     }
 
 }

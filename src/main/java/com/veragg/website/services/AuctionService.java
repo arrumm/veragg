@@ -1,5 +1,7 @@
 package com.veragg.website.services;
 
+import java.util.List;
+
 import com.veragg.website.domain.Auction;
 
 public interface AuctionService<T extends Auction> {
@@ -11,5 +13,7 @@ public interface AuctionService<T extends Auction> {
     T findByFileNumber(String fileNumber);
 
     void delete(T auction);
+
+    List<T> findAll();
 
 }
