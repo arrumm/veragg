@@ -21,7 +21,6 @@ public class AuctionMapperImpl implements AuctionMapper {
                 .address(auctionDraft.getAddress())
                 .amount(auctionDraft.getAmount())
                 .buyLimit(auctionDraft.getBuyLimit())
-                .draft(auctionDraft)
                 .appointment(auctionDraft.getAppointment())
                 .outdoorDescription(auctionDraft.getOutdoorDescription())
                 .propertyPlotDescription(auctionDraft.getPropertyPlotDescription())

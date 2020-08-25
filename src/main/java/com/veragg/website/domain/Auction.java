@@ -20,7 +20,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -46,10 +45,6 @@ public class Auction {
     @ManyToOne
     @JoinColumn(name = "court_id")
     private Court court;
-
-    @OneToOne
-    @JoinColumn(name = "auction_draft_id")
-    private AuctionDraft draft;
 
     //aktenzeichen
     @NonNull
@@ -125,9 +120,9 @@ public class Auction {
     //    private List<Document> expertiseReports = new ArrayList<>();
 
     @Builder
-    public Auction(@NonNull Court court, AuctionDraft draft, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment,
-            @NonNull Integer amount, @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription,
-            List<String> imageLinks, List<String> expertiseLinks, Set<String> otherDocumentLinks, String sourceUrl) {
+    public Auction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
+            @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, List<String> imageLinks,
+            List<String> expertiseLinks, Set<String> otherDocumentLinks, String sourceUrl) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;
@@ -139,7 +134,6 @@ public class Auction {
         this.propertyBuildingDescription = propertyBuildingDescription;
         this.propertyPlotDescription = propertyPlotDescription;
         this.expertiseDescription = expertiseDescription;
-        this.draft = draft;
         this.imageLinks = imageLinks;
         this.expertiseLinks = expertiseLinks;
         this.otherDocumentLinks = otherDocumentLinks;

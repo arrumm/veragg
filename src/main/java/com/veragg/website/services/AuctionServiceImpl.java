@@ -13,7 +13,7 @@ import static java.util.Objects.nonNull;
 @Service
 public class AuctionServiceImpl implements AuctionService<Auction> {
 
-    private AuctionRepo auctionRepo;
+    private final AuctionRepo auctionRepo;
 
     @Autowired
     public AuctionServiceImpl(AuctionRepo auctionRepo) {
