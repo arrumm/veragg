@@ -19,8 +19,7 @@ public class DraftToAuctionMergeJob {
         this.auctionMergeService = auctionMergeService;
     }
 
-    //TODO: fix cron
-    @Scheduled(cron = "* * * * 10")
+    @Scheduled(cron = "0 0 13 * * *")
     public void run() {
 
         List<AuctionDraft> sortedDrafts = auctionMergeService.getSortedDrafts();

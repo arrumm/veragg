@@ -53,7 +53,13 @@ public class AuctionMergeServiceImpl implements AuctionMergeService {
             if (auctionSourceTypeA.equals(auctionSourceTypeB)) {
                 return sourceA.getPriority().compareTo(sourceB.getPriority());
             } else {
-                return Integer.compare(auctionSourceTypeA.ordinal(), auctionSourceTypeB.ordinal());
+                Integer ordinalA = auctionSourceTypeA.ordinal();
+                int ordinalB = auctionSourceTypeB.ordinal();
+                if (ordinalA.equals(ordinalB)) {
+                    return a.getFileNumber().compareTo(b.getFileNumber());
+                } else {
+                    return Integer.compare(ordinalA, ordinalB);
+                }
             }
         });
 
