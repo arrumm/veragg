@@ -108,7 +108,7 @@ public class AbstractCrawler_when_process_is_called {
         doReturn(auctionSource).when(auctionSourceService).findByName(anyString());
 
         //Act
-        sut.process();
+        sut.crawl();
 
         //Assert
         verify(oneAuctionDraft).setSource(eq(auctionSource));
@@ -131,7 +131,7 @@ public class AbstractCrawler_when_process_is_called {
         doReturn(null).when(auctionSourceService).findByName(anyString());
 
         //Act
-        sut.process();
+        sut.crawl();
 
         //Assert
         verify(oneAuctionDraft).setSource(eq(null));
@@ -162,7 +162,7 @@ public class AbstractCrawler_when_process_is_called {
         doReturn(anotherAuctionDraft).when(mapperService).map(eq(anotherAuctionDTO));
 
         //Act
-        sut.process();
+        sut.crawl();
 
         //Assert
         verify(auctionService).save(eq(oneAuctionDraft));
@@ -185,7 +185,7 @@ public class AbstractCrawler_when_process_is_called {
         doReturn(auctionDraft).when(mapperService).map(eq(auctionDTO));
 
         //Act
-        sut.process();
+        sut.crawl();
 
         //Assert
         verify(mapperService, times(1)).map(eq(auctionDTO));
@@ -204,7 +204,7 @@ public class AbstractCrawler_when_process_is_called {
         doThrow(parseException).when(mapperService).map(eq(auctionDTO));
 
         //Act
-        sut.process();
+        sut.crawl();
 
         //Assert
         verifyZeroInteractions(auctionService);
@@ -221,7 +221,7 @@ public class AbstractCrawler_when_process_is_called {
         doThrow(ioException).when(sut).fetchAuction(any(), anyString());
 
         //Act
-        sut.process();
+        sut.crawl();
 
         //Assert
         verifyZeroInteractions(mapperService);
@@ -236,7 +236,7 @@ public class AbstractCrawler_when_process_is_called {
         doReturn(new HashSet<String>(Collections.singletonList(null))).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
 
         //Act
-        sut.process();
+        sut.crawl();
 
         //Assert
         PowerMockito.verifyStatic(InternetUtils.class, times(1));
@@ -251,7 +251,7 @@ public class AbstractCrawler_when_process_is_called {
         doReturn(Collections.EMPTY_SET).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
 
         //Act
-        sut.process();
+        sut.crawl();
 
         //Assert
         PowerMockito.verifyStatic(InternetUtils.class, never());

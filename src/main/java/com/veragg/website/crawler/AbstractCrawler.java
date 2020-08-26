@@ -39,7 +39,7 @@ public abstract class AbstractCrawler implements Crawling {
     }
 
     @Override
-    public void process() {
+    public void crawl() {
 
         Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
         BaseAuctionDTO auctionDTO = null;
