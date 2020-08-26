@@ -1,5 +1,7 @@
 package com.veragg.website.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,7 @@ public class AuctionServiceImpl implements AuctionService<Auction> {
 
     @Override
     public Auction save(@NonNull Auction auction) {
-        Auction existingAuction = auctionRepo.findByFileNumber(auction.getFileNumber());
+        Auction existingAuction = auctionRepo.findByFileNumberAndCourt(auction.getFileNumber(), auction.getCourt());
         if (nonNull(existingAuction)) {
             return existingAuction;
         } else {
@@ -43,5 +45,10 @@ public class AuctionServiceImpl implements AuctionService<Auction> {
     @Override
     public void delete(Auction auction) {
         auctionRepo.delete(auction);
+    }
+
+    @Override
+    public List<Auction> findAll() {
+        return auctionRepo.findAll();
     }
 }
