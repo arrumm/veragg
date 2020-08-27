@@ -2,9 +2,9 @@ package com.veragg.website.services;
 
 import java.util.List;
 
-import com.veragg.website.domain.Auction;
+import com.veragg.website.domain.BaseAuction;
 
-public interface AuctionService<T extends Auction> {
+public interface AuctionService<T extends BaseAuction> {
 
     T save(T auction);
 
