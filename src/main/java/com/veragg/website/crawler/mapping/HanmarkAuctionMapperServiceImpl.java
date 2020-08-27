@@ -25,7 +25,7 @@ import static java.util.Objects.nonNull;
 @Service
 public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<HanmarkAuctionDTO> {
 
-    private static final String HOUSE_NUMBER_REGEX = "\\d+(\\/\\d+)*$";
+    private static final String HOUSE_NUMBER_REGEX = "[\\d\\+]+(\\d+)*";
     private static final String ZIPCODE_REGEX = "^\\d{5}";
     private static final String AMOUNT_REGEX = "([0-9.,]+)";
     private static final String AMOUNT_CENT_REGEX = ",.+";
@@ -33,17 +33,20 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private static final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
 
     private final CourtService courtService;
+    private final NameService nameService;
 
     @Autowired
-    public HanmarkAuctionMapperServiceImpl(final CourtService courtService) {
+    public HanmarkAuctionMapperServiceImpl(final CourtService courtService, NameService nameService) {
         this.courtService = courtService;
+        this.nameService = nameService;
     }
 
     @Override
     public AuctionDraft map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
 
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
-        Court court = courtService.findBy(auctionDTO.getCourtName(), address.getZipCode());
+        String courtName = nameService.normalize(auctionDTO.getCourtName());
+        Court court = courtService.findBy(courtName, address.getZipCode());
         Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName());
 
         //@formatter:off
@@ -89,7 +92,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private Address getAddress(String streetAddress, String cityAddress) {
         Address address = new Address();
 
-        String houseNumber = extractByPattern(Pattern.compile(HOUSE_NUMBER_REGEX), streetAddress);
+        String houseNumber = extractByPattern(Pattern.compile(HOUSE_NUMBER_REGEX), streetAddress).replace("+", "-");
         address.setNumber(houseNumber.trim());
         address.setStreet(streetAddress.replaceFirst(houseNumber, StringUtils.EMPTY).trim());
 

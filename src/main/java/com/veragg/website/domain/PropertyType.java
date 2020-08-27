@@ -6,7 +6,8 @@ import java.util.Set;
 
 public enum PropertyType {
 
-    FLAT("Wohnung", "Einzimmerwohnung", "Zweizimmerwohnung", "Dreizimmerwohnung", "Vierzimmerwohnung", "Fünfzimmerwohnung und mehr", "Sonstige Wohnung", "Wohn- und Geschäftsräume"),
+    FLAT("Wohnung", "Eigentumswohnung", "Einzimmerwohnung", "Zweizimmerwohnung", "Dreizimmerwohnung", "Vierzimmerwohnung", "Fünfzimmerwohnung und mehr", "Sonstige Wohnung",
+            "Wohn- und Geschäftsräume"),
     //house
     ONE_FAMILY_HOUSE("Einfamilienhaus", "Wohn- und Geschäftshaus"),
     MORE_FAMILY_HOUSE("Mehrfamilienhaus"),

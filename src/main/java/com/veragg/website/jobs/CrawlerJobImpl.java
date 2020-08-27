@@ -1,10 +1,10 @@
 package com.veragg.website.jobs;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.veragg.website.crawler.Crawling;
 
-@Service
+@Component
 public class CrawlerJobImpl implements CrawlerJob<Crawling> {
 
     private final Crawling crawler;
@@ -17,4 +17,5 @@ public class CrawlerJobImpl implements CrawlerJob<Crawling> {
     public Crawling getCrawler() {
         return crawler;
     }
+
 }

@@ -77,7 +77,6 @@ public class AuctionMapperImpl_when_getAuction_is_called {
         assertEquals(Integer.valueOf(1), resultAuction.getAmount());
         assertEquals(BuyLimit.NA, resultAuction.getBuyLimit());
         assertThat(resultAuction.getPropertyTypes(), hasItems(COMMERCIAL_PROPERTY, ONE_FAMILY_HOUSE));
-        assertEquals(draft, resultAuction.getDraft());
         assertEquals(appointment, resultAuction.getAppointment());
         assertEquals("outdoor description", resultAuction.getOutdoorDescription());
         assertEquals("plot description", resultAuction.getPropertyPlotDescription());

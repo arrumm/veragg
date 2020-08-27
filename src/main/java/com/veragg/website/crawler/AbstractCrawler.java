@@ -39,7 +39,7 @@ public abstract class AbstractCrawler implements Crawling {
     }
 
     @Override
-    public void process() {
+    public void crawl() {
 
         Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
         BaseAuctionDTO auctionDTO = null;
@@ -58,6 +58,8 @@ public abstract class AbstractCrawler implements Crawling {
                 LOGGER.error("Auction draft parse from [{}] failed", auctionDTO, e);
             }
         }
+
+        cleanup();
 
     }
 
@@ -133,5 +135,9 @@ public abstract class AbstractCrawler implements Crawling {
     abstract Pattern getContainerPageUrlPattern();
 
     abstract String getSourceName();
+
+    private void cleanup() {
+        this.visitedUrls.clear();
+    }
 
 }

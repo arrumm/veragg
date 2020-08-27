@@ -32,6 +32,9 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     private CourtService courtService;
 
     @Mock
+    private NameService nameService;
+
+    @Mock
     private Court court;
 
     @Mock
@@ -40,7 +43,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     @Before
     public void setUp() {
         initMocks(this);
-        sut = new HanmarkAuctionMapperServiceImpl(courtService);
+        sut = new HanmarkAuctionMapperServiceImpl(courtService, nameService);
         when(court.getName()).thenReturn("Wittlich");
         when(court.getState()).thenReturn(state);
         when(state.getId()).thenReturn("RP");
