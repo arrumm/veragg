@@ -119,7 +119,7 @@ public class BaseAuction {
     @Builder(builderMethodName = "baseAuctionBuilder")
     public BaseAuction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
             @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, List<String> imageLinks,
-            List<String> expertiseLinks, Set<String> otherDocumentLinks, String sourceUrl) {
+            List<String> expertiseLinks, Set<String> otherDocumentLinks, String sourceUrl, AuctionSource source) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;
@@ -135,6 +135,7 @@ public class BaseAuction {
         this.expertiseLinks = expertiseLinks;
         this.otherDocumentLinks = otherDocumentLinks;
         this.sourceUrl = sourceUrl;
+        this.source = source;
     }
 
     @Override

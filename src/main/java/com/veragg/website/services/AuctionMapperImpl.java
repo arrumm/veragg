@@ -29,6 +29,8 @@ public class AuctionMapperImpl implements AuctionMapper {
                 .imageLinks(auctionDraft.getImageLinks())
                 .expertiseReportLinks(auctionDraft.getExpertiseLinks())
                 .otherFileLinks(auctionDraft.getOtherDocumentLinks())
+                .sourceUrl(auctionDraft.getSourceUrl())
+                .source(auctionDraft.getSource())
                 .build();
         //@formatter:on
     }
