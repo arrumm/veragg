@@ -63,6 +63,9 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .outdoorDescription(auctionDTO.getOutdoorDescription())
                 .propertyPlotDescription(auctionDTO.getPlotDescription())
                 .sourceUrl(auctionDTO.getSourceUrl())
+                .expertiseReportLinks(auctionDTO.getExpertiseLinks())
+                .imageLinks(auctionDTO.getImageLinks())
+                .otherFileLinks(auctionDTO.getOtherDocumentLinks())
                 .build();
         //@formatter:on
     }

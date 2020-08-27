@@ -83,7 +83,7 @@ public class HanmarkCrawler extends AbstractCrawler {
         Document doc = Jsoup.parse(pageData, "UTF-8", baseUri);
 
         //@formatter:off
-        final HanmarkAuctionDTO auction = HanmarkAuctionDTO.builder()
+        final HanmarkAuctionDTO auctionDTO = HanmarkAuctionDTO.builder()
                 .courtName(getElementTextByPath(doc, COURT_XPATH))
                 .fileNumber(getElementTextByPath(doc, FILE_NUMBER_CSS_PATH))
                 .propertyTypeName(getElementTextByPath(doc, TYPE_CSS_PATH))
@@ -96,16 +96,16 @@ public class HanmarkCrawler extends AbstractCrawler {
         //@formatter:on
 
         Element description = getDescription(doc);
-        auction.setExpertDescription(collectDescription(description, EXPERTISE_DESCRIPTION_NAME));
-        auction.setPlotDescription(collectDescription(description, PLOT_DESCRIPTION_NAME));
-        auction.setBuildingDescription(collectDescription(description, BUILDING_DESCRIPTION_NAME));
-        auction.setOutdoorDescription(collectDescription(description, OUTDOOR_DESCRIPTION_NAME));
+        auctionDTO.setExpertDescription(collectDescription(description, EXPERTISE_DESCRIPTION_NAME));
+        auctionDTO.setPlotDescription(collectDescription(description, PLOT_DESCRIPTION_NAME));
+        auctionDTO.setBuildingDescription(collectDescription(description, BUILDING_DESCRIPTION_NAME));
+        auctionDTO.setOutdoorDescription(collectDescription(description, OUTDOOR_DESCRIPTION_NAME));
 
-        auction.setExpertiseLinks(getFilesLinks(doc, EXPERTISE_FILE_LINK_PATTERN));
-        auction.setOtherDocumentLinks(new HashSet<>(getFilesLinks(doc, OTHER_FILE_LINK_PATTERN)));
-        auction.setImageLinks(getImageLinks(doc));
+        auctionDTO.setExpertiseLinks(getFilesLinks(doc, EXPERTISE_FILE_LINK_PATTERN));
+        auctionDTO.setOtherDocumentLinks(new HashSet<>(getFilesLinks(doc, OTHER_FILE_LINK_PATTERN)));
+        auctionDTO.setImageLinks(getImageLinks(doc));
 
-        return auction;
+        return auctionDTO;
     }
 
     private List<String> getImageLinks(Document doc) {
