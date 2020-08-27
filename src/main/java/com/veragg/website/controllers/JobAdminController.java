@@ -13,6 +13,7 @@ import com.veragg.website.crawler.Crawling;
 import com.veragg.website.crawler.HanmarkCrawler;
 import com.veragg.website.jobs.CrawlerJob;
 import com.veragg.website.jobs.CrawlerJobImpl;
+import com.veragg.website.jobs.CrawlerJobRunnerServiceImpl;
 import com.veragg.website.jobs.DraftToAuctionMergeJob;
 
 @Controller
@@ -21,12 +22,15 @@ public class JobAdminController {
 
     private final DraftToAuctionMergeJob mergeJob;
 
-    private HanmarkCrawler hanmarkCrawler;
+    private final HanmarkCrawler hanmarkCrawler;
+
+    private final CrawlerJobRunnerServiceImpl jobRunnerService;
 
     @Autowired
-    public JobAdminController(DraftToAuctionMergeJob mergeJob, HanmarkCrawler hanmarkCrawler) {
+    public JobAdminController(DraftToAuctionMergeJob mergeJob, HanmarkCrawler hanmarkCrawler, CrawlerJobRunnerServiceImpl jobRunnerService) {
         this.mergeJob = mergeJob;
         this.hanmarkCrawler = hanmarkCrawler;
+        this.jobRunnerService = jobRunnerService;
     }
 
     @GetMapping(value = "/jobs/merge", produces = "application/json")
@@ -44,7 +48,7 @@ public class JobAdminController {
         final Map<String, Object> result = new HashMap<>();
 
         final CrawlerJob<? extends Crawling> job = new CrawlerJobImpl(hanmarkCrawler);
-        job.execute();
+        jobRunnerService.run(job);
 
         result.put("result", "job executed");
         return result;
