@@ -3,8 +3,6 @@ package com.veragg.website.jobs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 
@@ -26,7 +24,6 @@ public class CrawlerJobRunnerService {
 
     private final ApplicationContext applicationContext;
     private final TaskScheduler taskScheduler;
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     @Autowired
     public CrawlerJobRunnerService(ApplicationContext applicationContext, TaskScheduler taskScheduler) {
@@ -52,21 +49,8 @@ public class CrawlerJobRunnerService {
     private void schedule(final Collection<CrawlerJobWrapper<CrawlerJob<?>>> crawlerJobWrapperCollection) {
         for (final CrawlerJobWrapper<CrawlerJob<?>> crawlerJobWrapper : crawlerJobWrapperCollection) {
             LOGGER.info("schedule(job = [{}])", crawlerJobWrapper.getJob());
-            taskScheduler.schedule(() -> asyncRunJob(crawlerJobWrapper), new CronTrigger(crawlerJobWrapper.getConfiguration().getSchedule()));
+            taskScheduler.schedule(() -> crawlerJobWrapper.getJob().execute(), new CronTrigger(crawlerJobWrapper.getConfiguration().getSchedule()));
         }
-    }
-
-    private void asyncRunJob(final CrawlerJobWrapper<CrawlerJob<?>> crawlerJobWrapper) {
-        LOGGER.info("asyncRunJob(jobWrapper = [{}])", crawlerJobWrapper);
-
-        executorService.submit(() -> {
-            try {
-                crawlerJobWrapper.getJob().execute();
-            } catch (final Exception e) {
-                LOGGER.error("asyncRunJob.call(): Error while executing job {}: {}", crawlerJobWrapper.getJob().getId(), e.getMessage(), e);
-            }
-        });
-
     }
 
     private CrawlerJobConfigurations getJobsConfigurations() {

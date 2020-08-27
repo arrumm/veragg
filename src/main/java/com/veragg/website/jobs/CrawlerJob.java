@@ -1,7 +1,11 @@
 package com.veragg.website.jobs;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+
 import com.veragg.website.crawler.Crawling;
 
+@EnableAsync
 public interface CrawlerJob<T extends Crawling> {
 
     default String getId() {
@@ -10,6 +14,7 @@ public interface CrawlerJob<T extends Crawling> {
 
     T getCrawler();
 
+    @Async
     default void execute() {
         getCrawler().crawl();
     }
