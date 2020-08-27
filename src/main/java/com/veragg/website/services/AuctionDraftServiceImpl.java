@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.repository.AuctionDraftRepo;
 
+import static java.util.Objects.nonNull;
+
 @Service
 public class AuctionDraftServiceImpl implements AuctionService<AuctionDraft> {
 
@@ -19,8 +21,12 @@ public class AuctionDraftServiceImpl implements AuctionService<AuctionDraft> {
     }
 
     @Override
-    public AuctionDraft save(AuctionDraft auction) {
-        return auctionDraftRepo.save(auction);
+    public AuctionDraft save(AuctionDraft auctionDraft) {
+        AuctionDraft auctionDraftFound = auctionDraftRepo.findByFileNumberAndCourtAndSource(auctionDraft.getFileNumber(), auctionDraft.getCourt(), auctionDraft.getSource());
+        if (nonNull(auctionDraftFound)) {
+            return auctionDraftFound;
+        }
+        return auctionDraftRepo.save(auctionDraft);
     }
 
     @Override

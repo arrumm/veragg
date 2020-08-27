@@ -34,9 +34,7 @@ public class AuctionMergeServiceImpl implements AuctionMergeService {
     public Auction merge(@NonNull AuctionDraft auctionDraft) {
 
         Auction auction = auctionMapper.getAuction(auctionDraft);
-        Auction savedAuction = auctionService.save(auction);
-        auctionDraftService.delete(auctionDraft);
-        return savedAuction;
+        return auctionService.save(auction);
 
     }
 
