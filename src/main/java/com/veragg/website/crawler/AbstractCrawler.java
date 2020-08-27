@@ -59,6 +59,8 @@ public abstract class AbstractCrawler implements Crawling {
             }
         }
 
+        cleanup();
+
     }
 
     /**
@@ -133,5 +135,9 @@ public abstract class AbstractCrawler implements Crawling {
     abstract Pattern getContainerPageUrlPattern();
 
     abstract String getSourceName();
+
+    private void cleanup() {
+        this.visitedUrls.clear();
+    }
 
 }
