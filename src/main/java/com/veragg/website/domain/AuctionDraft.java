@@ -23,7 +23,7 @@ public class AuctionDraft extends BaseAuction {
             @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, List<String> imageLinks,
             List<String> expertiseReportLinks, Set<String> otherFileLinks, String sourceUrl) {
         super(court, fileNumber, propertyTypes, address, appointment, amount, buyLimit, outdoorDescription, propertyBuildingDescription, propertyPlotDescription, expertiseDescription, imageLinks,
-                expertiseReportLinks, otherFileLinks, sourceUrl);
+                expertiseReportLinks, otherFileLinks, sourceUrl, null);
     }
 
 }

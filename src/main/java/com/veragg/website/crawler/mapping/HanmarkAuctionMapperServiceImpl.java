@@ -33,17 +33,20 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private static final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
 
     private final CourtService courtService;
+    private final NameService nameService;
 
     @Autowired
-    public HanmarkAuctionMapperServiceImpl(final CourtService courtService) {
+    public HanmarkAuctionMapperServiceImpl(final CourtService courtService, NameService nameService) {
         this.courtService = courtService;
+        this.nameService = nameService;
     }
 
     @Override
     public AuctionDraft map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
 
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
-        Court court = courtService.findBy(auctionDTO.getCourtName(), address.getZipCode());
+        String courtName = nameService.normalize(auctionDTO.getCourtName());
+        Court court = courtService.findBy(courtName, address.getZipCode());
         Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName());
 
         //@formatter:off
