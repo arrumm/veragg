@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.domain.AuctionSourceType;
+import com.veragg.website.domain.AuctionStatus;
 
 import lombok.NonNull;
 
@@ -22,9 +22,9 @@ public class AuctionMergeServiceImpl implements AuctionMergeService {
         this.auctionService = auctionService;
     }
 
-    @Transactional
     @Override
     public List<Auction> merge(@NonNull List<Auction> auctions) {
+        auctions.forEach(auction -> auction.setAuctionStatus(AuctionStatus.ACTIVE));
         return auctionService.saveAll(auctions);
     }
 
