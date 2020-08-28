@@ -6,6 +6,7 @@ import org.mockito.Mock;
 
 import com.veragg.website.domain.Auction;
 import com.veragg.website.repository.AuctionRepo;
+import com.veragg.website.repository.DocumentAuctionRepo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,12 +28,15 @@ public class AuctionServiceImpl_when_save_is_called {
     AuctionRepo auctionRepo;
 
     @Mock
+    DocumentAuctionRepo documentAuctionRepo;
+
+    @Mock
     Auction auctionMock;
 
     @Before
     public void setup() {
         initMocks(this);
-        sut = new AuctionServiceImpl(auctionRepo);
+        sut = new AuctionServiceImpl(auctionRepo, documentAuctionRepo);
     }
 
     @Test

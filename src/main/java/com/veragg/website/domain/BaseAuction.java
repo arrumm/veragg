@@ -100,15 +100,15 @@ public class BaseAuction {
     private String sourceUrl;
 
     @OneToMany
-    private List<Document> documents = new ArrayList<>();
+    private List<Document<? extends BaseAuction>> documents = new ArrayList<>();
 
     //    @OneToMany
     //    private List<Document> tilePictures = new ArrayList<>();
 
     @Builder(builderMethodName = "baseAuctionBuilder")
-    public BaseAuction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
+    public BaseAuction(@NonNull Court<?> court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
             @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, String sourceUrl,
-            AuctionSource source, List<Document> documents) {
+            AuctionSource source, List<Document<?>> documents) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;

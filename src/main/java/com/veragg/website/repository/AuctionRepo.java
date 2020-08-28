@@ -8,6 +8,6 @@ import com.veragg.website.domain.Court;
 @Repository
 public interface AuctionRepo extends BaseAuctionRepo<Auction> {
 
-    Auction findByFileNumberAndCourt(String fileNumber, Court court);
+    Auction findByFileNumberAndCourt(String fileNumber, Court<Auction> court);
 
 }

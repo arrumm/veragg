@@ -36,11 +36,11 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private static final String DATE_REGEX = "([1-9]|([012][0-9])|(3[01]))\\.([0]{0,1}[1-9]|1[012])\\.\\d\\d\\d\\d [012]{0,1}[0-9]:[0-6][0-9]";
     private static final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
 
-    private final CourtService courtService;
+    private final CourtService<AuctionDraft> courtService;
     private final NameService nameService;
 
     @Autowired
-    public HanmarkAuctionMapperServiceImpl(final CourtService courtService, NameService nameService) {
+    public HanmarkAuctionMapperServiceImpl(final CourtService<AuctionDraft> courtService, NameService nameService) {
         this.courtService = courtService;
         this.nameService = nameService;
     }
@@ -50,7 +50,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
 
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
         String courtName = nameService.normalize(auctionDTO.getCourtName());
-        Court court = courtService.findBy(courtName, address.getZipCode());
+        Court<AuctionDraft> court = courtService.findBy(courtName, address.getZipCode());
         Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName());
 
         //@formatter:off
@@ -70,10 +70,10 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .build();
         //@formatter:on
 
-        List<Document> documents = new ArrayList<>();
-        auctionDTO.getImageLinks().forEach(imageUrl -> documents.add(new Document(imageUrl, DocumentType.IMAGE, auctionDTO.getImageLinks().indexOf(imageUrl) + 1)));
-        auctionDTO.getExpertiseLinks().forEach(expertiseUrl -> documents.add(new Document(expertiseUrl, DocumentType.EXPERTISE)));
-        auctionDTO.getOtherDocumentLinks().forEach(otherDocumentUrl -> documents.add(new Document(otherDocumentUrl, DocumentType.OTHER)));
+        List<Document<?>> documents = new ArrayList<>();
+        auctionDTO.getImageLinks().forEach(imageUrl -> documents.add(new Document<AuctionDraft>(imageUrl, DocumentType.IMAGE, auctionDTO.getImageLinks().indexOf(imageUrl) + 1)));
+        auctionDTO.getExpertiseLinks().forEach(expertiseUrl -> documents.add(new Document<AuctionDraft>(expertiseUrl, DocumentType.EXPERTISE)));
+        auctionDTO.getOtherDocumentLinks().forEach(otherDocumentUrl -> documents.add(new Document<AuctionDraft>(otherDocumentUrl, DocumentType.OTHER)));
         auctionDraft.setDocuments(documents);
 
         return auctionDraft;

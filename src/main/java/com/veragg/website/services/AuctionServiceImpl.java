@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.veragg.website.domain.Auction;
 import com.veragg.website.repository.AuctionRepo;
+import com.veragg.website.repository.DocumentAuctionRepo;
 
 import lombok.NonNull;
 
@@ -16,18 +18,22 @@ import static java.util.Objects.nonNull;
 public class AuctionServiceImpl implements AuctionService<Auction> {
 
     private final AuctionRepo auctionRepo;
+    private final DocumentAuctionRepo documentAuctionRepo;
 
     @Autowired
-    public AuctionServiceImpl(AuctionRepo auctionRepo) {
+    public AuctionServiceImpl(AuctionRepo auctionRepo, DocumentAuctionRepo documentAuctionRepo) {
         this.auctionRepo = auctionRepo;
+        this.documentAuctionRepo = documentAuctionRepo;
     }
 
+    @Transactional
     @Override
     public Auction save(@NonNull Auction auction) {
         Auction existingAuction = auctionRepo.findByFileNumberAndCourt(auction.getFileNumber(), auction.getCourt());
         if (nonNull(existingAuction)) {
             return existingAuction;
         } else {
+            auction.getDocuments().forEach(documentAuctionRepo::save);
             return auctionRepo.save(auction);
         }
     }

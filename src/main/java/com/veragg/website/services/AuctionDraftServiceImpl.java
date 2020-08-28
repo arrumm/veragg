@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.repository.AuctionDraftRepo;
+import com.veragg.website.repository.DocumentAuctionDraftRepo;
 
 import static java.util.Objects.nonNull;
 
@@ -14,10 +15,12 @@ import static java.util.Objects.nonNull;
 public class AuctionDraftServiceImpl implements AuctionService<AuctionDraft> {
 
     private final AuctionDraftRepo auctionDraftRepo;
+    private final DocumentAuctionDraftRepo documentAuctionRepo;
 
     @Autowired
-    public AuctionDraftServiceImpl(AuctionDraftRepo auctionDraftRepo) {
+    public AuctionDraftServiceImpl(AuctionDraftRepo auctionDraftRepo, DocumentAuctionDraftRepo documentAuctionRepo) {
         this.auctionDraftRepo = auctionDraftRepo;
+        this.documentAuctionRepo = documentAuctionRepo;
     }
 
     @Override
@@ -26,6 +29,7 @@ public class AuctionDraftServiceImpl implements AuctionService<AuctionDraft> {
         if (nonNull(auctionDraftFound)) {
             return auctionDraftFound;
         }
+        auctionDraft.getDocuments().forEach(documentAuctionRepo::save);
         return auctionDraftRepo.save(auctionDraft);
     }
 

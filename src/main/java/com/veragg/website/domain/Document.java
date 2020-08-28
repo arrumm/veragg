@@ -21,7 +21,7 @@ import static java.util.Objects.isNull;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Document {
+public class Document<T extends BaseAuction> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,6 +40,8 @@ public class Document {
     private String storeName;
 
     private Integer sortOrder;
+
+    private T owner;
 
     public Document(String url, DocumentType documentType) {
         this.url = url;

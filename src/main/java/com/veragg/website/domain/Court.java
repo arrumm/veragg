@@ -20,11 +20,14 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@EqualsAndHashCode(exclude = {"id", "address"})
+@EqualsAndHashCode(exclude = {
+        "id",
+        "address"
+})
 @Entity
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class Court {
+public class Court<T extends BaseAuction> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,5 +45,5 @@ public class Court {
     private State state;
 
     @OneToMany(mappedBy = "court", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Auction> auctions;
+    private Set<T> auctions;
 }

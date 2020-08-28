@@ -11,6 +11,6 @@ import lombok.NonNull;
 @Repository
 public interface AuctionDraftRepo extends BaseAuctionRepo<AuctionDraft> {
 
-    AuctionDraft findByFileNumberAndCourtAndSource(@NonNull String fileNumber, @NonNull Court court, @NonNull AuctionSource source);
+    AuctionDraft findByFileNumberAndCourtAndSource(@NonNull String fileNumber, @NonNull Court<AuctionDraft> court, @NonNull AuctionSource source);
 
 }
