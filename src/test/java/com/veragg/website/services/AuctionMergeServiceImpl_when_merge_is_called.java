@@ -70,7 +70,7 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
     public void given_delete_throw_NPE_then_NPE_expected() {
 
         //Arrange
-        when(auctionMapper.getAuction(draft)).thenReturn(auction);
+        when(auctionMapper.getAuction(eq(draft))).thenThrow(NullPointerException.class);
         doThrow(NullPointerException.class).when(auctionDraftService).delete(draft);
 
         //Act
@@ -92,7 +92,6 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
         //Assert
         assertEquals(auction, resultAuction);
         verify(auctionService).save(eq(auction));
-        verify(auctionDraftService).delete(eq(draft));
     }
 
 }
