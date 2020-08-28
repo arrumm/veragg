@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
-import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
 import com.veragg.website.domain.Document;
@@ -84,7 +84,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
         auctionDTO.setExpertiseLinks(Collections.singletonList("url/expertise.pdf"));
 
         // Act
-        final AuctionDraft result = sut.map(auctionDTO);
+        final Auction result = sut.map(auctionDTO);
 
         // Assert
         assertEquals("Wittlich", result.getCourt().getName());

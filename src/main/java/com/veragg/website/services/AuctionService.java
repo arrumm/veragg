@@ -2,18 +2,24 @@ package com.veragg.website.services;
 
 import java.util.List;
 
-import com.veragg.website.domain.BaseAuction;
+import com.veragg.website.domain.Auction;
+import com.veragg.website.domain.AuctionSource;
+import com.veragg.website.domain.Court;
 
-public interface AuctionService<T extends BaseAuction> {
+public interface AuctionService {
 
-    T save(T auction);
+    Auction saveDraft(Auction auction);
 
-    T findById(Long id);
+    List<Auction> saveAll(List<Auction> auction);
 
-    T findByFileNumber(String fileNumber);
+    Auction findById(Long id);
 
-    void delete(T auction);
+    void delete(Auction auction);
 
-    List<T> findAll();
+    List<Auction> findAll();
+
+    List<Auction> findAllDrafts();
+
+    Auction findDraftByFileNumberCourtSource(String fileNumber, Court court, AuctionSource source);
 
 }

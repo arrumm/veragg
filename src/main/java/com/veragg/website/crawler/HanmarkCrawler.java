@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
-import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.services.AuctionService;
 import com.veragg.website.services.AuctionSourceService;
 
@@ -71,7 +70,7 @@ public class HanmarkCrawler extends AbstractCrawler {
     private static final Set<String> DESCRIPTION_KEYWORDS = new HashSet<>(Arrays.asList(EXPERTISE_DESCRIPTION_NAME, PLOT_DESCRIPTION_NAME, BUILDING_DESCRIPTION_NAME, OUTDOOR_DESCRIPTION_NAME));
 
     @Autowired
-    public HanmarkCrawler(AuctionMapperService<HanmarkAuctionDTO> mapperService, AuctionService<AuctionDraft> auctionService, AuctionSourceService auctionSourceService) {
+    public HanmarkCrawler(AuctionMapperService<HanmarkAuctionDTO> mapperService, AuctionService auctionService, AuctionSourceService auctionSourceService) {
         this.auctionMapper = mapperService;
         this.auctionService = auctionService;
         this.auctionSourceService = auctionSourceService;

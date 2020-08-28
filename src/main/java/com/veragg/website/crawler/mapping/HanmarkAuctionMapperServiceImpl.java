@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.domain.Address;
-import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
 import com.veragg.website.domain.Document;
@@ -36,25 +36,25 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private static final String DATE_REGEX = "([1-9]|([012][0-9])|(3[01]))\\.([0]{0,1}[1-9]|1[012])\\.\\d\\d\\d\\d [012]{0,1}[0-9]:[0-6][0-9]";
     private static final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
 
-    private final CourtService<AuctionDraft> courtService;
+    private final CourtService courtService;
     private final NameService nameService;
 
     @Autowired
-    public HanmarkAuctionMapperServiceImpl(final CourtService<AuctionDraft> courtService, NameService nameService) {
+    public HanmarkAuctionMapperServiceImpl(final CourtService courtService, NameService nameService) {
         this.courtService = courtService;
         this.nameService = nameService;
     }
 
     @Override
-    public AuctionDraft map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
+    public Auction map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
 
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
         String courtName = nameService.normalize(auctionDTO.getCourtName());
-        Court<AuctionDraft> court = courtService.findBy(courtName, address.getZipCode());
+        Court court = courtService.findBy(courtName, address.getZipCode());
         Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName());
 
         //@formatter:off
-        AuctionDraft auctionDraft = AuctionDraft.draftBuilder()
+        Auction auction = Auction.builder()
                 .court(court)
                 .address(address)
                 .propertyTypes(propertyTypes)
@@ -70,13 +70,13 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .build();
         //@formatter:on
 
-        List<Document<?>> documents = new ArrayList<>();
-        auctionDTO.getImageLinks().forEach(imageUrl -> documents.add(new Document<AuctionDraft>(imageUrl, DocumentType.IMAGE, auctionDTO.getImageLinks().indexOf(imageUrl) + 1)));
-        auctionDTO.getExpertiseLinks().forEach(expertiseUrl -> documents.add(new Document<AuctionDraft>(expertiseUrl, DocumentType.EXPERTISE)));
-        auctionDTO.getOtherDocumentLinks().forEach(otherDocumentUrl -> documents.add(new Document<AuctionDraft>(otherDocumentUrl, DocumentType.OTHER)));
-        auctionDraft.setDocuments(documents);
+        List<Document> documents = new ArrayList<>();
+        auctionDTO.getImageLinks().forEach(imageUrl -> documents.add(new Document(imageUrl, DocumentType.IMAGE, auctionDTO.getImageLinks().indexOf(imageUrl) + 1)));
+        auctionDTO.getExpertiseLinks().forEach(expertiseUrl -> documents.add(new Document(expertiseUrl, DocumentType.EXPERTISE)));
+        auctionDTO.getOtherDocumentLinks().forEach(otherDocumentUrl -> documents.add(new Document(otherDocumentUrl, DocumentType.OTHER)));
+        auction.setDocuments(documents);
 
-        return auctionDraft;
+        return auction;
     }
 
     private LocalDateTime getAppointmentDate(String appointmentDate) {

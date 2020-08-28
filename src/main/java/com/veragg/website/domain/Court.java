@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class Court<T extends BaseAuction> {
+public class Court {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,5 +45,5 @@ public class Court<T extends BaseAuction> {
     private State state;
 
     @OneToMany(mappedBy = "court", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<T> auctions;
+    private Set<Auction> auctions;
 }

@@ -1,28 +1,28 @@
 package com.veragg.website.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.Document;
 import com.veragg.website.repository.DocumentAuctionRepo;
 
 @Service
-public class AuctionDocumentServiceImpl implements DocumentService<Auction> {
+public class DocumentServiceImpl implements DocumentService {
 
     private final DocumentAuctionRepo documentRepo;
 
-    public AuctionDocumentServiceImpl(DocumentAuctionRepo documentRepo) {
+    @Autowired
+    public DocumentServiceImpl(DocumentAuctionRepo documentRepo) {
         this.documentRepo = documentRepo;
     }
 
     @Override
-    public Document<Auction> findByUrl(String url) {
+    public Document findByUrl(String url) {
         return documentRepo.findByUrl(url);
     }
 
     @Override
-    public Document<Auction> save(Document<Auction> document) {
+    public Document save(Document document) {
         return documentRepo.save(document);
     }
-
 }

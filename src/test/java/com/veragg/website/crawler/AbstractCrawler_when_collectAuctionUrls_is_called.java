@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
-import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.services.AuctionService;
 import com.veragg.website.services.AuctionSourceService;
 
@@ -59,7 +58,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     AuctionMapperService<HanmarkAuctionDTO> mapperService;
 
     @Mock
-    AuctionService<AuctionDraft> auctionService;
+    AuctionService auctionService;
 
     @Mock
     AuctionSourceService auctionSourceService;

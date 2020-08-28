@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.veragg.website.services.FileUrlHelper;
 
@@ -21,7 +23,7 @@ import static java.util.Objects.isNull;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Document<T extends BaseAuction> {
+public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,7 +43,9 @@ public class Document<T extends BaseAuction> {
 
     private Integer sortOrder;
 
-    private T owner;
+    @ManyToOne
+    @JoinColumn(name = "auction_id")
+    private Auction auction;
 
     public Document(String url, DocumentType documentType) {
         this.url = url;

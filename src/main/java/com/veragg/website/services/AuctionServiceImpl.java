@@ -4,18 +4,18 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.veragg.website.domain.Auction;
+import com.veragg.website.domain.AuctionSource;
+import com.veragg.website.domain.AuctionStatus;
+import com.veragg.website.domain.Court;
 import com.veragg.website.repository.AuctionRepo;
 import com.veragg.website.repository.DocumentAuctionRepo;
-
-import lombok.NonNull;
 
 import static java.util.Objects.nonNull;
 
 @Service
-public class AuctionServiceImpl implements AuctionService<Auction> {
+public class AuctionServiceImpl implements AuctionService {
 
     private final AuctionRepo auctionRepo;
     private final DocumentAuctionRepo documentAuctionRepo;
@@ -26,26 +26,24 @@ public class AuctionServiceImpl implements AuctionService<Auction> {
         this.documentAuctionRepo = documentAuctionRepo;
     }
 
-    @Transactional
     @Override
-    public Auction save(@NonNull Auction auction) {
-        Auction existingAuction = auctionRepo.findByFileNumberAndCourt(auction.getFileNumber(), auction.getCourt());
-        if (nonNull(existingAuction)) {
-            return existingAuction;
-        } else {
-            auction.getDocuments().forEach(documentAuctionRepo::save);
-            return auctionRepo.save(auction);
+    public Auction saveDraft(Auction auction) {
+        Auction auctionFound = findDraftByFileNumberCourtSource(auction.getFileNumber(), auction.getCourt(), auction.getSource());
+        if (nonNull(auctionFound)) {
+            return auctionFound;
         }
+        auction.getDocuments().forEach(documentAuctionRepo::save);
+        return auctionRepo.save(auction);
+    }
+
+    @Override
+    public List<Auction> saveAll(List<Auction> auctions) {
+        return auctionRepo.saveAll(auctions);
     }
 
     @Override
     public Auction findById(Long id) {
         return auctionRepo.findById(id).orElse(null);
-    }
-
-    @Override
-    public Auction findByFileNumber(String fileNumber) {
-        return auctionRepo.findByFileNumber(fileNumber);
     }
 
     @Override
@@ -57,4 +55,15 @@ public class AuctionServiceImpl implements AuctionService<Auction> {
     public List<Auction> findAll() {
         return auctionRepo.findAll();
     }
+
+    @Override
+    public List<Auction> findAllDrafts() {
+        return auctionRepo.findAllByAuctionStatus(AuctionStatus.DRAFT);
+    }
+
+    @Override
+    public Auction findDraftByFileNumberCourtSource(String fileNumber, Court court, AuctionSource source) {
+        return auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(fileNumber, court, source, AuctionStatus.DRAFT);
+    }
+
 }

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.veragg.website.domain.Auction;
-import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.domain.AuctionSourceType;
 
@@ -18,30 +17,21 @@ public class AuctionMergeServiceImpl implements AuctionMergeService {
 
     AuctionServiceImpl auctionService;
 
-    AuctionDraftServiceImpl auctionDraftService;
-
-    AuctionMapper auctionMapper;
-
     @Autowired
-    public AuctionMergeServiceImpl(AuctionServiceImpl auctionService, AuctionMapper auctionMapper, AuctionDraftServiceImpl auctionDraftService) {
-        this.auctionMapper = auctionMapper;
+    public AuctionMergeServiceImpl(AuctionServiceImpl auctionService) {
         this.auctionService = auctionService;
-        this.auctionDraftService = auctionDraftService;
     }
 
     @Transactional
     @Override
-    public Auction merge(@NonNull AuctionDraft auctionDraft) {
-
-        Auction auction = auctionMapper.getAuction(auctionDraft);
-        return auctionService.save(auction);
-
+    public List<Auction> merge(@NonNull List<Auction> auctions) {
+        return auctionService.saveAll(auctions);
     }
 
     @Override
-    public List<AuctionDraft> getSortedDrafts() {
+    public List<Auction> getSortedDrafts() {
 
-        List<AuctionDraft> allDrafts = auctionDraftService.findAll();
+        List<Auction> allDrafts = auctionService.findAllDrafts();
 
         allDrafts.sort((a, b) -> {
             AuctionSource sourceA = a.getSource();

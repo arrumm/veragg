@@ -1,5 +1,8 @@
 package com.veragg.website.services;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,7 +11,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.veragg.website.domain.Auction;
-import com.veragg.website.domain.AuctionDraft;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -25,13 +27,10 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
     AuctionServiceImpl auctionService;
 
     @Mock
-    AuctionDraftServiceImpl auctionDraftService;
+    AuctionServiceImpl auctionDraftService;
 
     @Mock
-    AuctionMapper auctionMapper;
-
-    @Mock
-    AuctionDraft draft;
+    Auction draft;
 
     @Mock
     Auction auction;
@@ -40,7 +39,7 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
 
     @Before
     public void setUp() {
-        sut = new AuctionMergeServiceImpl(auctionService, auctionMapper, auctionDraftService);
+        sut = new AuctionMergeServiceImpl(auctionService);
     }
 
     @Test
@@ -57,12 +56,11 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
     public void given_save_throw_NPE_then_NPE_expected() {
 
         //Arrange
-        when(auctionMapper.getAuction(draft)).thenReturn(auction);
-        when(auctionService.save(auction)).thenThrow(NullPointerException.class);
+        when(auctionService.saveDraft(auction)).thenThrow(NullPointerException.class);
 
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.merge(draft));
+        assertThrows(NullPointerException.class, () -> sut.merge(Collections.singletonList(draft)));
 
     }
 
@@ -70,12 +68,11 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
     public void given_delete_throw_NPE_then_NPE_expected() {
 
         //Arrange
-        when(auctionMapper.getAuction(eq(draft))).thenThrow(NullPointerException.class);
         doThrow(NullPointerException.class).when(auctionDraftService).delete(draft);
 
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.merge(draft));
+        assertThrows(NullPointerException.class, () -> sut.merge(Collections.singletonList(draft)));
 
     }
 
@@ -83,15 +80,14 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
     public void given_auction_mapped_then_return_mapped_auction_and_save_and_delete_is_called() {
 
         //Arrange
-        when(auctionMapper.getAuction(draft)).thenReturn(auction);
-        when(auctionService.save(auction)).thenReturn(auction);
+        when(auctionService.saveDraft(auction)).thenReturn(auction);
 
         //Act
-        Auction resultAuction = sut.merge(draft);
+        List<Auction> resultAuction = sut.merge(Collections.singletonList(draft));
 
         //Assert
         assertEquals(auction, resultAuction);
-        verify(auctionService).save(eq(auction));
+        verify(auctionService).saveDraft(eq(auction));
     }
 
 }
