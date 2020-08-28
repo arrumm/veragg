@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -91,15 +92,6 @@ public class BaseAuction {
     @UpdateTimestamp
     private LocalDateTime updatedOn;
 
-    @ElementCollection
-    private List<String> imageLinks = new ArrayList<>();
-
-    @ElementCollection
-    private List<String> expertiseLinks = new ArrayList<>();
-
-    @ElementCollection
-    private Set<String> otherDocumentLinks = new HashSet<>();
-
     @ManyToOne
     @JoinColumn(name = "source_id")
     private AuctionSource source;
@@ -107,19 +99,16 @@ public class BaseAuction {
     @Column(name = "source_url")
     private String sourceUrl;
 
-    //    @OneToMany
-    //    private List<Document> pictures = new ArrayList<>();
-    //
+    @OneToMany
+    private List<Document> documents = new ArrayList<>();
+
     //    @OneToMany
     //    private List<Document> tilePictures = new ArrayList<>();
-    //
-    //    @OneToMany
-    //    private List<Document> expertiseReports = new ArrayList<>();
 
     @Builder(builderMethodName = "baseAuctionBuilder")
     public BaseAuction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
-            @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, List<String> imageLinks,
-            List<String> expertiseLinks, Set<String> otherDocumentLinks, String sourceUrl, AuctionSource source) {
+            @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, String sourceUrl,
+            AuctionSource source, List<Document> documents) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;
@@ -131,11 +120,9 @@ public class BaseAuction {
         this.propertyBuildingDescription = propertyBuildingDescription;
         this.propertyPlotDescription = propertyPlotDescription;
         this.expertiseDescription = expertiseDescription;
-        this.imageLinks = imageLinks;
-        this.expertiseLinks = expertiseLinks;
-        this.otherDocumentLinks = otherDocumentLinks;
         this.sourceUrl = sourceUrl;
         this.source = source;
+        this.documents = documents;
     }
 
     @Override

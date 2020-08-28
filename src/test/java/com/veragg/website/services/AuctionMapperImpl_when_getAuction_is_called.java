@@ -5,18 +5,26 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.veragg.website.domain.Address;
 import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.AuctionSource;
+import com.veragg.website.domain.AuctionSourceType;
 import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
+import com.veragg.website.domain.Document;
+import com.veragg.website.domain.DocumentType;
 
 import static com.veragg.website.domain.PropertyType.COMMERCIAL_PROPERTY;
 import static com.veragg.website.domain.PropertyType.ONE_FAMILY_HOUSE;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -62,9 +70,20 @@ public class AuctionMapperImpl_when_getAuction_is_called {
         draft.setPropertyBuildingDescription("building description");
         draft.setPropertyPlotDescription("plot description");
         draft.setExpertiseDescription("expertise description");
-        draft.setImageLinks(Arrays.asList("image1Url", "image3Url"));
-        draft.setExpertiseLinks(Arrays.asList("expertiseUrl", "anotherExpUrl"));
-        draft.setOtherDocumentLinks(new HashSet<>(Arrays.asList("otherDocUrl1", "otherDocUrl2", "otherDocUrl3")));
+
+        Document docImage1 = new Document("url/image1Url.jpg", DocumentType.IMAGE);
+        Document docImage2 = new Document("url/image2Url.jpg", DocumentType.IMAGE);
+        Document docExpertise1 = new Document("url/expertiseUrl.pdf", DocumentType.EXPERTISE);
+        Document docExpertise2 = new Document("url/anotherExpUrl.pfd", DocumentType.EXPERTISE);
+        Document docOther1 = new Document("url/otherDocUrl1.pdf", DocumentType.OTHER);
+        Document docOther2 = new Document("url/otherDocUrl2.jpg", DocumentType.OTHER);
+        Document docOther3 = new Document("url/otherDocUrl3.png", DocumentType.OTHER);
+        draft.setDocuments(Arrays.asList(docImage2, docImage1, docExpertise2, docExpertise1, docOther1, docOther2, docOther3));
+
+        AuctionSource source = new AuctionSource();
+        source.setAuctionSourceType(AuctionSourceType.WEBSITE);
+        source.setName("sourceName");
+        draft.setSource(source);
 
         //Act
         Auction resultAuction = sut.getAuction(draft);
@@ -82,12 +101,19 @@ public class AuctionMapperImpl_when_getAuction_is_called {
         assertEquals("plot description", resultAuction.getPropertyPlotDescription());
         assertEquals("expertise description", resultAuction.getExpertiseDescription());
         assertEquals("building description", resultAuction.getPropertyBuildingDescription());
-        assertEquals(2, resultAuction.getImageLinks().size());
-        assertThat(resultAuction.getImageLinks(), hasItems("image1Url", "image3Url"));
-        assertEquals(2, resultAuction.getExpertiseLinks().size());
-        assertThat(resultAuction.getExpertiseLinks(), hasItems("expertiseUrl", "anotherExpUrl"));
-        assertEquals(3, resultAuction.getOtherDocumentLinks().size());
-        assertThat(resultAuction.getOtherDocumentLinks(), hasItems("otherDocUrl1", "otherDocUrl2", "otherDocUrl3"));
+
+        assertEquals(7, resultAuction.getDocuments().size());
+        //@formatter:off
+        assertThat(resultAuction.getDocuments(), hasItem(allOf(
+                        Matchers.<Document>hasProperty("url", is("url/image1Url.jpg")),
+                        Matchers.<Document>hasProperty("documentType", is(DocumentType.IMAGE)))));
+        assertThat(resultAuction.getDocuments(), hasItem(allOf(
+                        Matchers.<Document>hasProperty("url", is("url/otherDocUrl1.pdf")),
+                        Matchers.<Document>hasProperty("documentType", is(DocumentType.OTHER)))));
+        assertThat(resultAuction.getDocuments(), hasItems(docExpertise1, docExpertise2, docImage1, docImage2, docOther3, docOther2, docOther1));
+        //@formatter:on
+
+        assertEquals(resultAuction.getSource(), source);
 
     }
 

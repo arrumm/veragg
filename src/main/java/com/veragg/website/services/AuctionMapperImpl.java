@@ -26,11 +26,9 @@ public class AuctionMapperImpl implements AuctionMapper {
                 .propertyPlotDescription(auctionDraft.getPropertyPlotDescription())
                 .expertiseDescription(auctionDraft.getExpertiseDescription())
                 .propertyBuildingDescription(auctionDraft.getPropertyBuildingDescription())
-                .imageLinks(auctionDraft.getImageLinks())
-                .expertiseReportLinks(auctionDraft.getExpertiseLinks())
-                .otherFileLinks(auctionDraft.getOtherDocumentLinks())
                 .sourceUrl(auctionDraft.getSourceUrl())
                 .source(auctionDraft.getSource())
+                .documents(auctionDraft.getDocuments())
                 .build();
         //@formatter:on
     }

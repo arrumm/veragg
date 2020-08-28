@@ -3,7 +3,9 @@ package com.veragg.website.crawler.mapping;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +19,8 @@ import com.veragg.website.domain.Address;
 import com.veragg.website.domain.AuctionDraft;
 import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
+import com.veragg.website.domain.Document;
+import com.veragg.website.domain.DocumentType;
 import com.veragg.website.domain.PropertyType;
 import com.veragg.website.services.CourtService;
 
@@ -50,7 +54,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName());
 
         //@formatter:off
-        return AuctionDraft.draftBuilder()
+        AuctionDraft auctionDraft = AuctionDraft.draftBuilder()
                 .court(court)
                 .address(address)
                 .propertyTypes(propertyTypes)
@@ -63,11 +67,16 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .outdoorDescription(auctionDTO.getOutdoorDescription())
                 .propertyPlotDescription(auctionDTO.getPlotDescription())
                 .sourceUrl(auctionDTO.getSourceUrl())
-                .expertiseReportLinks(auctionDTO.getExpertiseLinks())
-                .imageLinks(auctionDTO.getImageLinks())
-                .otherFileLinks(auctionDTO.getOtherDocumentLinks())
                 .build();
         //@formatter:on
+
+        List<Document> documents = new ArrayList<>();
+        auctionDTO.getImageLinks().forEach(imageUrl -> documents.add(new Document(imageUrl, DocumentType.IMAGE, auctionDTO.getImageLinks().indexOf(imageUrl) + 1)));
+        auctionDTO.getExpertiseLinks().forEach(expertiseUrl -> documents.add(new Document(expertiseUrl, DocumentType.EXPERTISE)));
+        auctionDTO.getOtherDocumentLinks().forEach(otherDocumentUrl -> documents.add(new Document(otherDocumentUrl, DocumentType.OTHER)));
+        auctionDraft.setDocuments(documents);
+
+        return auctionDraft;
     }
 
     private LocalDateTime getAppointmentDate(String appointmentDate) {
