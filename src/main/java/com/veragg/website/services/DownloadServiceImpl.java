@@ -30,7 +30,7 @@ public class DownloadServiceImpl implements DownloadService {
     }
 
     @Override
-    public void downloadFile(@NonNull Document document) {
+    public String downloadFile(@NonNull Document document) {
 
         URL downloadFileUrl = null;
         try {
@@ -41,13 +41,14 @@ public class DownloadServiceImpl implements DownloadService {
 
         if (nonNull(downloadFileUrl)) {
             try (ReadableByteChannel readableByteChannel = Channels.newChannel(downloadFileUrl.openStream())) {
-                fileManager.transferToFile(document.getStoreName(), readableByteChannel);
+                return fileManager.transferToFile(document.getStoreName(), readableByteChannel);
             } catch (FileManagementException e) {
                 LOGGER.error("Unable to save save the file from url {}", document.getUrl(), e);
             } catch (IOException e) {
                 LOGGER.error("Unable to download file from url {}", document.getUrl(), e);
             }
         }
+        return null;
 
     }
 }

@@ -1,5 +1,7 @@
 package com.veragg.website.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +26,10 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public Document save(Document document) {
         return documentRepo.save(document);
+    }
+
+    @Override
+    public List<Document> getToDownload() {
+        return documentRepo.findAllByFilePathIsNull();
     }
 }
