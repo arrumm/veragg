@@ -13,8 +13,6 @@ import com.veragg.website.domain.Court;
 @Repository
 public interface AuctionRepo extends JpaRepository<Auction, Long> {
 
-    Auction findByFileNumberAndCourt(String fileNumber, Court court);
-
     Auction findByFileNumberAndCourtAndSourceAndAuctionStatus(String fileNumber, Court court, AuctionSource source, AuctionStatus auctionStatus);
 
     List<Auction> findAllByAuctionStatus(AuctionStatus status);

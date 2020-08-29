@@ -12,6 +12,8 @@ import com.veragg.website.domain.Court;
 import com.veragg.website.repository.AuctionRepo;
 import com.veragg.website.repository.DocumentAuctionRepo;
 
+import lombok.NonNull;
+
 import static java.util.Objects.nonNull;
 
 @Service
@@ -62,7 +64,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public Auction findDraftByFileNumberCourtSource(String fileNumber, Court court, AuctionSource source) {
+    public Auction findDraftByFileNumberCourtSource(@NonNull String fileNumber, @NonNull Court court, @NonNull AuctionSource source) {
         return auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(fileNumber, court, source, AuctionStatus.DRAFT);
     }
 
