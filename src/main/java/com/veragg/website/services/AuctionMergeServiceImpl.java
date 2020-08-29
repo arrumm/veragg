@@ -1,5 +1,6 @@
 package com.veragg.website.services;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,11 @@ public class AuctionMergeServiceImpl implements AuctionMergeService {
 
     @Override
     public List<Auction> merge(@NonNull List<Auction> auctions) {
-        auctions.forEach(auction -> auction.setAuctionStatus(AuctionStatus.ACTIVE));
-        return auctionService.saveAll(auctions);
+        if (!auctions.isEmpty()) {
+            auctions.forEach(auction -> auction.setAuctionStatus(AuctionStatus.ACTIVE));
+            return auctionService.saveAll(auctions);
+        }
+        return Collections.emptyList();
     }
 
     @Override
