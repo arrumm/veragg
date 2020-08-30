@@ -69,7 +69,7 @@ public class FileManagerImpl implements FileManager {
 
         saveToFile(readableByteChannel, storagePath);
 
-        return storagePath.toFile().getName();
+        return storagePath.toFile().getAbsolutePath();
     }
 
     private void saveToFile(@NonNull ReadableByteChannel readableByteChannel, @NonNull Path storagePath) {

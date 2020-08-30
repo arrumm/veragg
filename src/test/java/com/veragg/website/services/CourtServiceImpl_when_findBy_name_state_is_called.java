@@ -11,9 +11,9 @@ import com.veragg.website.domain.State;
 import com.veragg.website.repository.CourtRepo;
 import com.veragg.website.repository.StateRepo;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -53,33 +53,28 @@ public class CourtServiceImpl_when_findBy_name_state_is_called {
 
     }
 
-    //    TODO: exception thrown
     @Test
-    public void and_state_null_then_return_null() {
+    public void and_state_null_then_NPE_is_thrown() {
 
         // Arrange
         when(courtRepo.findByNameAndState(eq("name"), any(State.class))).thenReturn(null);
 
         // Act
-        Court courtFound = sut.findBy("name", (State) null);
 
         // Assert
-        assertNull(courtFound);
+        assertThrows(NullPointerException.class, () -> sut.findBy("name", (State) null));
 
     }
 
-    //TODO: exception thrown
     @Test
-    public void and_both_state_name_null_then_return_null() {
+    public void and_both_state_name_null_then_NPE_is_thrown() {
 
         // Arrange
         when(courtRepo.findByNameAndState(eq("name"), eq(null))).thenReturn(null);
 
         // Act
-        Court courtFound = sut.findBy("name", (State) null);
-
         // Assert
-        assertNull(courtFound);
+        assertThrows(NullPointerException.class, () -> sut.findBy(null, (State) null));
 
     }
 

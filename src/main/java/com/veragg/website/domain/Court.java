@@ -20,7 +20,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@EqualsAndHashCode(exclude = {"id", "address"})
+@EqualsAndHashCode(exclude = {
+        "id",
+        "address"
+})
 @Entity
 @RequiredArgsConstructor
 @NoArgsConstructor

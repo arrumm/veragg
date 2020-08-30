@@ -2,8 +2,12 @@ package com.veragg.website.crawler.mapping;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,9 +18,11 @@ import org.springframework.stereotype.Service;
 
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.domain.Address;
-import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
+import com.veragg.website.domain.Document;
+import com.veragg.website.domain.DocumentType;
 import com.veragg.website.domain.PropertyType;
 import com.veragg.website.services.CourtService;
 
@@ -30,7 +36,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private static final String AMOUNT_REGEX = "([0-9.,]+)";
     private static final String AMOUNT_CENT_REGEX = ",.+";
     private static final String DATE_REGEX = "([1-9]|([012][0-9])|(3[01]))\\.([0]{0,1}[1-9]|1[012])\\.\\d\\d\\d\\d [012]{0,1}[0-9]:[0-6][0-9]";
-    private static final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder().appendPattern("dd.MM.yyyy HH:mm").toFormatter().withZone(ZoneId.of("Europe/Berlin"));
 
     private final CourtService courtService;
     private final NameService nameService;
@@ -42,7 +48,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     }
 
     @Override
-    public AuctionDraft map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
+    public Auction map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
 
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
         String courtName = nameService.normalize(auctionDTO.getCourtName());
@@ -50,7 +56,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName());
 
         //@formatter:off
-        return AuctionDraft.draftBuilder()
+        Auction auction = Auction.builder()
                 .court(court)
                 .address(address)
                 .propertyTypes(propertyTypes)
@@ -65,12 +71,19 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .sourceUrl(auctionDTO.getSourceUrl())
                 .build();
         //@formatter:on
+
+        List<Document> documents = new ArrayList<>();
+        auctionDTO.getImageLinks().forEach(imageUrl -> documents.add(new Document(imageUrl, DocumentType.IMAGE, auctionDTO.getImageLinks().indexOf(imageUrl) + 1)));
+        auctionDTO.getExpertiseLinks().forEach(expertiseUrl -> documents.add(new Document(expertiseUrl, DocumentType.EXPERTISE)));
+        auctionDTO.getOtherDocumentLinks().forEach(otherDocumentUrl -> documents.add(new Document(otherDocumentUrl, DocumentType.OTHER)));
+        auction.setDocuments(documents);
+
+        return auction;
     }
 
     private LocalDateTime getAppointmentDate(String appointmentDate) {
         String normalizedDate = extractByPattern(Pattern.compile(DATE_REGEX), appointmentDate);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        return LocalDateTime.parse(normalizedDate, formatter);
+        return LocalDateTime.parse(normalizedDate, DATE_TIME_FORMATTER);
     }
 
     private Set<PropertyType> getPropertyTypes(final String propertyTypeName) {

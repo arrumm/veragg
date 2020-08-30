@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.Auction;
 import com.veragg.website.services.AuctionMergeService;
 
 @Component
@@ -21,10 +21,10 @@ public class DraftToAuctionMergeJob {
     }
 
     @Async
-    @Scheduled(cron = "0 0 13 * * *")
+    @Scheduled(cron = "0 0 10 * * *")
     public void run() {
-        List<AuctionDraft> sortedDrafts = auctionMergeService.getSortedDrafts();
-        sortedDrafts.forEach(auctionDraft -> auctionMergeService.merge(auctionDraft));
+        List<Auction> sortedDrafts = auctionMergeService.getSortedDrafts();
+        auctionMergeService.merge(sortedDrafts);
     }
 
 }

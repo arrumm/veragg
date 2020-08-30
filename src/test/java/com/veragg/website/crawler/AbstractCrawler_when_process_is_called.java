@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
-import com.veragg.website.domain.AuctionDraft;
+import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.services.AuctionService;
 import com.veragg.website.services.AuctionSourceService;
@@ -57,7 +57,7 @@ public class AbstractCrawler_when_process_is_called {
     AuctionMapperService<HanmarkAuctionDTO> mapperService;
 
     @Mock
-    AuctionService<AuctionDraft> auctionService;
+    AuctionService auctionService;
 
     @Mock
     Logger logger;
@@ -66,7 +66,7 @@ public class AbstractCrawler_when_process_is_called {
     HanmarkAuctionDTO auctionDTO;
 
     @Mock
-    AuctionDraft auctionDraft;
+    Auction auction;
 
     @Mock
     AuctionSourceService auctionSourceService;
@@ -93,7 +93,7 @@ public class AbstractCrawler_when_process_is_called {
     }
 
     @Test
-    public void given_source_is_not_null_urls_fetched_mapped_then_auction_draft_saved_with_source() throws IOException, ParseException {
+    public void given_source_is_not_null_urls_fetched_mapped_then_auction_saved_with_source() throws IOException, ParseException {
 
         //Arrange
         doReturn(new HashSet<String>() {{
@@ -103,15 +103,15 @@ public class AbstractCrawler_when_process_is_called {
 
         HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
         doReturn(oneAuctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
-        AuctionDraft oneAuctionDraft = mock(AuctionDraft.class);
-        doReturn(oneAuctionDraft).when(mapperService).map(eq(oneAuctionDTO));
+        Auction oneAuction = mock(Auction.class);
+        doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
         doReturn(auctionSource).when(auctionSourceService).findByName(anyString());
 
         //Act
         sut.crawl();
 
         //Assert
-        verify(oneAuctionDraft).setSource(eq(auctionSource));
+        verify(oneAuction).setSource(eq(auctionSource));
 
     }
 
@@ -126,15 +126,15 @@ public class AbstractCrawler_when_process_is_called {
 
         HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
         doReturn(oneAuctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
-        AuctionDraft oneAuctionDraft = mock(AuctionDraft.class);
-        doReturn(oneAuctionDraft).when(mapperService).map(eq(oneAuctionDTO));
+        Auction oneAuction = mock(Auction.class);
+        doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
         doReturn(null).when(auctionSourceService).findByName(anyString());
 
         //Act
         sut.crawl();
 
         //Assert
-        verify(oneAuctionDraft).setSource(eq(null));
+        verify(oneAuction).setSource(eq(null));
 
     }
 
@@ -155,18 +155,18 @@ public class AbstractCrawler_when_process_is_called {
         doReturn(oneAuctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
         doReturn(anotherAuctionDTO).when(sut).fetchAuction(any(), eq(ANOTHER_AUCTION_URL));
 
-        AuctionDraft oneAuctionDraft = mock(AuctionDraft.class);
-        AuctionDraft anotherAuctionDraft = mock(AuctionDraft.class);
+        Auction oneAuction = mock(Auction.class);
+        Auction anotherAuction = mock(Auction.class);
 
-        doReturn(oneAuctionDraft).when(mapperService).map(eq(oneAuctionDTO));
-        doReturn(anotherAuctionDraft).when(mapperService).map(eq(anotherAuctionDTO));
+        doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
+        doReturn(anotherAuction).when(mapperService).map(eq(anotherAuctionDTO));
 
         //Act
         sut.crawl();
 
         //Assert
-        verify(auctionService).save(eq(oneAuctionDraft));
-        verify(auctionService).save(eq(anotherAuctionDraft));
+        verify(auctionService).saveDraft(eq(oneAuction));
+        verify(auctionService).saveDraft(eq(anotherAuction));
 
     }
 
@@ -182,14 +182,14 @@ public class AbstractCrawler_when_process_is_called {
         PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
         doThrow(ioException).when(sut).fetchAuction(any(), eq("auctionUrlNPE"));
         doReturn(auctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
-        doReturn(auctionDraft).when(mapperService).map(eq(auctionDTO));
+        doReturn(auction).when(mapperService).map(eq(auctionDTO));
 
         //Act
         sut.crawl();
 
         //Assert
         verify(mapperService, times(1)).map(eq(auctionDTO));
-        verify(auctionService, times(1)).save(eq(auctionDraft));
+        verify(auctionService, times(1)).saveDraft(eq(auction));
         verifyNoMoreInteractions(auctionService, mapperService);
 
     }

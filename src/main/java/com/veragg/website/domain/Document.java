@@ -8,6 +8,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.veragg.website.services.FileUrlHelper;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,13 +25,11 @@ import static java.util.Objects.isNull;
 @NoArgsConstructor
 public class Document {
 
-    //TODO: should be base entity without table
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String path;
+    private String filePath;
     private String url;
 
     @Enumerated(EnumType.STRING)
@@ -36,24 +38,32 @@ public class Document {
     @Enumerated(EnumType.STRING)
     private FileType fileType;
 
-    private String originalName;
+    private String originalFileName;
     private String storeName;
 
     private Integer sortOrder;
 
-    public Document(String url, DocumentType documentType) {
+    @ManyToOne
+    @JoinColumn(name = "auction_id")
+    private Auction auction;
 
-        //TODO: extract original name
-        this.originalName = String.valueOf(url.charAt(0));
-        //TODO: extract type
+    public Document(String url, DocumentType documentType) {
+        this.url = url;
+        String fileName = FileUrlHelper.getFileName(url);
+        this.originalFileName = fileName;
         this.documentType = documentType;
 
-        this.fileType = FileType.valueOf(String.valueOf(url.charAt(0)));
+        String fileExtension = FileUrlHelper.getExtension(fileName);
+        this.fileType = FileType.getByExtension(fileExtension);
 
         if (isNull(storeName)) {
             this.storeName = UUID.randomUUID().toString();
         }
+    }
 
+    public Document(String url, DocumentType documentType, Integer sortOrder) {
+        this(url, documentType);
+        this.sortOrder = sortOrder;
     }
 
 }

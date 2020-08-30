@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.veragg.website.domain.Auction;
 import com.veragg.website.repository.AuctionRepo;
+import com.veragg.website.repository.DocumentAuctionRepo;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -22,13 +23,16 @@ public class AuctionServiceImpl_when_delete_is_called {
     AuctionRepo auctionRepo;
 
     @Mock
+    DocumentAuctionRepo documentAuctionRepo;
+
+    @Mock
     Auction auction;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        auctionService = new AuctionServiceImpl(auctionRepo);
+        auctionService = new AuctionServiceImpl(auctionRepo, documentAuctionRepo);
     }
 
     @Test

@@ -6,12 +6,22 @@ import java.util.Set;
 
 public enum FileType {
     IMAGE("jpeg", "jpg", "gif", "png", "svg"),
-    PDF("pdf");
+    PDF("pdf"),
+    DOC("doc", "docx"),
+    XLS("xls", "xlsx");
 
-    private Set<String> extensions = new HashSet<>();
+    private final Set<String> extensions = new HashSet<>();
 
     FileType(final String... extensions) {
         this.extensions.addAll(Arrays.asList(extensions));
+    }
+
+    public Set<String> getExtensions() {
+        return extensions;
+    }
+
+    public static FileType getByExtension(String extension) {
+        return Arrays.stream(FileType.values()).filter(propertyType -> propertyType.getExtensions().contains(extension)).findFirst().orElse(null);
     }
 
 }

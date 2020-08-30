@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,8 +32,11 @@ public class BaseAuctionDTO {
     private List<String> tileImages;
     private String courtAppointmentDescriptionUrl;
     private String limitDescription;
+    @Builder.Default
     private List<String> imageLinks = new ArrayList<>();
+    @Builder.Default
     private List<String> expertiseLinks = new ArrayList<>();
+    @Builder.Default
     private Set<String> otherDocumentLinks = new HashSet<>();
     private String sourceUrl;
 }
