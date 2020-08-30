@@ -1,6 +1,7 @@
 package com.veragg.website.services;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class AuctionServiceImpl implements AuctionService {
         if (nonNull(auctionFound)) {
             return auctionFound;
         }
-        auction.getDocuments().forEach(documentAuctionRepo::save);
+        auction.getDocuments().stream().filter(Objects::nonNull).forEach(documentAuctionRepo::save);
         return auctionRepo.save(auction);
     }
 
