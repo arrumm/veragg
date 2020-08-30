@@ -2,7 +2,9 @@ package com.veragg.website.crawler.mapping;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +36,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private static final String AMOUNT_REGEX = "([0-9.,]+)";
     private static final String AMOUNT_CENT_REGEX = ",.+";
     private static final String DATE_REGEX = "([1-9]|([012][0-9])|(3[01]))\\.([0]{0,1}[1-9]|1[012])\\.\\d\\d\\d\\d [012]{0,1}[0-9]:[0-6][0-9]";
-    private static final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder().appendPattern("dd.MM.yyyy HH:mm").toFormatter().withZone(ZoneId.of("Europe/Berlin"));
 
     private final CourtService courtService;
     private final NameService nameService;
@@ -81,8 +83,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
 
     private LocalDateTime getAppointmentDate(String appointmentDate) {
         String normalizedDate = extractByPattern(Pattern.compile(DATE_REGEX), appointmentDate);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        return LocalDateTime.parse(normalizedDate, formatter);
+        return LocalDateTime.parse(normalizedDate, DATE_TIME_FORMATTER);
     }
 
     private Set<PropertyType> getPropertyTypes(final String propertyTypeName) {

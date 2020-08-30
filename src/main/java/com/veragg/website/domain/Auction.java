@@ -1,5 +1,6 @@
 package com.veragg.website.domain;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,7 +59,6 @@ public class Auction {
     @NonNull
     private Address address;
 
-    //TODO: refactor to normal date/time
     //termin
     @NonNull
     private LocalDateTime appointment;
@@ -86,11 +86,11 @@ public class Auction {
 
     @Column(name = "created_on")
     @CreationTimestamp
-    private LocalDateTime createdOn;
+    private Instant createdOn;
 
     @Column(name = "updated_on")
     @UpdateTimestamp
-    private LocalDateTime updatedOn;
+    private Instant updatedOn;
 
     @ManyToOne
     @JoinColumn(name = "source_id")
@@ -106,8 +106,8 @@ public class Auction {
     @NonNull
     private AuctionStatus auctionStatus;
 
-    //    @OneToMany
-    //    private List<Document> tilePictures = new ArrayList<>();
+    @OneToMany
+    private List<Document> tilePictures = new ArrayList<>();
 
     @Builder
     public Auction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
