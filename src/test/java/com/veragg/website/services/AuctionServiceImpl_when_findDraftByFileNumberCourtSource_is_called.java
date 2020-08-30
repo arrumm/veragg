@@ -7,11 +7,17 @@ import org.mockito.MockitoAnnotations;
 
 import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.AuctionSource;
+import com.veragg.website.domain.AuctionStatus;
 import com.veragg.website.domain.Court;
 import com.veragg.website.repository.AuctionRepo;
 import com.veragg.website.repository.DocumentAuctionRepo;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called {
 
@@ -69,47 +75,33 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
 
     }
 
-    //TODO: fix tests
+    @Test
+    public void given_valid_fileNumber_and_court_and_source_then_auction_draft_should_return() {
 
-    //        public void given_valid_fileNumber_then_auction_should_return() {
-    //        @Test
-    //
-    //            //Arrange
-    //
-    //            //Act
-    //            Auction result = null;
-    //
-    //            //Assert
-    //            assertNotNull(result);
-    //            assertEquals(auctionMock, result);
-    //
-    //        }
+        //Arrange
+        when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq(AuctionStatus.DRAFT))).thenReturn(auctionMock);
 
-    //    @Test
-    //    public void given_fileNumber_with_no_auction_then_null_should_return() {
-    //
-    //        //Arrange
-    //        when(auctionRepo.findByFileNumber(eq("1K 12"))).thenReturn(null);
-    //
-    //        //Act
-    //        Auction result = auctionService.findByFileNumber("1K 12");
-    //
-    //        //Assert
-    //        assertNull(result);
-    //
-    //    }
-    //
-    //    @Test(expected = IllegalArgumentException.class)
-    //    public void given_null_fileNumber_to_find_then_throw_IAE() {
-    //
-    //        //Arrange
-    //        when(auctionRepo.findByFileNumber(anyString())).thenThrow(new IllegalArgumentException());
-    //
-    //        //Act
-    //        auctionService.findByFileNumber("1K 12");
-    //
-    //        //Assert
-    //
-    //    }
+        //Act
+        Auction result = sut.findDraftByFileNumberCourtSource("1K 12", court, auctionSource);
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(auctionMock, result);
+
+    }
+
+    @Test
+    public void given_fileNumber_with_no_auction_then_null_should_return() {
+
+        //Arrange
+        when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq(AuctionStatus.DRAFT))).thenReturn(null);
+
+        //Act
+        Auction result = sut.findDraftByFileNumberCourtSource("1K 12", court, auctionSource);
+
+        //Assert
+        assertNull(result);
+
+    }
 
 }
