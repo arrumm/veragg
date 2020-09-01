@@ -23,7 +23,7 @@ import static java.util.Objects.isNull;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Document {
+public class Document implements Comparable<Document> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -61,9 +61,55 @@ public class Document {
         }
     }
 
+    public Document(DocumentType documentType, String storeName) {
+        this.documentType = documentType;
+        this.storeName = storeName;
+    }
+
     public Document(String url, DocumentType documentType, Integer sortOrder) {
         this(url, documentType);
         this.sortOrder = sortOrder;
     }
 
+    @Override
+    public int compareTo(Document o) {
+        if (o.equals(this)) {
+            return 0;
+        }
+        if (o.getSortOrder().equals(this.getSortOrder())) {
+            return o.getOriginalFileName().compareTo(this.getOriginalFileName());
+        } else {
+            return o.getSortOrder() - this.getSortOrder();
+        }
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Document document = (Document) o;
+
+        if (getDocumentType() != document.getDocumentType()) {
+            return false;
+        }
+        if (!getSortOrder().equals(document.getSortOrder())) {
+            return false;
+        }
+
+        return getOriginalFileName().equals(document.getOriginalFileName());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getDocumentType().hashCode();
+        result = 31 * result + getOriginalFileName().hashCode();
+        result = 31 * result + getSortOrder().hashCode();
+        return result;
+    }
 }
