@@ -13,6 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,8 @@ import static java.util.Objects.nonNull;
 
 @Service
 public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<HanmarkAuctionDTO> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HanmarkAuctionMapperServiceImpl.class);
 
     private static final String HOUSE_NUMBER_REGEX = "[\\d\\+]+(\\d+)*";
     private static final String ZIPCODE_REGEX = "^\\d{5}";
@@ -93,6 +97,9 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
             propertyTypes.add(propertyTypeByName);
         }
         propertyTypes.addAll(PropertyType.getBySynonym(propertyTypeName));
+        if (propertyTypes.isEmpty()) {
+            LOGGER.warn("No property type found {}", propertyTypeName);
+        }
         return propertyTypes;
     }
 
