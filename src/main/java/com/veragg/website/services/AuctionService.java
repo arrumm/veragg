@@ -16,7 +16,7 @@ public interface AuctionService {
 
     void delete(Auction auction);
 
-    List<Auction> findAll();
+    List<Auction> getAll();
 
     List<Auction> findAllDrafts();
 

@@ -55,7 +55,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> findAll() {
+    public List<Auction> getAll() {
         return auctionRepo.findAll();
     }
 
