@@ -8,15 +8,16 @@ import lombok.Getter;
 
 @Getter
 public enum BuyLimit {
-    L50(50),
-    L70(70),
-    L100(100, "keine Grenze"),
-    NA(100, "keine Angabe");
+    L0("keine Grenze", 0, "keine Grenze"),
+    L70("gelten", 50, "gelten"),
+    NA("keine Angabe", 100, "keine Angabe");
 
-    private Integer value;
-    private Set<String> synonyms = new HashSet<>();
+    private final String name;
+    private final Integer value;
+    private final Set<String> synonyms = new HashSet<>();
 
-    BuyLimit(final Integer value, final String... synonyms) {
+    BuyLimit(String name, final Integer value, final String... synonyms) {
+        this.name = name;
         this.value = value;
         this.synonyms.addAll(Arrays.asList(synonyms));
     }
