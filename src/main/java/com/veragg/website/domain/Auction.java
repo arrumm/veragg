@@ -36,6 +36,8 @@ import lombok.Setter;
 @Entity
 public class Auction {
 
+    //TODO: create and id for requesting the resource?
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -108,6 +110,8 @@ public class Auction {
 
     @OneToMany
     private List<Document> tilePictures = new ArrayList<>();
+
+    //TODO: additional info like in https://www.hanmark.de/wertgutachten-29300.html
 
     @Builder
     public Auction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
