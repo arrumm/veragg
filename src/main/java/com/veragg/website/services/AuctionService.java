@@ -20,6 +20,6 @@ public interface AuctionService {
 
     List<Auction> findAllDrafts();
 
-    Auction findDraftByFileNumberCourtSource(String fileNumber, Court court, AuctionSource source);
+    Auction findDraftBy(String fileNumber, Court court, AuctionSource source);
 
 }
