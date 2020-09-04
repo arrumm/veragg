@@ -51,6 +51,7 @@ public abstract class AbstractCrawler implements Crawling {
                 String pageData = getPageContent(url);
                 auctionDTO = fetchAuction(new ByteArrayInputStream(pageData.getBytes()), url);
                 Auction auction = auctionMapper.map(auctionDTO);
+                //TODO: adjust unit tests
                 Auction auctionFound = auctionService.findDraftBy(auction.getFileNumber(), auction.getCourt(), auctionSource);
                 if (isNull(auctionFound)) {
                     auction.setSource(auctionSource);

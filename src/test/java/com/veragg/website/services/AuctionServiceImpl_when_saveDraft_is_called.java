@@ -12,6 +12,7 @@ import com.veragg.website.domain.AuctionStatus;
 import com.veragg.website.domain.Court;
 import com.veragg.website.domain.Document;
 import com.veragg.website.repository.AuctionRepo;
+import com.veragg.website.repository.CourtRepo;
 import com.veragg.website.repository.DocumentAuctionRepo;
 
 import static org.junit.Assert.assertEquals;
@@ -35,6 +36,9 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
     AuctionRepo auctionRepo;
 
     @Mock
+    CourtRepo courtRepo;
+
+    @Mock
     DocumentAuctionRepo documentAuctionRepo;
 
     @Mock
@@ -55,7 +59,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         when(auction.getFileNumber()).thenReturn("AZ number");
         when(auction.getCourt()).thenReturn(court);
         when(auction.getSource()).thenReturn(source);
-        sut = new AuctionServiceImpl(auctionRepo, documentAuctionRepo);
+        sut = new AuctionServiceImpl(auctionRepo, documentAuctionRepo, courtRepo);
     }
 
     @Test
