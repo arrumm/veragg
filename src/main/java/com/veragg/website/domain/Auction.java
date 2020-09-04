@@ -7,12 +7,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,6 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Builder;
@@ -36,10 +39,10 @@ import lombok.Setter;
 @Entity
 public class Auction {
 
-    //TODO: create and id for requesting the resource?
+    //TODO: create a special id for requesting the resource?
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NonNull
@@ -75,15 +78,19 @@ public class Auction {
     private BuyLimit buyLimit;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String outdoorDescription;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String propertyBuildingDescription;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String propertyPlotDescription;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String expertiseDescription;
 
     @Column(name = "created_on")
@@ -101,14 +108,14 @@ public class Auction {
     @Column(name = "source_url")
     private String sourceUrl;
 
-    @OneToMany
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Document> documents = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @NonNull
     private AuctionStatus auctionStatus;
 
-    @OneToMany
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Document> tilePictures = new ArrayList<>();
 
     //TODO: additional info like in https://www.hanmark.de/wertgutachten-29300.html
@@ -116,7 +123,7 @@ public class Auction {
     @Builder
     public Auction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
             @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, String sourceUrl,
-            AuctionSource source, List<Document> documents) {
+            AuctionSource source, List<Document> documents, @NonNull AuctionStatus auctionStatus) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;
@@ -131,6 +138,7 @@ public class Auction {
         this.sourceUrl = sourceUrl;
         this.source = source;
         this.documents = documents;
+        this.auctionStatus = auctionStatus;
     }
 
     @Override
