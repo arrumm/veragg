@@ -2,6 +2,8 @@ package com.veragg.website.domain;
 
 import javax.persistence.Embeddable;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
+@Builder
 public class Address {
 
     private String street;
@@ -17,12 +21,5 @@ public class Address {
     private String zipCode;
     private String city;
     private String flat;
-
-    public Address(final String street, final String no, final String zipCode, final String city) {
-        this.street = street;
-        this.number = no;
-        this.zipCode = zipCode;
-        this.city = city;
-    }
 
 }
