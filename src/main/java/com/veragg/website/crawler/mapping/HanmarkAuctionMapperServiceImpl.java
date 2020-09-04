@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.domain.Address;
 import com.veragg.website.domain.Auction;
+import com.veragg.website.domain.AuctionStatus;
 import com.veragg.website.domain.BuyLimit;
 import com.veragg.website.domain.Court;
 import com.veragg.website.domain.Document;
@@ -73,6 +74,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .outdoorDescription(auctionDTO.getOutdoorDescription())
                 .propertyPlotDescription(auctionDTO.getPlotDescription())
                 .sourceUrl(auctionDTO.getSourceUrl())
+                .auctionStatus(AuctionStatus.DRAFT)
                 .build();
         //@formatter:on
 
@@ -80,6 +82,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         auctionDTO.getImageLinks().forEach(imageUrl -> documents.add(new Document(imageUrl, DocumentType.IMAGE, auctionDTO.getImageLinks().indexOf(imageUrl) + 1)));
         auctionDTO.getExpertiseLinks().forEach(expertiseUrl -> documents.add(new Document(expertiseUrl, DocumentType.EXPERTISE)));
         auctionDTO.getOtherDocumentLinks().forEach(otherDocumentUrl -> documents.add(new Document(otherDocumentUrl, DocumentType.OTHER)));
+        documents.forEach(document -> document.setAuction(auction));
         auction.setDocuments(documents);
 
         return auction;
@@ -110,17 +113,16 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     }
 
     private Address getAddress(String streetAddress, String cityAddress) {
-        Address address = new Address();
+
+        Address.AddressBuilder addressBuilder = Address.builder();
 
         String houseNumber = extractByPattern(Pattern.compile(HOUSE_NUMBER_REGEX), streetAddress).replace("+", "-");
-        address.setNumber(houseNumber.trim());
-        address.setStreet(streetAddress.replaceFirst(houseNumber, StringUtils.EMPTY).trim());
+        addressBuilder.number(houseNumber.trim()).street(streetAddress.replaceFirst(houseNumber, StringUtils.EMPTY).trim());
 
         String zipCode = extractByPattern(Pattern.compile(ZIPCODE_REGEX), cityAddress);
-        address.setZipCode(zipCode.trim());
-        address.setCity(cityAddress.replaceAll(zipCode, StringUtils.EMPTY).trim());
+        addressBuilder.zipCode(zipCode.trim()).city(cityAddress.replaceAll(zipCode, StringUtils.EMPTY).trim());
 
-        return address;
+        return addressBuilder.build();
     }
 
     private String extractByPattern(Pattern pattern, String source) {
