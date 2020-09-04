@@ -22,6 +22,7 @@ import com.veragg.website.services.AuctionSourceService;
 import lombok.NonNull;
 
 import static com.veragg.website.crawler.InternetUtils.getPageContent;
+import static java.util.Objects.isNull;
 
 public abstract class AbstractCrawler implements Crawling {
 
@@ -50,8 +51,11 @@ public abstract class AbstractCrawler implements Crawling {
                 String pageData = getPageContent(url);
                 auctionDTO = fetchAuction(new ByteArrayInputStream(pageData.getBytes()), url);
                 Auction auction = auctionMapper.map(auctionDTO);
-                auction.setSource(auctionSource);
-                auctionService.saveDraft(auction);
+                Auction auctionFound = auctionService.findDraftBy(auction.getFileNumber(), auction.getCourt(), auctionSource);
+                if (isNull(auctionFound)) {
+                    auction.setSource(auctionSource);
+                    auctionService.saveDraft(auction);
+                }
             } catch (IOException e) {
                 LOGGER.error("Page data fetch from [{}] failed", url, e);
             } catch (ParseException e) {
