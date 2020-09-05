@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+  <changeSet author="rarkhipov" id="changelog-createStateZipCodesTable">
+    <createTable tableName="state_zip_codes">
+      <column name="id" type="int" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="location" type="varchar(255)" />
+      <column name="location_addition" type="varchar(255)" />
+      <column name="location_with_addition" type="varchar(255)" />
+      <column name="zip_code" type="varchar(255)" />
+      <column name="state_id" type="varchar(255)" />
+    </createTable>
+  </changeSet>
+</databaseChangeLog>

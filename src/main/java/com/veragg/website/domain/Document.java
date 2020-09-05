@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.veragg.website.services.FileUrlHelper;
 
@@ -23,6 +24,7 @@ import static java.util.Objects.isNull;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "documents")
 public class Document implements Comparable<Document> {
 
     @Id

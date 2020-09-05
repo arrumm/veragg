@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+  <changeSet author="rarkhipov" id="changelog-createAuctionToCourtConstraint">
+    <addForeignKeyConstraint
+        constraintName="auction_to_court_id"
+        baseTableName="auctions"
+        baseColumnNames="court_id"
+        referencedTableName="courts"
+        referencedColumnNames="id" />
+  </changeSet>
+  <changeSet author="rarkhipov" id="changelog-createAuctionToSourceConstraint">
+    <addForeignKeyConstraint
+        constraintName="auction_to_source_id"
+        baseTableName="auctions"
+        baseColumnNames="source_id"
+        referencedTableName="auction_sources"
+        referencedColumnNames="id" />
+  </changeSet>
+</databaseChangeLog>

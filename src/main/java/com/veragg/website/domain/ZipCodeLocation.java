@@ -25,8 +25,7 @@ public class ZipCodeLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "serial")
-    private Long id;
+    private Integer id;
 
     @Column(name = "zip_code")
     private String zipCode;

@@ -4,9 +4,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
-  <changeSet author="rarkhipov" id="changelog-createAuctionTable">
-    <createTable tableName="auction">
-      <column name="id" type="int(4)" autoIncrement="true">
+  <changeSet author="rarkhipov" id="changelog-createAuctionsTable">
+    <createTable tableName="auctions">
+      <column name="id" type="bigint" autoIncrement="true">
         <constraints primaryKey="true" nullable="false" />
       </column>
       <column name="city" type="varchar(255)" />
@@ -14,7 +14,7 @@
       <column name="number" type="varchar(255)" />
       <column name="street" type="varchar(255)" />
       <column name="zip_code" type="varchar(255)" />
-      <column name="amount" type="int(4)" />
+      <column name="amount" type="int" />
       <column name="appointment" type="timestamp" />
       <column name="created_on" type="timestamp" />
       <column name="updated_on" type="timestamp" />
@@ -26,8 +26,8 @@
       <column name="buy_limit" type="varchar(255)" />
       <column name="file_number" type="varchar(255)" />
       <column name="source_url" type="varchar(255)" />
-      <column name="source_id" type="int(4)" />
-      <column name="court_id" type="int(8)" />
+      <column name="source_id" type="int" />
+      <column name="court_id" type="bigint" />
     </createTable>
   </changeSet>
 </databaseChangeLog>

@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,6 +27,7 @@ import lombok.Setter;
         "address"
 })
 @Entity
+@Table(name = "courts")
 public class Court {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
