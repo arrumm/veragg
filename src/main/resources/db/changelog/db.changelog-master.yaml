@@ -1,9 +1,0 @@
-databaseChangeLog:
-  #  - include:
-  #      file: db/schema/sequence-init.yaml
-  #  - include:
-  #      file: db/schema/auction-table-init.yaml
-  - include:
-      file: db/schema/initial_schema.sql
-  - includeAll:
-      path: db/initial/

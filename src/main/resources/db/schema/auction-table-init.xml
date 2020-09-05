@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+  <changeSet author="rarkhipov" id="changelog-createAuctionTable">
+    <createTable tableName="auction">
+      <column name="id" type="int(4)" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="city" type="varchar(255)" />
+      <column name="flat" type="varchar(255)" />
+      <column name="number" type="varchar(255)" />
+      <column name="street" type="varchar(255)" />
+      <column name="zip_code" type="varchar(255)" />
+      <column name="amount" type="int(4)" />
+      <column name="appointment" type="timestamp" />
+      <column name="created_on" type="timestamp" />
+      <column name="updated_on" type="timestamp" />
+      <column name="auction_status" type="varchar(255)" />
+      <column name="expertise_description" type="clob" />
+      <column name="outdoor_description" type="clob" />
+      <column name="property_building_description" type="clob" />
+      <column name="property_plot_description" type="clob" />
+      <column name="buy_limit" type="varchar(255)" />
+      <column name="file_number" type="varchar(255)" />
+      <column name="source_url" type="varchar(255)" />
+      <column name="source_id" type="int(4)" />
+      <column name="court_id" type="int(8)" />
+    </createTable>
+  </changeSet>
+</databaseChangeLog>
