@@ -47,7 +47,7 @@ public enum PropertyType {
     }
 
     public static PropertyType getByName(String name) {
-        for (PropertyType propertyType : PropertyType.values()) {
+        for (PropertyType propertyType : values()) {
             if (propertyType.getName().equals(name)) {
                 return propertyType;
             }
@@ -57,7 +57,18 @@ public enum PropertyType {
 
     public static Set<PropertyType> getBySynonym(String synonym) {
         Set<PropertyType> propertyTypes = new HashSet<>();
-        Arrays.stream(PropertyType.values()).filter(propertyType -> propertyType.getSynonyms().contains(synonym)).forEach(propertyTypes::add);
+        Arrays.stream(values()).filter(propertyType -> propertyType.getSynonyms().contains(synonym)).forEach(propertyTypes::add);
+        return propertyTypes;
+    }
+
+    public static Set<PropertyType> getBySynonymIn(String description) {
+        Set<PropertyType> propertyTypes = new HashSet<>();
+        //@formatter:off
+        Arrays.stream(values())
+                .filter(propertyType -> propertyType.getSynonyms().stream()
+                        .anyMatch(description::contains))
+                .forEach(propertyTypes::add);
+        //@formatter:on
         return propertyTypes;
     }
 

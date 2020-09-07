@@ -58,7 +58,8 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
         String courtName = nameService.normalize(auctionDTO.getCourtName());
         Court court = courtService.findBy(courtName, address.getZipCode());
-        Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName());
+        String expertDescription = auctionDTO.getExpertDescription();
+        Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName(), expertDescription);
 
         //@formatter:off
         Auction auction = Auction.builder()
@@ -69,7 +70,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .fileNumber(auctionDTO.getFileNumber())
                 .buyLimit(getLimit(auctionDTO.getLimitDescription()))
                 .amount(Integer.parseInt(getNormalizedAmount(auctionDTO.getAmount())))
-                .expertiseDescription(auctionDTO.getExpertDescription())
+                .expertiseDescription(expertDescription)
                 .propertyBuildingDescription(auctionDTO.getBuildingDescription())
                 .outdoorDescription(auctionDTO.getOutdoorDescription())
                 .propertyPlotDescription(auctionDTO.getPlotDescription())
@@ -93,13 +94,14 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         return LocalDateTime.parse(normalizedDate, DATE_TIME_FORMATTER);
     }
 
-    private Set<PropertyType> getPropertyTypes(final String propertyTypeName) {
+    private Set<PropertyType> getPropertyTypes(final String propertyTypeName, String expertiseDescription) {
         Set<PropertyType> propertyTypes = new HashSet<>();
         PropertyType propertyTypeByName = PropertyType.getByName(propertyTypeName);
         if (nonNull(propertyTypeByName)) {
             propertyTypes.add(propertyTypeByName);
         }
         propertyTypes.addAll(PropertyType.getBySynonym(propertyTypeName));
+        propertyTypes.addAll(PropertyType.getBySynonymIn(expertiseDescription));
         if (propertyTypes.isEmpty()) {
             LOGGER.warn("No property type found {}", propertyTypeName);
         }
