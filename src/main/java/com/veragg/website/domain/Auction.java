@@ -120,6 +120,9 @@ public class Auction {
     @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Document> tilePictures = new ArrayList<>();
 
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AuctionHistory> history = new ArrayList<>();
+
     //TODO: additional info like in https://www.hanmark.de/wertgutachten-29300.html
 
     @Builder

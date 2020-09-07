@@ -24,7 +24,7 @@ public class DraftToAuctionMergeJob {
     @Scheduled(cron = "0 0 10 * * *")
     public void run() {
         List<Auction> sortedDrafts = auctionMergeService.getSortedDrafts();
-        auctionMergeService.merge(sortedDrafts);
+        auctionMergeService.mergeDrafts(sortedDrafts);
     }
 
 }

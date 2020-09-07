@@ -13,6 +13,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.veragg.website.domain.Auction;
+import com.veragg.website.domain.AuctionHistory;
+import com.veragg.website.domain.AuctionHistoryStatus;
 import com.veragg.website.domain.AuctionStatus;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -30,20 +32,29 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Auction.class)
-public class AuctionMergeServiceImpl_when_merge_is_called {
+@PrepareForTest({
+        Auction.class,
+        AuctionHistory.class
+})
+public class AuctionMergeServiceImpl_when_mergeDrafts_is_called {
 
     @Mock
-    AuctionServiceImpl auctionService;
+    AuctionService auctionService;
+
+    @Mock
+    AuctionHistoryService auctionHistoryService;
 
     @Mock
     Auction auction;
+
+    @Mock
+    AuctionHistory auctionHistory;
 
     AuctionMergeService sut;
 
     @Before
     public void setUp() {
-        sut = new AuctionMergeServiceImpl(auctionService);
+        sut = new AuctionMergeServiceImpl(auctionService, auctionHistoryService);
     }
 
     @Test
@@ -52,7 +63,7 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.merge(null));
+        assertThrows(NullPointerException.class, () -> sut.mergeDrafts(null));
 
     }
 
@@ -61,11 +72,12 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
 
         //Arrange
         //Act
-        List<Auction> resultList = sut.merge(Collections.emptyList());
+        List<Auction> resultList = sut.mergeDrafts(Collections.emptyList());
 
         //Assert
         assertTrue(resultList.isEmpty());
         verifyNoInteractions(auctionService);
+        verifyNoInteractions(auctionHistoryService);
 
     }
 
@@ -74,13 +86,21 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
 
         //Arrange
         ArgumentCaptor<List<Auction>> auctionListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List<AuctionHistory>> auctionHistoryListArgumentCaptor = ArgumentCaptor.forClass(List.class);
         List<Auction> auctionDrafts = Arrays.asList(auction, auction);
         when(auctionService.saveAll(eq(auctionDrafts))).thenReturn(auctionDrafts);
         doCallRealMethod().when(auction).setAuctionStatus(any(AuctionStatus.class));
         doCallRealMethod().when(auction).getAuctionStatus();
 
+        List<AuctionHistory> auctionHistoryList = Arrays.asList(auctionHistory, auctionHistory);
+        when(auctionHistoryService.saveAll(anyList())).thenReturn(auctionHistoryList);
+        when(auctionHistory.getAuction()).thenReturn(auction);
+        when(auctionHistory.getHistoryStatus()).thenReturn(AuctionHistoryStatus.ADDED);
+
+        when(auctionHistoryService.getHistoryAdded(eq(auction))).thenReturn(auctionHistory);
+
         //Act
-        List<Auction> resultList = sut.merge(auctionDrafts);
+        List<Auction> resultList = sut.mergeDrafts(auctionDrafts);
 
         //Assert
         assertFalse(resultList.isEmpty());
@@ -92,6 +112,14 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
         assertEquals(AuctionStatus.ACTIVE, auctionListArgument.get(0).getAuctionStatus());
         assertEquals(AuctionStatus.ACTIVE, auctionListArgument.get(1).getAuctionStatus());
 
+        verify(auctionHistoryService).saveAll(auctionHistoryListArgumentCaptor.capture());
+        List<AuctionHistory> auctionHistoryListArgument = auctionHistoryListArgumentCaptor.getValue();
+        assertEquals(2, auctionHistoryListArgument.size());
+        assertEquals(AuctionHistoryStatus.ADDED, auctionHistoryListArgument.get(0).getHistoryStatus());
+        assertEquals(AuctionHistoryStatus.ADDED, auctionHistoryListArgument.get(1).getHistoryStatus());
+        assertEquals(auction, auctionHistoryListArgument.get(0).getAuction());
+        assertEquals(auction, auctionHistoryListArgument.get(1).getAuction());
+
     }
 
     @Test
@@ -102,7 +130,7 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
 
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.merge(Collections.singletonList(auction)));
+        assertThrows(NullPointerException.class, () -> sut.mergeDrafts(Collections.singletonList(auction)));
 
     }
 
@@ -114,11 +142,12 @@ public class AuctionMergeServiceImpl_when_merge_is_called {
         when(auctionService.saveAll(eq(auctionList))).thenReturn(auctionList);
 
         //Act
-        List<Auction> resultList = sut.merge(auctionList);
+        List<Auction> resultList = sut.mergeDrafts(auctionList);
 
         //Assert
         assertThat(resultList, hasItem(auction));
         verify(auctionService).saveAll(eq(auctionList));
+        verify(auctionHistoryService).saveAll(anyList());
     }
 
 }

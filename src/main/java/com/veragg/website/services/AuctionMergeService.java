@@ -6,7 +6,7 @@ import com.veragg.website.domain.Auction;
 
 public interface AuctionMergeService {
 
-    List<Auction> merge(List<Auction> auctions);
+    List<Auction> mergeDrafts(List<Auction> auctions);
 
     List<Auction> getSortedDrafts();
 
