@@ -1,7 +1,7 @@
 package com.veragg.website.crawler;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -77,9 +77,10 @@ public class HanmarkCrawler extends AbstractCrawler {
     }
 
     @Override
-    HanmarkAuctionDTO fetchAuction(final InputStream pageData, final String baseUri) throws IOException {
+    HanmarkAuctionDTO fetchAuction(PageData pageData) throws IOException {
 
-        Document doc = Jsoup.parse(pageData, "UTF-8", baseUri);
+        String baseUri = pageData.getUrl();
+        Document doc = Jsoup.parse(new ByteArrayInputStream(pageData.getContent().getBytes()), "UTF-8", baseUri);
 
         //@formatter:off
         final HanmarkAuctionDTO auctionDTO = HanmarkAuctionDTO.builder()
