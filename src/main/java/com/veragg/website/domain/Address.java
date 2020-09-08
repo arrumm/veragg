@@ -17,9 +17,11 @@ import lombok.Setter;
 public class Address {
 
     private String street;
+    //todo: rename to buildingNumber
     private String number;
     private String zipCode;
     private String city;
+    //    todo: flatNumber
     private String flat;
 
 }

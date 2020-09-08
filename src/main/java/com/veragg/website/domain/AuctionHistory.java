@@ -42,6 +42,7 @@ public class AuctionHistory {
     @Enumerated(EnumType.STRING)
     private AuctionHistoryStatus historyStatus;
 
+    //todo: rename to 
     @Column(name = "created")
     @CreationTimestamp
     private Instant createdOn;

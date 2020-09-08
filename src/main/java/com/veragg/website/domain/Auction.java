@@ -67,10 +67,12 @@ public class Auction {
     private Address address;
 
     //termin
+    //todo: appointmentDate
     @NonNull
     private LocalDateTime appointment;
 
     //Verkehrswert
+    //todo: rename to marketValue
     @NonNull
     private Integer amount;
 

@@ -16,6 +16,7 @@ import lombok.NonNull;
 
 import static java.util.Objects.nonNull;
 
+//todo: refactor to service
 public class InternetUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InternetUtils.class);
