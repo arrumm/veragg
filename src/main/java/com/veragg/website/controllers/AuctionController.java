@@ -44,7 +44,7 @@ public class AuctionController {
                 .collect(Collectors.toList());
         //@formatter:on
 
-        result.put("auctions", auctionDTOList);
+        result.put("auction_previews", auctionDTOList);
         return result;
     }
 

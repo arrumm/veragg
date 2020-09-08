@@ -32,6 +32,8 @@ public class AuctionPreviewDTOMapperService {
                 .zipCode(auction.getAddress().getZipCode())
                 .appointment(DateConverter.dateToTimestamp(auction.getAppointment()))
                 .amount(auction.getAmount())
+                .street(auction.getAddress().getStreet())
+                .number(auction.getAddress().getNumber())
                 //todo: combine a filename by id with some predefined static storage
                 .tileImage(timeImageFileName)
                 .build();
