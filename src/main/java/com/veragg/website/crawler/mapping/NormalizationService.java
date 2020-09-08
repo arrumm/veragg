@@ -3,9 +3,9 @@ package com.veragg.website.crawler.mapping;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NameService {
+public class NormalizationService {
 
-    public String normalize(String name) {
+    public String normalizeCity(String name) {
 
         String result = name;
         result = result.replace("ü", "u");

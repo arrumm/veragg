@@ -44,19 +44,19 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private static final DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder().appendPattern("dd.MM.yyyy HH:mm").toFormatter().withZone(ZoneId.of("Europe/Berlin"));
 
     private final CourtService courtService;
-    private final NameService nameService;
+    private final NormalizationService normalizationService;
 
     @Autowired
-    public HanmarkAuctionMapperServiceImpl(final CourtService courtService, NameService nameService) {
+    public HanmarkAuctionMapperServiceImpl(final CourtService courtService, NormalizationService normalizationService) {
         this.courtService = courtService;
-        this.nameService = nameService;
+        this.normalizationService = normalizationService;
     }
 
     @Override
     public Auction map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
 
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
-        String courtName = nameService.normalize(auctionDTO.getCourtName());
+        String courtName = normalizationService.normalizeCity(auctionDTO.getCourtName());
         Court court = courtService.findBy(courtName, address.getZipCode());
         String expertDescription = auctionDTO.getExpertDescription();
         Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName(), expertDescription);
