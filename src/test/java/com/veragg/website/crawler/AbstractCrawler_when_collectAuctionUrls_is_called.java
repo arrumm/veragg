@@ -1,12 +1,20 @@
 package com.veragg.website.crawler;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +23,25 @@ import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.services.AuctionService;
 import com.veragg.website.services.AuctionSourceService;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-//        PageDataService.class,
-        LoggerFactory.class
+        PageData.class,
+        LoggerFactory.class,
+        AbstractCrawler.class
 })
 public class AbstractCrawler_when_collectAuctionUrls_is_called {
 
@@ -47,53 +70,66 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     @Mock
     IOException ioException;
 
-    //    @Before
-    //    public void setUp() {
-    //        initMocks(this);
-    //        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
-    //        sut = Mockito.spy(hanmarkCrawler);
-    //        when(sut.getMaxCrawlDepth()).thenReturn(2);
-    //        PowerMockito.mockStatic(PageDataService.class);
-    //        mockStatic(LoggerFactory.class);
-    //        PowerMockito.when(LoggerFactory.getLogger(HanmarkCrawler.class)).thenReturn(logger);
-    //        Whitebox.setInternalState(sut, logger);
-    //    }
-    //
-    //    @Test
-    //    public void given_get_page_content_throw_IOException_for_url_then_process_only_others_url() throws IOException {
-    //
-    //        //Arrange
-    //        Pattern crawlPattern = Pattern.compile(CRAWL);
-    //        Pattern collectPattern = Pattern.compile(COLLECT);
-    //
-    //        PowerMockito.when(PageDataService.getPageContent(eq("startUrl"))).thenReturn(START_URL_CONTENT);
-    //        Set<String> urls = new HashSet<String>() {{
-    //            add("urlFirst");
-    //            add("urlSecond");
-    //        }};
-    //        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(START_URL_CONTENT));
-    //        doReturn(urls).when(sut).fetchUrls(eq(crawlPattern), eq(START_URL_CONTENT));
-    //
-    //        Set<String> urlsFromFirst = new HashSet<String>() {{
-    //            add("urlFirst2");
-    //            add("urlFirst1");
-    //        }};
-    //        PowerMockito.when(PageDataService.getPageContent(eq("urlFirst"))).thenReturn(URL_FIRST_CONTENT);
-    //        doReturn(urlsFromFirst).when(sut).fetchUrls(eq(collectPattern), eq(URL_FIRST_CONTENT));
-    //        PowerMockito.when(PageDataService.getPageContent(eq("urlSecond"))).thenThrow(ioException);
-    //
-    //        //Act
-    //        Set<String> result = sut.collectAuctionUrls("startUrl", 0, crawlPattern, collectPattern);
-    //
-    //        //Assert
-    //        assertNotNull(result);
-    //        assertEquals(2, result.size());
-    //        verify(sut, times(3)).fetchUrls(any(), anyString());
-    //        verify(sut, never()).fetchUrls(eq(collectPattern), eq(URL_SECOND_CONTENT));
-    //        verify(logger).error(eq("Error get content of [{}]"), eq("urlSecond"), eq(ioException));
-    //
-    //    }
-    //
+    @Mock
+    PageData pageData;
+
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
+        sut = Mockito.spy(hanmarkCrawler);
+        when(sut.getMaxCrawlDepth()).thenReturn(2);
+        mockStatic(LoggerFactory.class);
+        PowerMockito.when(LoggerFactory.getLogger(HanmarkCrawler.class)).thenReturn(logger);
+        Whitebox.setInternalState(sut, logger);
+        PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageData);
+    }
+
+    @Test
+    public void given_get_page_content_throw_IOException_for_url_then_process_only_others_url() throws Exception {
+
+        //Arrange
+        Pattern crawlPattern = Pattern.compile(CRAWL);
+        Pattern collectPattern = Pattern.compile(COLLECT);
+
+        PageData pageDataStartUrl = mock(PageData.class);
+        PageData pageDataFirstUrl = mock(PageData.class);
+        PageData pageDataSecondUrl = mock(PageData.class);
+
+        PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageDataStartUrl, pageDataFirstUrl, pageDataSecondUrl);
+
+        when(pageDataStartUrl.getData()).thenReturn(pageDataStartUrl);
+        when(pageDataFirstUrl.getData()).thenReturn(pageDataFirstUrl);
+        when(pageDataSecondUrl.getData()).thenThrow(ioException);
+
+        when(pageDataStartUrl.getContent()).thenReturn(START_URL_CONTENT);
+        when(pageDataFirstUrl.getContent()).thenReturn(URL_FIRST_CONTENT);
+
+        Set<String> urls = new HashSet<String>() {{
+            add("urlFirst");
+            add("urlSecond");
+        }};
+        doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), eq(START_URL_CONTENT));
+        doReturn(urls).when(sut).fetchUrls(eq(crawlPattern), eq(START_URL_CONTENT));
+
+        Set<String> urlsFromFirst = new HashSet<String>() {{
+            add("urlFirst2");
+            add("urlFirst1");
+        }};
+        doReturn(urlsFromFirst).when(sut).fetchUrls(eq(collectPattern), eq(URL_FIRST_CONTENT));
+
+        //Act
+        Set<String> result = sut.collectAuctionUrls("startUrl", 0, crawlPattern, collectPattern);
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(sut, times(3)).fetchUrls(any(), anyString());
+        verify(sut, never()).fetchUrls(eq(collectPattern), eq(URL_SECOND_CONTENT));
+        verify(logger).error(eq("Error get content of [{}]"), eq("urlSecond"), eq(ioException));
+
+    }
+
     //    @Test
     //    public void given_get_page_content_throw_IOException_then_exception_logged() throws IOException {
     //
@@ -101,7 +137,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     //        Pattern crawlPattern = Pattern.compile(CRAWL);
     //        Pattern collectPattern = Pattern.compile(COLLECT);
     //
-    //        PowerMockito.when(PageDataService.getPageContent(eq("startUrl"))).thenThrow(ioException);
+    //        PowerMockito.when(PageDataService.getPageContent(eq("startUrl"))).`thenThro`w(ioException);
     //
     //        //Act
     //        Set<String> result = sut.collectAuctionUrls("startUrl", 0, crawlPattern, collectPattern);
@@ -256,7 +292,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     //    public void given_urls_collected_then_return_set_of_urls_and_initial_url_removed() throws IOException {
     //
     //        //Arrange
-    //        PowerMockito.when(PageDataService.getPageContent(anyString())).thenReturn("");
+    //        when(PageData.getPageContent(anyString())).thenReturn("");
     //        Set<String> urls = new HashSet<String>() {{
     //            add("url1");
     //            add("url2");
