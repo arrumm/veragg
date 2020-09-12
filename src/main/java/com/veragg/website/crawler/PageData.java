@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import static java.util.Objects.nonNull;
@@ -33,7 +34,7 @@ public class PageData {
 
     private Boolean available = Boolean.FALSE;
 
-    public PageData(String url) {
+    public PageData(@NonNull String url) {
         this.url = url;
     }
 
