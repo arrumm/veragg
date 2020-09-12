@@ -29,9 +29,9 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
@@ -123,7 +123,8 @@ public class PageData_when_getData_is_called {
         assertNull(resultPageData.getContent());
 
         verify(logger).warn(eq("Page data from url [{}] cannot be fetched, response status is [{}]"), eq("forbiddenUrl"), eq(403));
-        verifyNoInteractions(IOUtils.class);
+        verifyNoMoreInteractions(IOUtils.class);
+        IOUtils.toString(any(InputStream.class), eq(StandardCharsets.UTF_8));
 
     }
 
