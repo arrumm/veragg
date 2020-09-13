@@ -1,10 +1,13 @@
 package com.veragg.website.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,8 +64,13 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> getAll() {
-        return auctionRepo.findAll();
+    public Page<Auction> getAll(Pageable pageable) {
+        return auctionRepo.findAll(pageable);
+    }
+
+    @Override
+    public Page<Auction> findAllAvailable(Pageable pageable) {
+        return auctionRepo.findAllByAuctionStatusAndAppointmentIsAfter(AuctionStatus.ACTIVE, LocalDate.now().atStartOfDay(), pageable);
     }
 
     @Override
