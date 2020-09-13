@@ -99,9 +99,9 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
 
         PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageDataStartUrl, pageDataFirstUrl, pageDataSecondUrl);
 
-        when(pageDataStartUrl.getData()).thenReturn(pageDataStartUrl);
-        when(pageDataFirstUrl.getData()).thenReturn(pageDataFirstUrl);
-        when(pageDataSecondUrl.getData()).thenThrow(ioException);
+        when(pageDataStartUrl.fetch()).thenReturn(pageDataStartUrl);
+        when(pageDataFirstUrl.fetch()).thenReturn(pageDataFirstUrl);
+        when(pageDataSecondUrl.fetch()).thenThrow(ioException);
 
         when(pageDataStartUrl.getContent()).thenReturn(START_URL_CONTENT);
         when(pageDataFirstUrl.getContent()).thenReturn(URL_FIRST_CONTENT);
@@ -140,7 +140,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
 
         PageData pageDataStartUrl = mock(PageData.class);
         PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageDataStartUrl);
-        when(pageDataStartUrl.getData()).thenThrow(ioException);
+        when(pageDataStartUrl.fetch()).thenThrow(ioException);
 
         //Act
         Set<String> result = sut.collectAuctionUrls("startUrl", 0, crawlPattern, collectPattern);
@@ -188,9 +188,9 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
 
         PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageDataStartUrl, pageDataFirstUrl, pageDataSecondUrl);
 
-        when(pageDataStartUrl.getData()).thenReturn(pageDataStartUrl);
-        when(pageDataFirstUrl.getData()).thenReturn(pageDataFirstUrl);
-        when(pageDataSecondUrl.getData()).thenReturn(pageDataSecondUrl);
+        when(pageDataStartUrl.fetch()).thenReturn(pageDataStartUrl);
+        when(pageDataFirstUrl.fetch()).thenReturn(pageDataFirstUrl);
+        when(pageDataSecondUrl.fetch()).thenReturn(pageDataSecondUrl);
 
         when(pageDataStartUrl.getContent()).thenReturn(START_URL_CONTENT);
         when(pageDataFirstUrl.getContent()).thenReturn(URL_FIRST_CONTENT);
@@ -228,9 +228,9 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
 
         PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageDataStartUrl, pageDataFirstUrl, pageDataSecondUrl);
 
-        when(pageDataStartUrl.getData()).thenReturn(pageDataStartUrl);
-        when(pageDataFirstUrl.getData()).thenReturn(pageDataFirstUrl);
-        when(pageDataSecondUrl.getData()).thenReturn(pageDataSecondUrl);
+        when(pageDataStartUrl.fetch()).thenReturn(pageDataStartUrl);
+        when(pageDataFirstUrl.fetch()).thenReturn(pageDataFirstUrl);
+        when(pageDataSecondUrl.fetch()).thenReturn(pageDataSecondUrl);
 
         when(pageDataStartUrl.getContent()).thenReturn(START_URL_CONTENT);
         when(pageDataFirstUrl.getContent()).thenReturn(URL_FIRST_CONTENT);
@@ -271,7 +271,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
         //Arrange
         PageData pageData = mock(PageData.class);
         PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageData);
-        when(pageData.getData()).thenReturn(pageData);
+        when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn(StringUtils.EMPTY);
 
         Set<String> urls = new HashSet<String>() {{
@@ -300,7 +300,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
 
         PageData pageData = mock(PageData.class);
         PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageData);
-        when(pageData.getData()).thenReturn(pageData);
+        when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn("pageContent");
 
         doReturn(Collections.EMPTY_SET).when(sut).fetchUrls(eq(collectPattern), anyString());
@@ -325,7 +325,7 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
         //Arrange
         PageData pageData = mock(PageData.class);
         PowerMockito.whenNew(PageData.class).withAnyArguments().thenReturn(pageData);
-        when(pageData.getData()).thenReturn(pageData);
+        when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn(StringUtils.EMPTY);
 
         Set<String> urls = new HashSet<String>() {{

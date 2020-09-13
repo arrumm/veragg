@@ -97,7 +97,7 @@ public class AbstractCrawler_when_process_is_called {
         Whitebox.setInternalState(sut, logger);
 
         PowerMockito.whenNew(PageData.class).withArguments(eq(AUCTION_URL)).thenReturn(pageData);
-        when(pageData.getData()).thenReturn(pageData);
+        when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
     }
 
@@ -158,9 +158,9 @@ public class AbstractCrawler_when_process_is_called {
         PageData pageDataFromAnotherUrl = mock(PageData.class);
         PowerMockito.whenNew(PageData.class).withArguments(eq(ANOTHER_AUCTION_URL)).thenReturn(pageDataFromAnotherUrl);
 
-        when(pageData.getData()).thenReturn(pageData);
+        when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
-        when(pageDataFromAnotherUrl.getData()).thenReturn(pageDataFromAnotherUrl);
+        when(pageDataFromAnotherUrl.fetch()).thenReturn(pageDataFromAnotherUrl);
         when(pageDataFromAnotherUrl.getContent()).thenReturn(ANOTHER_AUCTION_URL_CONTENT);
 
         HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
@@ -197,9 +197,9 @@ public class AbstractCrawler_when_process_is_called {
         PageData pageDataNPE = mock(PageData.class);
         PowerMockito.whenNew(PageData.class).withArguments(eq("auctionUrlNPE")).thenReturn(pageDataNPE);
 
-        when(pageData.getData()).thenReturn(pageData);
+        when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
-        when(pageDataNPE.getData()).thenReturn(pageDataNPE);
+        when(pageDataNPE.fetch()).thenReturn(pageDataNPE);
         when(pageDataNPE.getContent()).thenReturn(AUCTION_URL_CONTENT);
 
         doThrow(ioException).when(sut).fetchAuction(eq(pageData));
@@ -281,7 +281,7 @@ public class AbstractCrawler_when_process_is_called {
 
         //Assert
         verify(pageData, never());
-        pageData.getData();
+        pageData.fetch();
 
     }
 

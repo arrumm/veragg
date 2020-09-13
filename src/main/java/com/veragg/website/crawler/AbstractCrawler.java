@@ -46,7 +46,7 @@ public abstract class AbstractCrawler implements Crawling {
         for (String url : urlsToFetch) {
             try {
                 PageData pageData = new PageData(url);
-                auctionDTO = fetchAuction(pageData.getData());
+                auctionDTO = fetchAuction(pageData.fetch());
                 Auction auction = auctionMapper.map(auctionDTO);
                 Auction auctionFound = auctionService.findDraftBy(auction.getFileNumber(), auction.getCourt(), auctionSource);
                 if (isNull(auctionFound)) {
@@ -82,7 +82,7 @@ public abstract class AbstractCrawler implements Crawling {
         if (!visitedUrls.contains(currentUrl)) {
             final String currentPageContent;
             try {
-                currentPageContent = new PageData(currentUrl).getData().getContent();
+                currentPageContent = new PageData(currentUrl).fetch().getContent();
                 visitedUrls.add(currentUrl);
 
                 fetchedUrls.addAll(fetchUrls(extractAuctionUrlPattern, currentPageContent));

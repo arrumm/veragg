@@ -38,7 +38,7 @@ public class PageData {
         this.url = url;
     }
 
-    public PageData getData() throws IOException {
+    public PageData fetch() throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             try (CloseableHttpResponse response = httpClient.execute(new HttpGet(this.url))) {
                 int status = response.getStatusLine().getStatusCode();

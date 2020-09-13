@@ -39,7 +39,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
         IOUtils.class,
         LoggerFactory.class
 })
-public class PageData_when_getData_is_called {
+public class PageData_when_fetch_is_called {
 
     @Mock
     private CloseableHttpClient httpClient;
@@ -84,7 +84,7 @@ public class PageData_when_getData_is_called {
         PowerMockito.when(HttpClients.createDefault()).then(throwIOException());
 
         //Act
-        sut.getData();
+        sut.fetch();
 
         //Assert
     }
@@ -102,7 +102,7 @@ public class PageData_when_getData_is_called {
         when(httpClient.execute(any(HttpGet.class))).thenThrow(ioException);
 
         //Act
-        sut.getData();
+        sut.fetch();
 
         //Assert
     }
@@ -116,7 +116,7 @@ public class PageData_when_getData_is_called {
         when(statusLine.getStatusCode()).thenReturn(403);
 
         //Act
-        PageData resultPageData = new PageData("forbiddenUrl").getData();
+        PageData resultPageData = new PageData("forbiddenUrl").fetch();
 
         //Assert
         assertNotNull(resultPageData);
@@ -140,7 +140,7 @@ public class PageData_when_getData_is_called {
         PowerMockito.when(IOUtils.toString(eq(inputStream), eq(StandardCharsets.UTF_8))).thenReturn("entityBody");
 
         //Act
-        PageData result = new PageData("url").getData();
+        PageData result = new PageData("url").fetch();
 
         //Assert
         assertNotNull(result);
@@ -158,7 +158,7 @@ public class PageData_when_getData_is_called {
         when(httpResponse.getEntity()).thenReturn(null);
 
         //Act
-        PageData result = new PageData("url").getData();
+        PageData result = new PageData("url").fetch();
 
         //Assert
         assertNotNull(result);
