@@ -2,6 +2,9 @@ package com.veragg.website.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.domain.Court;
@@ -16,10 +19,12 @@ public interface AuctionService {
 
     void delete(Auction auction);
 
-    List<Auction> findAll();
+    Page<Auction> getAll(Pageable pageable);
+
+    Page<Auction> findAllAvailable(Pageable pageable);
 
     List<Auction> findAllDrafts();
 
-    Auction findDraftByFileNumberCourtSource(String fileNumber, Court court, AuctionSource source);
+    Auction findDraftBy(String fileNumber, Court court, AuctionSource source);
 
 }

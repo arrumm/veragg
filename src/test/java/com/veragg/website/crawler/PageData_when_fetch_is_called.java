@@ -1,15 +1,16 @@
 package com.veragg.website.crawler;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,20 +25,21 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
+import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
         HttpClients.class,
-        EntityUtils.class,
+        IOUtils.class,
         LoggerFactory.class
 })
-public class InternetUtils_when_getPageContent_is_called {
+public class PageData_when_fetch_is_called {
 
     @Mock
     private CloseableHttpClient httpClient;
@@ -57,15 +59,22 @@ public class InternetUtils_when_getPageContent_is_called {
     @Mock
     Logger logger;
 
+    @Mock
+    InputStream inputStream;
+
+    PageData sut;
+
     @Before
     public void setUp() {
         mockStatic(HttpClients.class);
         PowerMockito.when(HttpClients.createDefault()).thenReturn(httpClient);
-        mockStatic(EntityUtils.class);
+        mockStatic(IOUtils.class);
+
+        sut = new PageData("url");
 
         mockStatic(LoggerFactory.class);
-        PowerMockito.when(LoggerFactory.getLogger(InternetUtils.class)).thenReturn(logger);
-        Whitebox.setInternalState(InternetUtils.class, logger);
+        PowerMockito.when(LoggerFactory.getLogger(PageData.class)).thenReturn(logger);
+        Whitebox.setInternalState(sut, logger);
     }
 
     @Test(expected = IOException.class)
@@ -75,7 +84,7 @@ public class InternetUtils_when_getPageContent_is_called {
         PowerMockito.when(HttpClients.createDefault()).then(throwIOException());
 
         //Act
-        InternetUtils.getPageContent("url");
+        sut.fetch();
 
         //Assert
     }
@@ -93,7 +102,7 @@ public class InternetUtils_when_getPageContent_is_called {
         when(httpClient.execute(any(HttpGet.class))).thenThrow(ioException);
 
         //Act
-        InternetUtils.getPageContent("url");
+        sut.fetch();
 
         //Assert
     }
@@ -107,14 +116,15 @@ public class InternetUtils_when_getPageContent_is_called {
         when(statusLine.getStatusCode()).thenReturn(403);
 
         //Act
-        String result = InternetUtils.getPageContent("forbiddenUrl");
+        PageData resultPageData = new PageData("forbiddenUrl").fetch();
 
         //Assert
-        assertNotNull(result);
-        assertEquals(StringUtils.EMPTY, result);
+        assertNotNull(resultPageData);
+        assertNull(resultPageData.getContent());
 
-        verify(logger).warn(eq("Page data from url [{}] cannot be fetched, response status [{}]"), eq("forbiddenUrl"), eq(403));
-        verifyZeroInteractions(EntityUtils.class);
+        verify(logger).warn(eq("Page data from url [{}] cannot be fetched, response status is [{}]"), eq("forbiddenUrl"), eq(403));
+        verifyNoMoreInteractions(IOUtils.class);
+        IOUtils.toString(any(InputStream.class), eq(StandardCharsets.UTF_8));
 
     }
 
@@ -126,14 +136,15 @@ public class InternetUtils_when_getPageContent_is_called {
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
-        PowerMockito.when(EntityUtils.toString(eq(httpEntity))).thenReturn("entityBody");
+        when(httpEntity.getContent()).thenReturn(inputStream);
+        PowerMockito.when(IOUtils.toString(eq(inputStream), eq(StandardCharsets.UTF_8))).thenReturn("entityBody");
 
         //Act
-        String result = InternetUtils.getPageContent("url");
+        PageData result = new PageData("url").fetch();
 
         //Assert
         assertNotNull(result);
-        assertEquals("entityBody", result);
+        assertEquals("entityBody", result.getContent());
 
     }
 
@@ -147,11 +158,11 @@ public class InternetUtils_when_getPageContent_is_called {
         when(httpResponse.getEntity()).thenReturn(null);
 
         //Act
-        String result = InternetUtils.getPageContent("url");
+        PageData result = new PageData("url").fetch();
 
         //Assert
         assertNotNull(result);
-        assertEquals(StringUtils.EMPTY, result);
+        assertNull(result.getContent());
 
     }
 
@@ -161,7 +172,7 @@ public class InternetUtils_when_getPageContent_is_called {
         //Arrange
 
         //Act
-        InternetUtils.getPageContent(null);
+        new PageData(null);
 
         //Assert
 

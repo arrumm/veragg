@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +22,7 @@ import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
 import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.AuctionSource;
+import com.veragg.website.domain.Court;
 import com.veragg.website.services.AuctionService;
 import com.veragg.website.services.AuctionSourceService;
 
@@ -34,15 +36,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-        InternetUtils.class,
+        PageData.class,
+        AbstractCrawler.class,
         LoggerFactory.class
 })
 public class AbstractCrawler_when_process_is_called {
@@ -78,31 +81,36 @@ public class AbstractCrawler_when_process_is_called {
     IOException ioException;
 
     @Mock
+    PageData pageData;
+
+    @Mock
     ParseException parseException;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         initMocks(this);
         HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
         sut = Mockito.spy(hanmarkCrawler);
         when(sut.getMaxCrawlDepth()).thenReturn(2);
-        PowerMockito.mockStatic(InternetUtils.class);
         mockStatic(LoggerFactory.class);
         PowerMockito.when(LoggerFactory.getLogger(HanmarkCrawler.class)).thenReturn(logger);
         Whitebox.setInternalState(sut, logger);
+
+        PowerMockito.whenNew(PageData.class).withArguments(eq(AUCTION_URL)).thenReturn(pageData);
+        when(pageData.fetch()).thenReturn(pageData);
+        when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
     }
 
     @Test
-    public void given_source_is_not_null_urls_fetched_mapped_then_auction_saved_with_source() throws IOException, ParseException {
+    public void given_source_is_not_null_urls_fetched_mapped_then_auction_saved_with_source() throws Exception {
 
         //Arrange
         doReturn(new HashSet<String>() {{
             add(AUCTION_URL);
         }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
-        PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
 
         HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
-        doReturn(oneAuctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
+        doReturn(oneAuctionDTO).when(sut).fetchAuction(eq(pageData));
         Auction oneAuction = mock(Auction.class);
         doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
         doReturn(auctionSource).when(auctionSourceService).findByName(anyString());
@@ -122,10 +130,9 @@ public class AbstractCrawler_when_process_is_called {
         doReturn(new HashSet<String>() {{
             add(AUCTION_URL);
         }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
-        PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
 
         HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
-        doReturn(oneAuctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
+        doReturn(oneAuctionDTO).when(sut).fetchAuction(eq(pageData));
         Auction oneAuction = mock(Auction.class);
         doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
         doReturn(null).when(auctionSourceService).findByName(anyString());
@@ -139,21 +146,28 @@ public class AbstractCrawler_when_process_is_called {
     }
 
     @Test
-    public void given_urls_fetched_mapped_then_auction_draft_saved() throws IOException, ParseException {
+    public void given_urls_fetched_mapped_then_auction_draft_saved() throws Exception {
 
         //Arrange
         doReturn(new HashSet<String>() {{
             add(ANOTHER_AUCTION_URL);
             add(AUCTION_URL);
         }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
-        PowerMockito.when(InternetUtils.getPageContent(eq(ANOTHER_AUCTION_URL))).thenReturn(ANOTHER_AUCTION_URL_CONTENT);
-        PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
+
+        PowerMockito.whenNew(PageData.class).withArguments(eq(AUCTION_URL)).thenReturn(pageData);
+        PageData pageDataFromAnotherUrl = mock(PageData.class);
+        PowerMockito.whenNew(PageData.class).withArguments(eq(ANOTHER_AUCTION_URL)).thenReturn(pageDataFromAnotherUrl);
+
+        when(pageData.fetch()).thenReturn(pageData);
+        when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
+        when(pageDataFromAnotherUrl.fetch()).thenReturn(pageDataFromAnotherUrl);
+        when(pageDataFromAnotherUrl.getContent()).thenReturn(ANOTHER_AUCTION_URL_CONTENT);
 
         HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
         HanmarkAuctionDTO anotherAuctionDTO = mock(HanmarkAuctionDTO.class);
 
-        doReturn(oneAuctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
-        doReturn(anotherAuctionDTO).when(sut).fetchAuction(any(), eq(ANOTHER_AUCTION_URL));
+        doReturn(oneAuctionDTO).when(sut).fetchAuction(eq(pageData));
+        doReturn(anotherAuctionDTO).when(sut).fetchAuction(eq(pageDataFromAnotherUrl));
 
         Auction oneAuction = mock(Auction.class);
         Auction anotherAuction = mock(Auction.class);
@@ -165,31 +179,46 @@ public class AbstractCrawler_when_process_is_called {
         sut.crawl();
 
         //Assert
-        verify(auctionService).saveDraft(eq(oneAuction));
-        verify(auctionService).saveDraft(eq(anotherAuction));
+        verify(auctionService, times(1)).saveDraft(eq(oneAuction));
+        verify(auctionService, times(1)).saveDraft(eq(anotherAuction));
 
     }
 
     @Test
-    public void given_fetch_auction_throw_exception_for_one_url_then_exception_caught_and_process_continue() throws IOException, ParseException {
+    public void given_fetch_auction_throw_exception_for_one_url_then_exception_caught_and_process_continue() throws Exception {
 
         //Arrange
         doReturn(new HashSet<String>() {{
             add("auctionUrlNPE");
             add(AUCTION_URL);
         }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
-        PowerMockito.when(InternetUtils.getPageContent(eq("auctionUrlNPE"))).thenReturn(AUCTION_URL_CONTENT);
-        PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
-        doThrow(ioException).when(sut).fetchAuction(any(), eq("auctionUrlNPE"));
-        doReturn(auctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
+
+        PowerMockito.whenNew(PageData.class).withArguments(eq(AUCTION_URL)).thenReturn(pageData);
+        PageData pageDataNPE = mock(PageData.class);
+        PowerMockito.whenNew(PageData.class).withArguments(eq("auctionUrlNPE")).thenReturn(pageDataNPE);
+
+        when(pageData.fetch()).thenReturn(pageData);
+        when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
+        when(pageDataNPE.fetch()).thenReturn(pageDataNPE);
+        when(pageDataNPE.getContent()).thenReturn(AUCTION_URL_CONTENT);
+
+        doThrow(ioException).when(sut).fetchAuction(eq(pageData));
+        doReturn(auctionDTO).when(sut).fetchAuction(eq(pageDataNPE));
+
         doReturn(auction).when(mapperService).map(eq(auctionDTO));
+
+        doReturn(auctionSource).when(auctionSourceService).findByName(anyString());
+        Court court = mock(Court.class);
+        when(auction.getFileNumber()).thenReturn(StringUtils.EMPTY);
+        when(auction.getCourt()).thenReturn(court);
 
         //Act
         sut.crawl();
 
         //Assert
-        verify(mapperService, times(1)).map(eq(auctionDTO));
-        verify(auctionService, times(1)).saveDraft(eq(auction));
+        verify(mapperService).map(eq(auctionDTO));
+        verify(auctionService).findDraftBy(anyString(), any(Court.class), any(AuctionSource.class));
+        verify(auctionService).saveDraft(eq(auction));
         verifyNoMoreInteractions(auctionService, mapperService);
 
     }
@@ -199,15 +228,14 @@ public class AbstractCrawler_when_process_is_called {
 
         //Arrange
         doReturn(new HashSet<>(Collections.singletonList(AUCTION_URL))).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
-        PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
-        doReturn(auctionDTO).when(sut).fetchAuction(any(), eq(AUCTION_URL));
+        doReturn(auctionDTO).when(sut).fetchAuction(any(PageData.class));
         doThrow(parseException).when(mapperService).map(eq(auctionDTO));
 
         //Act
         sut.crawl();
 
         //Assert
-        verifyZeroInteractions(auctionService);
+        verifyNoMoreInteractions(auctionService);
         verify(logger).error(eq("Auction draft parse from [{}] failed"), eq(auctionDTO), eq(parseException));
 
     }
@@ -217,14 +245,13 @@ public class AbstractCrawler_when_process_is_called {
 
         //Arrange
         doReturn(new HashSet<>(Collections.singletonList(AUCTION_URL))).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
-        PowerMockito.when(InternetUtils.getPageContent(eq(AUCTION_URL))).thenReturn(AUCTION_URL_CONTENT);
-        doThrow(ioException).when(sut).fetchAuction(any(), anyString());
+        doThrow(ioException).when(sut).fetchAuction(any(PageData.class));
 
         //Act
         sut.crawl();
 
         //Assert
-        verifyZeroInteractions(mapperService);
+        verifyNoInteractions(mapperService);
         verify(logger).error(eq("Page data fetch from [{}] failed"), eq(AUCTION_URL), eq(ioException));
 
     }
@@ -239,7 +266,6 @@ public class AbstractCrawler_when_process_is_called {
         sut.crawl();
 
         //Assert
-        PowerMockito.verifyStatic(InternetUtils.class, times(1));
         verifyNoMoreInteractions(sut);
 
     }
@@ -254,8 +280,8 @@ public class AbstractCrawler_when_process_is_called {
         sut.crawl();
 
         //Assert
-        PowerMockito.verifyStatic(InternetUtils.class, never());
-        InternetUtils.getPageContent(anyString());
+        verify(pageData, never());
+        pageData.fetch();
 
     }
 

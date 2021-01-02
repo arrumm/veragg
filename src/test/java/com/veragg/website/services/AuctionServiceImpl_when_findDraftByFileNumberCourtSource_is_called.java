@@ -10,6 +10,7 @@ import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.domain.AuctionStatus;
 import com.veragg.website.domain.Court;
 import com.veragg.website.repository.AuctionRepo;
+import com.veragg.website.repository.CourtRepo;
 import com.veragg.website.repository.DocumentAuctionRepo;
 
 import static org.junit.Assert.assertEquals;
@@ -27,6 +28,9 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
     AuctionRepo auctionRepo;
 
     @Mock
+    CourtRepo courtRepo;
+
+    @Mock
     DocumentAuctionRepo documentAuctionRepo;
 
     @Mock
@@ -42,7 +46,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        sut = new AuctionServiceImpl(auctionRepo, documentAuctionRepo);
+        sut = new AuctionServiceImpl(auctionRepo, documentAuctionRepo, courtRepo);
     }
 
     @Test
@@ -51,7 +55,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftByFileNumberCourtSource("", court, null));
+        assertThrows(NullPointerException.class, () -> sut.findDraftBy("", court, null));
 
     }
 
@@ -61,7 +65,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftByFileNumberCourtSource(null, court, auctionSource));
+        assertThrows(NullPointerException.class, () -> sut.findDraftBy(null, court, auctionSource));
 
     }
 
@@ -71,7 +75,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftByFileNumberCourtSource("", null, auctionSource));
+        assertThrows(NullPointerException.class, () -> sut.findDraftBy("", null, auctionSource));
 
     }
 
@@ -82,7 +86,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq(AuctionStatus.DRAFT))).thenReturn(auctionMock);
 
         //Act
-        Auction result = sut.findDraftByFileNumberCourtSource("1K 12", court, auctionSource);
+        Auction result = sut.findDraftBy("1K 12", court, auctionSource);
 
         //Assert
         assertNotNull(result);
@@ -97,7 +101,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq(AuctionStatus.DRAFT))).thenReturn(null);
 
         //Act
-        Auction result = sut.findDraftByFileNumberCourtSource("1K 12", court, auctionSource);
+        Auction result = sut.findDraftBy("1K 12", court, auctionSource);
 
         //Assert
         assertNull(result);

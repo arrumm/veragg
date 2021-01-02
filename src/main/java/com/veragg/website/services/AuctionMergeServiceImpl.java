@@ -2,11 +2,14 @@ package com.veragg.website.services;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.veragg.website.domain.Auction;
+import com.veragg.website.domain.AuctionHistory;
 import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.domain.AuctionSourceType;
 import com.veragg.website.domain.AuctionStatus;
@@ -16,17 +19,27 @@ import lombok.NonNull;
 @Service
 public class AuctionMergeServiceImpl implements AuctionMergeService {
 
-    AuctionServiceImpl auctionService;
+    AuctionService auctionService;
+
+    AuctionHistoryService auctionHistoryService;
 
     @Autowired
-    public AuctionMergeServiceImpl(AuctionServiceImpl auctionService) {
+    public AuctionMergeServiceImpl(AuctionService auctionService, AuctionHistoryService auctionHistoryService) {
         this.auctionService = auctionService;
+        this.auctionHistoryService = auctionHistoryService;
     }
 
     @Override
-    public List<Auction> merge(@NonNull List<Auction> auctions) {
+    @Transactional
+    public List<Auction> mergeDrafts(@NonNull List<Auction> auctions) {
         if (!auctions.isEmpty()) {
             auctions.forEach(auction -> auction.setAuctionStatus(AuctionStatus.ACTIVE));
+            //@formatter:off
+            List<AuctionHistory> auctionHistoryList = auctions.stream()
+                    .map(auction -> auctionHistoryService.getHistoryAdded(auction))
+                    .collect(Collectors.toList());
+            //@formatter:on
+            auctionHistoryService.saveAll(auctionHistoryList);
             return auctionService.saveAll(auctions);
         }
         return Collections.emptyList();

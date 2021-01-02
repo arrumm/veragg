@@ -1,10 +1,11 @@
 package com.veragg.website.crawler;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -18,9 +19,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-class HanmarkCrawler_when_parseAuction_is_called {
+public class HanmarkCrawler_when_parseAuction_is_called {
 
     private HanmarkCrawler sut;
 
@@ -33,18 +35,24 @@ class HanmarkCrawler_when_parseAuction_is_called {
     @Mock
     AuctionSourceService auctionSourceService;
 
-    @BeforeEach
+    @Mock
+    PageData pageData;
+
+    @Before
     public void setup() {
         sut = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
     }
 
     @Test
-    public void and_valid_pageData_is_passed_then_auction_returned() throws IOException {
+    public void and_valid_pageData_is_passed_then_auction_returned() throws Exception {
+
         // Arrange
         InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-house.html");
+        when(pageData.getUrl()).thenReturn("https://www.hanmark.de/house-url.html");
+        when(pageData.getContent()).thenReturn(IOUtils.toString(houseInputStream, StandardCharsets.UTF_8));
 
         // Act
-        HanmarkAuctionDTO result = sut.fetchAuction(houseInputStream, "https://www.hanmark.de/house-url.html");
+        HanmarkAuctionDTO result = sut.fetchAuction(pageData);
 
         // Assert
         assertNotNull(result);
@@ -68,10 +76,10 @@ class HanmarkCrawler_when_parseAuction_is_called {
         assertEquals("Ort und Einwohnerzahl: Hontheim ist eine Ortsgemeinde in der südlichen Vulkaneifel. Sie gehört zur Verbandsgemeinde Traben- Trarbach. Der Ort liegt am Randes des Kondelwalds " +
                         "und ist umgeben von den Bächen Alf sowie Üss. Hontheim hat ca. 800 Einwohner und verfügt über eine Kindertagesstätte. Eine Grundschule ist in Hontheim nicht vorhanden.\n" +
                         "Überörtliche Anbindung/Entfernungen: Durch Hontheim verläuft die Bundesstraße 421, die von der belgischen Grenze bis in den Hunsrück führt. Zudem hat der Ort eine gute " +
-                        "Anbindung an" +
-                        " die Autobahn A1 Kelberg - Trier - Saarbrücken. Die Entfernung bis zur Anschlussstelle Hasborn (123) beträgt ca. 13 km. Die Entfernungen zu den nächstgelegenen Städten " +
-                        "betragen: ca" +
-                        ". 5 km bis nach Bad Bertrich, ca. 18 km bis nach Wittlich, ca. 19 km bis nach Zell, ca. 24 km bis nach Traben- Trarbach, ca. 28 km bis nach Daun, ca. 29 km bis nach Cochem," +
+                        "Anbindung an die Autobahn A1 Kelberg - Trier - Saarbrücken. Die Entfernung bis zur Anschlussstelle Hasborn (123) beträgt ca. 13 km. Die Entfernungen zu den nächstgelegenen " +
+                        "Städten " +
+                        "betragen: ca. 5 km bis nach Bad Bertrich, ca. 18 km bis nach Wittlich, ca. 19 km bis nach Zell, ca. 24 km bis nach Traben- Trarbach, ca. 28 km bis nach Daun, ca. 29 km bis " +
+                        "nach Cochem," +
                         " ca. 37 " + "km bis zum Flughafen Frankfurt- Hahn, ca. 42 km bis nach Schweich.\nInnerörtliche Lage: Das zu bewertenden Grundstück liegt im nördlichen Zentrum von Hontheim" + ".\n" +
                         "Art der Bebauung und Nutzungen: gemischte Bauweise; Die Bebauung in der näheren Umgebung besteht überwiegend aus Wohnhäusern in zweigeschossiger Bauweise.\n" +
                         "Straßenart: Ortsstraße\nAnschlüsse an Versorgungsleitungen: Flurstück 36/2: Die Wasser-, Abwasser- und Elektrizitätsversorgung sind an das öffentliche Netz angeschlossen.\n",
@@ -85,8 +93,8 @@ class HanmarkCrawler_when_parseAuction_is_called {
                         "· Erdgeschoss: Treppenhaus, Diele, 2 Büros, Abstellraum, Heizungsraum, Öllager, Küche, Treppenhaus mit Flur, Dusche/WC\n" +
                         "· Obergeschoss: 2 Treppenhäuser, 2 Flure, Wohnzimmer, Küche, Abstellraum, WC, 2 Schlafzimmer, Bad, Abstellraum\n" + "· Dachgeschoss: Treppenhaus, Wohn-/Esszimmer, Küche, " + "Bad\n" +
                         "Gebäudekonstruktion\n" + "Konstruktionsart: Massivbauweise\n" + "Fundamente: unbekannt\n" + "Wände: Außen- und Innenwände: massives Mauerwerk\n" + "Geschossdecken: " +
-                        "unbekannt\n" +
-                        "Hauseingangs-/Nebeneingangsbereich: nicht überdachter Hauseingang mit einer Eingangsstufe, Oberbelag aus Naturstein; Nebeneingang: nicht überdachter Nebeneingang mit drei " +
+                        "unbekannt\nHauseingangs-/Nebeneingangsbereich: nicht überdachter Hauseingang mit einer Eingangsstufe, Oberbelag aus Naturstein; Nebeneingang: nicht überdachter Nebeneingang" +
+                        " mit drei " +
                         "Eingangsstufen, Oberbelag aus Fliesen\n" +
                         "Treppen: KG: Treppe aus Beton, Oberbelag aus Werkstein; EG: Spindeltreppe und Geländer in Stahlkonstruktion mit 14 Stufen aus Naturstein; OG: Spindeltreppe und Geländer in " +
                         "Stahlkonstruktion mit 15 Stufen aus Naturstein\n" + "Dach: Dachkonstruktion: Holzkonstruktion; Dachform: Satteldach; Dacheindeckung: Betondachsteine; Kamin: gemauert\n" +
@@ -115,11 +123,10 @@ class HanmarkCrawler_when_parseAuction_is_called {
                         "Fundamente: Beton\n" + "Wände: Außenwände: massives Mauerwerk\n" + "Dach: Dachkonstruktion: Holz; Dachform: Flachdach; Dacheindeckung: Abdichtungsbahnen\n" +
                         "Bodenbelag: PKW- Stellplätze: Betonsteinpflaster\n" + "Wandbeläge: PKW- Stellplätze: Putz mit Anstrich, Bruchsteinmauerwerk\n" + "Deckenbeläge: keine\n" +
                         "Tore/Fenster: keine vorhanden\n" + "Elektroinstallation: Elektroinstallation den Anforderungen entsprechend mit ausreichender Anzahl von Schalt-, Steckgeräten und " +
-                        "Brennstellen.\n" + "Zustand\n" +
-                        "Besonderheiten: Die Tore und die vorderseitige Außenwand fehlen. Die rückwärtige Wand der Garage fehlt. Die Garage wird durch die Nachbarwand begrenzt.\n" +
+                        "Brennstellen.\nZustand\nBesonderheiten: Die Tore und die vorderseitige Außenwand fehlen. Die rückwärtige Wand der Garage fehlt. Die Garage wird durch die Nachbarwand " +
+                        "begrenzt.\n" +
                         "Allgemeinbeurteilung: Bei dem zu bewertenden Objekt handelt es sich um eine Doppelgarage mit 2 PKW- Stellplätzen. Die Funktionalität der Stellplätze ist gegeben.\n" +
-                        "Garage\n" +
-                        "Art des Gebäudes: offene an die Doppelgarage angebaute Garage\n" + "Baujahr: unbekannt\n" + "Außenansicht: Putz mit Anstrich\n" +
+                        "Garage\nArt des Gebäudes: offene an die Doppelgarage angebaute Garage\n" + "Baujahr: unbekannt\n" + "Außenansicht: Putz mit Anstrich\n" +
                         "Nutzungseinheiten, Raumaufteilung: Erdgeschoss: PKW- Stellplatz\n" + "Gebäudekonstruktion\n" + "Konstruktionsart: Massivbauweise\n" + "Fundamente: Beton\n" +
                         "Wände: Außenwände: massives Mauerwerk\n" + "Dach: Dachkonstruktion: Holz; Dachform: Flachdach; Dacheindeckung: Abdichtungsbahnen\n" +
                         "Bodenbelag: PKW- Stellplätze: Betonsteinpflaster\n" + "Wandbeläge: PKW- Stellplätze: Putz mit Anstrich\n" + "Deckenbeläge: keine\n" + "Tore/Fenster: keine vorhanden\n" +
@@ -134,12 +141,15 @@ class HanmarkCrawler_when_parseAuction_is_called {
     }
 
     @Test
-    public void and_valid_pageData_is_passed_with_file_links_then_auction_returned() throws IOException {
+    public void and_valid_pageData_is_passed_with_file_links_then_auction_returned() throws Exception {
+
         // Arrange
         InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-gewerbe.html");
+        when(pageData.getUrl()).thenReturn("https://www.hanmark.de/hanmark-gewerbe.html");
+        when(pageData.getContent()).thenReturn(IOUtils.toString(houseInputStream, StandardCharsets.UTF_8));
 
         // Act
-        HanmarkAuctionDTO result = sut.fetchAuction(houseInputStream, "https://www.hanmark.de/hanmark-gewerbe.html");
+        HanmarkAuctionDTO result = sut.fetchAuction(pageData);
 
         // Assert
         assertNotNull(result);

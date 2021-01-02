@@ -1,5 +1,6 @@
 package com.veragg.website.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,25 +13,24 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(exclude = {
         "id",
         "address"
 })
 @Entity
-@RequiredArgsConstructor
-@NoArgsConstructor
+@Table(name = "courts")
 public class Court {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Embedded
@@ -44,6 +44,16 @@ public class Court {
     @JoinColumn(name = "state_id")
     private State state;
 
-    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Auction> auctions;
+    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Auction> auctions = new HashSet<>();
+
+    public Court() {
+    }
+
+    public Court(@NonNull String name, @NonNull State state) {
+        this.name = name;
+        this.state = state;
+        this.address = Address.builder().city(name).build();
+    }
+
 }

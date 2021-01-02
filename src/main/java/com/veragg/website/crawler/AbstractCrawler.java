@@ -1,8 +1,6 @@
 package com.veragg.website.crawler;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +19,7 @@ import com.veragg.website.services.AuctionSourceService;
 
 import lombok.NonNull;
 
-import static com.veragg.website.crawler.InternetUtils.getPageContent;
+import static java.util.Objects.isNull;
 
 public abstract class AbstractCrawler implements Crawling {
 
@@ -42,16 +40,19 @@ public abstract class AbstractCrawler implements Crawling {
     public void crawl() {
 
         Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
-        BaseAuctionDTO auctionDTO = null;
         AuctionSource auctionSource = auctionSourceService.findByName(getSourceName());
 
+        BaseAuctionDTO auctionDTO = null;
         for (String url : urlsToFetch) {
             try {
-                String pageData = getPageContent(url);
-                auctionDTO = fetchAuction(new ByteArrayInputStream(pageData.getBytes()), url);
+                PageData pageData = new PageData(url);
+                auctionDTO = fetchAuction(pageData.fetch());
                 Auction auction = auctionMapper.map(auctionDTO);
-                auction.setSource(auctionSource);
-                auctionService.saveDraft(auction);
+                Auction auctionFound = auctionService.findDraftBy(auction.getFileNumber(), auction.getCourt(), auctionSource);
+                if (isNull(auctionFound)) {
+                    auction.setSource(auctionSource);
+                    auctionService.saveDraft(auction);
+                }
             } catch (IOException e) {
                 LOGGER.error("Page data fetch from [{}] failed", url, e);
             } catch (ParseException e) {
@@ -81,7 +82,7 @@ public abstract class AbstractCrawler implements Crawling {
         if (!visitedUrls.contains(currentUrl)) {
             final String currentPageContent;
             try {
-                currentPageContent = getPageContent(currentUrl);
+                currentPageContent = new PageData(currentUrl).fetch().getContent();
                 visitedUrls.add(currentUrl);
 
                 fetchedUrls.addAll(fetchUrls(extractAuctionUrlPattern, currentPageContent));
@@ -124,7 +125,7 @@ public abstract class AbstractCrawler implements Crawling {
      *
      * @param pageData input stream of page data
      */
-    abstract BaseAuctionDTO fetchAuction(InputStream pageData, String baseUri) throws IOException;
+    abstract BaseAuctionDTO fetchAuction(PageData pageData) throws IOException;
 
     abstract String getStartURL();
 

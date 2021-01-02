@@ -13,7 +13,7 @@ public class CrawlerJobsConfiguratorImpl implements CrawlerJobsConfigurator {
     public CrawlerJobConfigurations configure() {
         //@formatter:off
         return new CrawlerJobConfigurations()
-                .job(from(HanmarkCrawler.class).schedule("0 0 90 * * *").name("Hanmark crawler"))
+                .job(from(HanmarkCrawler.class).schedule("0 0 9 * * *").name("Hanmark crawler"))
                 .job(from(AbstractCrawler.class).schedule("0 0 0 25 12 ?").name("abstract"));
         //@formatter:on
     }

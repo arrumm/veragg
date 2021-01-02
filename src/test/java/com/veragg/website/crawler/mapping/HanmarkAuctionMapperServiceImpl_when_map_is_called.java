@@ -43,7 +43,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     private CourtService courtService;
 
     @Mock
-    private NameService nameService;
+    private NormalizationService normalizationService;
 
     @Mock
     private Court court;
@@ -54,8 +54,8 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     @Before
     public void setUp() {
         initMocks(this);
-        sut = new HanmarkAuctionMapperServiceImpl(courtService, nameService);
-        when(nameService.normalize(anyString())).thenCallRealMethod();
+        sut = new HanmarkAuctionMapperServiceImpl(courtService, normalizationService);
+        when(normalizationService.normalizeCity(anyString())).thenCallRealMethod();
         when(court.getName()).thenReturn("Wittlich");
         when(court.getState()).thenReturn(state);
         when(state.getId()).thenReturn("RP");

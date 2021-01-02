@@ -11,5 +11,5 @@ public enum AuctionSourceType {
         this.priority = priority;
     }
 
-    private Integer priority;
+    private final Integer priority;
 }
