@@ -71,7 +71,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         when(auctionRepo.save(eq(auction))).thenReturn(auction);
 
         //Act
-        Auction result = sut.saveDraft(auction);
+        Auction result = sut.save(auction);
 
         //Assert
         assertNotNull(result);
@@ -92,7 +92,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         when(auctionRepo.save(eq(auctionFound))).thenReturn(auctionFound);
 
         //Act
-        Auction result = sut.saveDraft(auction);
+        Auction result = sut.save(auction);
 
         //Assert
         assertNotNull(result);
@@ -112,7 +112,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         when(auctionRepo.save(eq(auction))).thenReturn(auction);
 
         //Act
-        sut.saveDraft(auction);
+        sut.save(auction);
 
         //Assert
         verify(documentAuctionRepo, times(3)).save(any(Document.class));
@@ -127,7 +127,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         //Act
 
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.saveDraft(auction));
+        assertThrows(NullPointerException.class, () -> sut.save(auction));
 
     }
 
@@ -139,7 +139,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         //Act
 
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.saveDraft(auction));
+        assertThrows(NullPointerException.class, () -> sut.save(auction));
 
     }
 
@@ -151,7 +151,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         //Act
 
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.saveDraft(auction));
+        assertThrows(NullPointerException.class, () -> sut.save(auction));
 
     }
 

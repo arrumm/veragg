@@ -1,58 +1,43 @@
 package com.veragg.website.crawler;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import com.veragg.website.crawler.mapping.AuctionMapperService;
 import com.veragg.website.crawler.model.HanmarkAuctionDTO;
-import com.veragg.website.services.AuctionService;
-import com.veragg.website.services.AuctionSourceService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class HanmarkCrawler_when_parseAuction_is_called {
+public class HanmarkParser_WHEN_parse_is_called {
 
-    private HanmarkCrawler sut;
-
-    @Mock
-    private AuctionMapperService<HanmarkAuctionDTO> mapperService;
-
-    @Mock
-    AuctionService auctionService;
-
-    @Mock
-    AuctionSourceService auctionSourceService;
-
-    @Mock
-    PageData pageData;
+    private HanmarkParser sut;
 
     @Before
-    public void setup() {
-        sut = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
+    public void setup() throws Exception {
+        sut = new HanmarkParser();
     }
 
     @Test
-    public void and_valid_pageData_is_passed_then_auction_returned() throws Exception {
+    public void GIVEN_valid_pageData_THEN_auction_returned() throws IOException {
 
         // Arrange
         InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-house.html");
-        when(pageData.getUrl()).thenReturn("https://www.hanmark.de/house-url.html");
-        when(pageData.getContent()).thenReturn(IOUtils.toString(houseInputStream, StandardCharsets.UTF_8));
+        final Document houseHtmlDocument =
+                Jsoup.parse(new ByteArrayInputStream(IOUtils.toString(houseInputStream, StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8)), "UTF-8", "https://www.hanmark.de/house-url.html");
 
         // Act
-        HanmarkAuctionDTO result = sut.fetchAuction(pageData);
+        HanmarkAuctionDTO result = sut.parse(houseHtmlDocument);
 
         // Assert
         assertNotNull(result);
@@ -65,6 +50,9 @@ public class HanmarkCrawler_when_parseAuction_is_called {
         assertEquals("16.06.2020 14:00 Uhr", result.getAppointmentDate());
         assertEquals("keine Angabe", result.getLimitDescription());
         assertEquals("https://www.hanmark.de/house-url.html", result.getSourceUrl());
+
+        //TODO: additional info like Besondere objektspezifische Grundstücksmerkmale in https://www.hanmark.de/wertgutachten-29300.html
+        assertNull(result.getAdditionalInfoDescription());
 
         assertEquals(
                 "der Sachverständigen über den Verkehrswert für das mit einem Wohnhaus mit Garage bebaute Grundstück in 54538 Hontheim, Bergweg 7\n" + "· Grundbuch Hontheim\n" + "· Blatt 2297\n" +
@@ -79,8 +67,8 @@ public class HanmarkCrawler_when_parseAuction_is_called {
                         "Anbindung an die Autobahn A1 Kelberg - Trier - Saarbrücken. Die Entfernung bis zur Anschlussstelle Hasborn (123) beträgt ca. 13 km. Die Entfernungen zu den nächstgelegenen " +
                         "Städten " +
                         "betragen: ca. 5 km bis nach Bad Bertrich, ca. 18 km bis nach Wittlich, ca. 19 km bis nach Zell, ca. 24 km bis nach Traben- Trarbach, ca. 28 km bis nach Daun, ca. 29 km bis " +
-                        "nach Cochem," +
-                        " ca. 37 " + "km bis zum Flughafen Frankfurt- Hahn, ca. 42 km bis nach Schweich.\nInnerörtliche Lage: Das zu bewertenden Grundstück liegt im nördlichen Zentrum von Hontheim" + ".\n" +
+                        "nach Cochem," + " ca. 37 " +
+                        "km bis zum Flughafen Frankfurt- Hahn, ca. 42 km bis nach Schweich.\nInnerörtliche Lage: Das zu bewertenden Grundstück liegt im nördlichen Zentrum von Hontheim" + ".\n" +
                         "Art der Bebauung und Nutzungen: gemischte Bauweise; Die Bebauung in der näheren Umgebung besteht überwiegend aus Wohnhäusern in zweigeschossiger Bauweise.\n" +
                         "Straßenart: Ortsstraße\nAnschlüsse an Versorgungsleitungen: Flurstück 36/2: Die Wasser-, Abwasser- und Elektrizitätsversorgung sind an das öffentliche Netz angeschlossen.\n",
                 result.getPlotDescription());
@@ -94,8 +82,7 @@ public class HanmarkCrawler_when_parseAuction_is_called {
                         "· Obergeschoss: 2 Treppenhäuser, 2 Flure, Wohnzimmer, Küche, Abstellraum, WC, 2 Schlafzimmer, Bad, Abstellraum\n" + "· Dachgeschoss: Treppenhaus, Wohn-/Esszimmer, Küche, " + "Bad\n" +
                         "Gebäudekonstruktion\n" + "Konstruktionsart: Massivbauweise\n" + "Fundamente: unbekannt\n" + "Wände: Außen- und Innenwände: massives Mauerwerk\n" + "Geschossdecken: " +
                         "unbekannt\nHauseingangs-/Nebeneingangsbereich: nicht überdachter Hauseingang mit einer Eingangsstufe, Oberbelag aus Naturstein; Nebeneingang: nicht überdachter Nebeneingang" +
-                        " mit drei " +
-                        "Eingangsstufen, Oberbelag aus Fliesen\n" +
+                        " mit drei " + "Eingangsstufen, Oberbelag aus Fliesen\n" +
                         "Treppen: KG: Treppe aus Beton, Oberbelag aus Werkstein; EG: Spindeltreppe und Geländer in Stahlkonstruktion mit 14 Stufen aus Naturstein; OG: Spindeltreppe und Geländer in " +
                         "Stahlkonstruktion mit 15 Stufen aus Naturstein\n" + "Dach: Dachkonstruktion: Holzkonstruktion; Dachform: Satteldach; Dacheindeckung: Betondachsteine; Kamin: gemauert\n" +
                         "Besondere Bauteile: Hauseingangsstufen; Dachgauben\n" + "Ausstattung\n" + "Bodenbeläge: soweit ersichtlich überwiegend aus Fliesen\n" +
@@ -124,9 +111,8 @@ public class HanmarkCrawler_when_parseAuction_is_called {
                         "Bodenbelag: PKW- Stellplätze: Betonsteinpflaster\n" + "Wandbeläge: PKW- Stellplätze: Putz mit Anstrich, Bruchsteinmauerwerk\n" + "Deckenbeläge: keine\n" +
                         "Tore/Fenster: keine vorhanden\n" + "Elektroinstallation: Elektroinstallation den Anforderungen entsprechend mit ausreichender Anzahl von Schalt-, Steckgeräten und " +
                         "Brennstellen.\nZustand\nBesonderheiten: Die Tore und die vorderseitige Außenwand fehlen. Die rückwärtige Wand der Garage fehlt. Die Garage wird durch die Nachbarwand " +
-                        "begrenzt.\n" +
-                        "Allgemeinbeurteilung: Bei dem zu bewertenden Objekt handelt es sich um eine Doppelgarage mit 2 PKW- Stellplätzen. Die Funktionalität der Stellplätze ist gegeben.\n" +
-                        "Garage\nArt des Gebäudes: offene an die Doppelgarage angebaute Garage\n" + "Baujahr: unbekannt\n" + "Außenansicht: Putz mit Anstrich\n" +
+                        "begrenzt.\n" + "Allgemeinbeurteilung: Bei dem zu bewertenden Objekt handelt es sich um eine Doppelgarage mit 2 PKW- Stellplätzen. Die Funktionalität der Stellplätze ist " +
+                        "gegeben.\n" + "Garage\nArt des Gebäudes: offene an die Doppelgarage angebaute Garage\n" + "Baujahr: unbekannt\n" + "Außenansicht: Putz mit Anstrich\n" +
                         "Nutzungseinheiten, Raumaufteilung: Erdgeschoss: PKW- Stellplatz\n" + "Gebäudekonstruktion\n" + "Konstruktionsart: Massivbauweise\n" + "Fundamente: Beton\n" +
                         "Wände: Außenwände: massives Mauerwerk\n" + "Dach: Dachkonstruktion: Holz; Dachform: Flachdach; Dacheindeckung: Abdichtungsbahnen\n" +
                         "Bodenbelag: PKW- Stellplätze: Betonsteinpflaster\n" + "Wandbeläge: PKW- Stellplätze: Putz mit Anstrich\n" + "Deckenbeläge: keine\n" + "Tore/Fenster: keine vorhanden\n" +
@@ -141,15 +127,16 @@ public class HanmarkCrawler_when_parseAuction_is_called {
     }
 
     @Test
-    public void and_valid_pageData_is_passed_with_file_links_then_auction_returned() throws Exception {
+    public void GIVEN_valid_pageData_with_file_links_THEN_auction_returned() throws Exception {
 
         // Arrange
-        InputStream houseInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-gewerbe.html");
-        when(pageData.getUrl()).thenReturn("https://www.hanmark.de/hanmark-gewerbe.html");
-        when(pageData.getContent()).thenReturn(IOUtils.toString(houseInputStream, StandardCharsets.UTF_8));
+        InputStream commercialPropertyInputStream = getClass().getClassLoader().getResourceAsStream("hanmark-gewerbe.html");
+
+        final Document jsoupDocument = Jsoup.parse(new ByteArrayInputStream(IOUtils.toString(commercialPropertyInputStream, StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8)), "UTF-8",
+                "https://www.hanmark.de/hanmark-gewerbe.html");
 
         // Act
-        HanmarkAuctionDTO result = sut.fetchAuction(pageData);
+        HanmarkAuctionDTO result = sut.parse(jsoupDocument);
 
         // Assert
         assertNotNull(result);

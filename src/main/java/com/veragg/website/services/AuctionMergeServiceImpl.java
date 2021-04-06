@@ -48,7 +48,7 @@ public class AuctionMergeServiceImpl implements AuctionMergeService {
     @Override
     public List<Auction> getSortedDrafts() {
 
-        List<Auction> allDrafts = auctionService.findAllDrafts();
+        List<Auction> allDrafts = auctionService.findAll();
 
         allDrafts.sort((a, b) -> {
             AuctionSource sourceA = a.getSource();

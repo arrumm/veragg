@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.veragg.website.crawler.model.HanmarkAuctionDTO;
+import com.veragg.website.crawler.model.VersteigerungspoolAuctionDTO;
 import com.veragg.website.domain.Address;
 import com.veragg.website.domain.Auction;
 import com.veragg.website.domain.AuctionStatus;
@@ -32,9 +32,9 @@ import com.veragg.website.services.CourtService;
 import static java.util.Objects.nonNull;
 
 @Service
-public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<HanmarkAuctionDTO> {
+public class VersteigerungspoolAuctionMapperServiceImpl implements AuctionMapperService<VersteigerungspoolAuctionDTO> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HanmarkAuctionMapperServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersteigerungspoolAuctionMapperServiceImpl.class);
 
     private static final String HOUSE_NUMBER_REGEX = "[\\d+]+(\\d+)*";
     private static final String ZIPCODE_REGEX = "^\\d{5}";
@@ -47,19 +47,21 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private final NormalizationService normalizationService;
 
     @Autowired
-    public HanmarkAuctionMapperServiceImpl(final CourtService courtService, NormalizationService normalizationService) {
+    public VersteigerungspoolAuctionMapperServiceImpl(final CourtService courtService, NormalizationService normalizationService) {
         this.courtService = courtService;
         this.normalizationService = normalizationService;
     }
 
     @Override
-    public Auction map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
+    public Auction map(final VersteigerungspoolAuctionDTO auctionDTO) throws ParseException {
 
         Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
-        String courtName = normalizationService.normalizeCityName(auctionDTO.getCourtName());
+        String courtName = normalizationService.normalizeCityName(auctionDTO.getCourtName()).replace("Amtsgericht", "").trim();
         Court court = courtService.findBy(courtName, address.getZipCode());
         String expertDescription = auctionDTO.getExpertDescription();
         Set<PropertyType> propertyTypes = getPropertyTypes(auctionDTO.getPropertyTypeName(), expertDescription);
+
+        // TODO Roman: 05-Apr-21 look for amount after Gesamt.. if it's here
 
         //@formatter:off
         Auction auction = Auction.builder()
@@ -86,6 +88,8 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         documents.forEach(document -> document.setAuction(auction));
         auction.setDocuments(documents);
 
+        // TODO Roman: 26-Dec-20 street and city is the same path - separate in mapping
+
         return auction;
     }
 
@@ -111,7 +115,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     private String getNormalizedAmount(final String amount) {
         String extractedAmount = extractByPattern(Pattern.compile(AMOUNT_REGEX), amount);
         String amountWithoutCents = extractedAmount.replaceAll(AMOUNT_CENT_REGEX, "");
-        return amountWithoutCents.replaceAll("\\.", "");
+        return amountWithoutCents.replaceAll("[.€]", "");
     }
 
     private Address getAddress(String streetAddress, String cityAddress) {

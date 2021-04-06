@@ -55,7 +55,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftBy("", court, null));
+        assertThrows(NullPointerException.class, () -> sut.findBy("", court, null));
 
     }
 
@@ -65,7 +65,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftBy(null, court, auctionSource));
+        assertThrows(NullPointerException.class, () -> sut.findBy(null, court, auctionSource));
 
     }
 
@@ -75,7 +75,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftBy("", null, auctionSource));
+        assertThrows(NullPointerException.class, () -> sut.findBy("", null, auctionSource));
 
     }
 
@@ -86,7 +86,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq(AuctionStatus.DRAFT))).thenReturn(auctionMock);
 
         //Act
-        Auction result = sut.findDraftBy("1K 12", court, auctionSource);
+        Auction result = sut.findBy("1K 12", court, auctionSource);
 
         //Assert
         assertNotNull(result);
@@ -101,7 +101,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq(AuctionStatus.DRAFT))).thenReturn(null);
 
         //Act
-        Auction result = sut.findDraftBy("1K 12", court, auctionSource);
+        Auction result = sut.findBy("1K 12", court, auctionSource);
 
         //Assert
         assertNull(result);

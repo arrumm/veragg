@@ -74,10 +74,13 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     @Mock
     PageData pageData;
 
+    @Mock
+    Parsing hanmarkParser;
+
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService, auctionSourceService);
+        HanmarkCrawler hanmarkCrawler = new HanmarkCrawler(mapperService, auctionService, auctionSourceService, hanmarkParser);
         sut = Mockito.spy(hanmarkCrawler);
         when(sut.getMaxCrawlDepth()).thenReturn(2);
         mockStatic(LoggerFactory.class);

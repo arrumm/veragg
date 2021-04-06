@@ -1,5 +1,6 @@
 package com.veragg.website.crawler;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
@@ -7,6 +8,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,42 +24,47 @@ import lombok.NonNull;
 
 import static java.util.Objects.isNull;
 
-public abstract class AbstractCrawler implements Crawling {
+public abstract class AbstractCrawler<T extends BaseAuctionDTO> implements Crawling {
 
     protected Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final Set<String> visitedUrls = new HashSet<>();
 
-    AuctionMapperService auctionMapper;
+    AuctionMapperService<T> auctionMapper;
 
     AuctionService auctionService;
 
     AuctionSourceService auctionSourceService;
 
-    public AbstractCrawler() {
+    Parsing<T> auctionParser;
+
+    protected AbstractCrawler() {
     }
 
     @Override
     public void crawl() {
 
         Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
-        AuctionSource auctionSource = auctionSourceService.findByName(getSourceName());
 
-        BaseAuctionDTO auctionDTO = null;
-        for (String url : urlsToFetch) {
-            try {
-                PageData pageData = new PageData(url);
-                auctionDTO = fetchAuction(pageData.fetch());
-                Auction auction = auctionMapper.map(auctionDTO);
-                Auction auctionFound = auctionService.findDraftBy(auction.getFileNumber(), auction.getCourt(), auctionSource);
-                if (isNull(auctionFound)) {
-                    auction.setSource(auctionSource);
-                    auctionService.saveDraft(auction);
+        if (!urlsToFetch.isEmpty()) {
+            AuctionSource auctionSource = auctionSourceService.findByName(getSourceName());
+            T auctionDTO = null;
+            for (String url : urlsToFetch) {
+                try {
+                    PageData pageData = new PageData(url);
+                    Document doc = getDocumentFromContent(pageData.fetch(), pageData.getUrl());
+                    auctionDTO = auctionParser.parse(doc);
+                    Auction auction = auctionMapper.map(auctionDTO);
+                    Auction auctionFound = auctionService.findBy(auction.getFileNumber(), auction.getCourt(), auctionSource);
+                    if (isNull(auctionFound)) {
+                        auction.setSource(auctionSource);
+                        auctionService.save(auction);
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Page data fetch from [{}] failed", url, e);
+                } catch (ParseException e) {
+                    LOGGER.error("Auction draft parse from [{}] failed", auctionDTO, e);
                 }
-            } catch (IOException e) {
-                LOGGER.error("Page data fetch from [{}] failed", url, e);
-            } catch (ParseException e) {
-                LOGGER.error("Auction draft parse from [{}] failed", auctionDTO, e);
             }
         }
 
@@ -64,14 +72,18 @@ public abstract class AbstractCrawler implements Crawling {
 
     }
 
+    protected Document getDocumentFromContent(PageData pageData, String baseUri) throws IOException {
+        return Jsoup.parse(new ByteArrayInputStream(pageData.getContent().getBytes()), "UTF-8", baseUri);
+    }
+
     /**
-     * @param currentUrl               url to fetch auctions urls from / crawl further
+     * @param currentRelatedUrl        url to fetch auctions urls from / crawl further
      * @param startDepth               start level of depth of recursive call
      * @param urlsToCrawlPattern       to get urls of pages possibly contains auction urls
      * @param extractAuctionUrlPattern to get auction urls
      * @return set of auction urls
      */
-    Set<String> collectAuctionUrls(@NonNull String currentUrl, int startDepth, @NonNull Pattern urlsToCrawlPattern, @NonNull Pattern extractAuctionUrlPattern) {
+    Set<String> collectAuctionUrls(@NonNull String currentRelatedUrl, int startDepth, @NonNull Pattern urlsToCrawlPattern, @NonNull Pattern extractAuctionUrlPattern) {
 
         if (startDepth < 0 || getMaxCrawlDepth() < 0 || startDepth > getMaxCrawlDepth()) {
             throw new IllegalArgumentException("Current depth of crawling shouldn't be more than maximum depth");
@@ -79,11 +91,14 @@ public abstract class AbstractCrawler implements Crawling {
 
         final Set<String> fetchedUrls = new HashSet<>();
 
-        if (!visitedUrls.contains(currentUrl)) {
+        // TODO Roman: 26-Dec-20 test for absolute url
+        final String currentAbsoluteUrl = getAbsoluteUrl(currentRelatedUrl);
+
+        if (!visitedUrls.contains(currentAbsoluteUrl)) {
             final String currentPageContent;
             try {
-                currentPageContent = new PageData(currentUrl).fetch().getContent();
-                visitedUrls.add(currentUrl);
+                currentPageContent = new PageData(currentAbsoluteUrl).fetch().getContent();
+                visitedUrls.add(currentAbsoluteUrl);
 
                 fetchedUrls.addAll(fetchUrls(extractAuctionUrlPattern, currentPageContent));
                 fetchedUrls.removeAll(visitedUrls);
@@ -96,12 +111,19 @@ public abstract class AbstractCrawler implements Crawling {
                 }
 
             } catch (IOException e) {
-                LOGGER.error("Error get content of [{}]", currentUrl, e);
+                LOGGER.error("Error get content of [{}]", currentAbsoluteUrl, e);
             }
         }
 
         fetchedUrls.removeAll(visitedUrls);
         return fetchedUrls;
+    }
+
+    private String getAbsoluteUrl(final String currentUrl) {
+        if (!currentUrl.startsWith("http")) {
+            return getBaseUrl() + currentUrl;
+        }
+        return currentUrl;
     }
 
     /**
@@ -120,14 +142,9 @@ public abstract class AbstractCrawler implements Crawling {
         return urls;
     }
 
-    /**
-     * Parse the page and map it to {@link BaseAuctionDTO} specific to {@link AbstractCrawler} implementation
-     *
-     * @param pageData input stream of page data
-     */
-    abstract BaseAuctionDTO fetchAuction(PageData pageData) throws IOException;
-
     abstract String getStartURL();
+
+    abstract String getBaseUrl();
 
     abstract int getMaxCrawlDepth();
 

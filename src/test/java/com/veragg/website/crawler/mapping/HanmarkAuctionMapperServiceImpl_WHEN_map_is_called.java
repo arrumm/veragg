@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
+public class HanmarkAuctionMapperServiceImpl_WHEN_map_is_called {
 
     private HanmarkAuctionMapperServiceImpl sut;
 
@@ -55,7 +55,7 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
     public void setUp() {
         initMocks(this);
         sut = new HanmarkAuctionMapperServiceImpl(courtService, normalizationService);
-        when(normalizationService.normalizeCity(anyString())).thenCallRealMethod();
+        when(normalizationService.normalizeCityName(anyString())).thenCallRealMethod();
         when(court.getName()).thenReturn("Wittlich");
         when(court.getState()).thenReturn(state);
         when(state.getId()).thenReturn("RP");

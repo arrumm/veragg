@@ -97,6 +97,10 @@ public class Auction {
     @Type(type = "org.hibernate.type.TextType")
     private String expertiseDescription;
 
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    private String additionalInfoDescription;
+
     @Column(name = "created_on")
     @CreationTimestamp
     private Instant createdOn;
@@ -125,12 +129,10 @@ public class Auction {
     @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AuctionHistory> history = new ArrayList<>();
 
-    //TODO: additional info like in https://www.hanmark.de/wertgutachten-29300.html
-
     @Builder
     public Auction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
             @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, String sourceUrl,
-            AuctionSource source, List<Document> documents, @NonNull AuctionStatus auctionStatus) {
+            AuctionSource source, List<Document> documents, @NonNull AuctionStatus auctionStatus, @NonNull String additionalInfoDescription) {
         this.court = court;
         this.fileNumber = fileNumber;
         this.propertyTypes = propertyTypes;
@@ -146,6 +148,7 @@ public class Auction {
         this.source = source;
         this.documents = documents;
         this.auctionStatus = auctionStatus;
+        this.additionalInfoDescription = additionalInfoDescription;
     }
 
     @Override

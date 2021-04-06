@@ -11,7 +11,7 @@ import com.veragg.website.domain.Court;
 
 public interface AuctionService {
 
-    Auction saveDraft(Auction auction);
+    Auction save(Auction auction);
 
     List<Auction> saveAll(List<Auction> auction);
 
@@ -23,8 +23,8 @@ public interface AuctionService {
 
     Page<Auction> findAllAvailable(Pageable pageable);
 
-    List<Auction> findAllDrafts();
+    List<Auction> findAll();
 
-    Auction findDraftBy(String fileNumber, Court court, AuctionSource source);
+    Auction findBy(String fileNumber, Court court, AuctionSource source);
 
 }

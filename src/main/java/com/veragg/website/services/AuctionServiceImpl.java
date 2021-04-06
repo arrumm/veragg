@@ -37,7 +37,7 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Override
     @Transactional
-    public Auction saveDraft(Auction auction) {
+    public Auction save(Auction auction) {
         auction.setDocuments(auction.getDocuments().stream().filter(Objects::nonNull).collect(Collectors.toList()));
         auction.getDocuments().forEach(documentAuctionRepo::save);
         Auction savedAuction = auctionRepo.save(auction);
@@ -74,12 +74,12 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public List<Auction> findAllDrafts() {
+    public List<Auction> findAll() {
         return auctionRepo.findAllByAuctionStatus(AuctionStatus.DRAFT);
     }
 
     @Override
-    public Auction findDraftBy(@NonNull String fileNumber, @NonNull Court court, @NonNull AuctionSource source) {
+    public Auction findBy(@NonNull String fileNumber, @NonNull Court court, @NonNull AuctionSource source) {
         return auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(fileNumber, court, source, AuctionStatus.DRAFT);
     }
 

@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class NormalizationService {
 
-    public String normalizeCity(String name) {
-
+    public String normalizeCityName(String name) {
         String result = name;
         result = result.replace("ü", "u");
         result = result.replace("ö", "o");
@@ -16,7 +15,6 @@ public class NormalizationService {
         result = result.replace("ß", "ss");
 
         return result;
-
     }
 
 }

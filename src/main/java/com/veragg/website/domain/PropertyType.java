@@ -24,7 +24,8 @@ public enum PropertyType {
     OTHER_PLOT("Grundstück", 4),
 
     COMMERCIAL_PROPERTY("Gewerbe", 3, "Wohn-/Gewerbeimmobilie", "Wohn- und Geschäftshaus", "Büro-/Werkstatt-/Lagergebäude", "Büro/Laden", "Büro", "Lagerfläche", "Hotel", "Pension",
-            "Klinik/Pflegeheim", "Halle/Werkstatt", "Lagerhalle", "Ladengeschäft", "Halle", "Wohn- und Geschäftsräume", "Sonstige (Gewerbeobjekt)", "Freizeitanlage"),
+            "Klinik/Pflegeheim", "Halle/Werkstatt", "Lagerhalle", "Ladengeschäft", "Halle", "Wohn- und Geschäftsräume", "Sonstige (Gewerbeobjekt)", "Freizeitanlage", "Industriegebäude mit Freifläche",
+            "Sonstige (Gastronomie)"),
 
     OTHER("Ruine", 5);
 
@@ -61,12 +62,12 @@ public enum PropertyType {
         return propertyTypes;
     }
 
-    public static Set<PropertyType> getBySynonymIn(String description) {
+    public static Set<PropertyType> getBySynonymIn(String text) {
         Set<PropertyType> propertyTypes = new HashSet<>();
         //@formatter:off
         Arrays.stream(values())
                 .filter(propertyType -> propertyType.getSynonyms().stream()
-                        .anyMatch(description::contains))
+                        .anyMatch(text::contains))
                 .forEach(propertyTypes::add);
         //@formatter:on
         return propertyTypes;

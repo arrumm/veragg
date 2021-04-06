@@ -29,6 +29,7 @@ public class BaseAuctionDTO {
     private String plotDescription;
     private String buildingDescription;
     private String outdoorDescription;
+    private String additionalInfoDescription;
     private List<String> tileImages;
     private String courtAppointmentDescriptionUrl;
     private String limitDescription;

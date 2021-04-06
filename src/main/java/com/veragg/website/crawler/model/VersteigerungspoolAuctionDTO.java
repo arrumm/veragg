@@ -9,9 +9,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
-public class HanmarkAuctionDTO extends BaseAuctionDTO {
-
-    public HanmarkAuctionDTO(final BaseAuctionDTO baseAuctionDTO) {
+public class VersteigerungspoolAuctionDTO extends BaseAuctionDTO {
+    public VersteigerungspoolAuctionDTO(final BaseAuctionDTO baseAuctionDTO) {
         super();
         setCourtName(baseAuctionDTO.getCourtName());
         setFileNumber(baseAuctionDTO.getFileNumber());
