@@ -6,8 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.veragg.website.domain.Auction;
-import com.veragg.website.domain.AuctionSource;
-import com.veragg.website.domain.Court;
 
 public interface AuctionService {
 
@@ -25,6 +23,5 @@ public interface AuctionService {
 
     List<Auction> findAll();
 
-    Auction findBy(String fileNumber, Court court, AuctionSource source);
-
+    Auction findBy(Auction auction);
 }

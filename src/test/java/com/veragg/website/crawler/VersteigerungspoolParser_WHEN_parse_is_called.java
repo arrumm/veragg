@@ -16,7 +16,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.veragg.website.crawler.model.VersteigerungspoolAuctionDTO;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VersteigerungspoolParser_WHEN_parse_is_called {
@@ -73,6 +75,62 @@ public class VersteigerungspoolParser_WHEN_parse_is_called {
                 "Fenster: aus Kunststoff mit Isolierverglasung; Rollläden aus Kunststoff.\n" + "Bodenbeläge: PVC, Parkett.\n" + "Heizung: Zentralheizung.\n" + "Warmwasser: zentral über Heizung.\n" +
                         "Elektroinstallation: durchschnittliche Ausstattung; Türöffner, Klingelanlage, Telefonanschluss.\n" + "Sanitäre Installation: eingebaute Wanne, WC und Waschbecken.\n" +
                         "Besondere Bauteile: Loggia (überbaut).\n" + "\n" + "© immobilienpool.de Media GmbH &amp; Co. KG | 2020", result.getBuildingDescription());
+
+        assertNull(result.getAdditionalInfoDescription());
+
+    }
+
+    @Test
+    public void GIVEN_valid_pageData_AND_additional_info_filled_is_passed_THEN_auction_returned() throws IOException {
+
+        // Arrange
+        InputStream hausInputStream = getClass().getClassLoader().getResourceAsStream("versteigerungspool-zwei-einfamilienhauuser.html");
+        final Document htmlDocumentFlat = Jsoup.parse(new ByteArrayInputStream(IOUtils.toString(hausInputStream, StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8)), "UTF-8",
+                "https://versteigerungspool.de/immobilie/zwei-einfamilienhaeuser.325227");
+
+        // Act
+        VersteigerungspoolAuctionDTO result = sut.parse(htmlDocumentFlat);
+
+        //Assert
+        assertEquals("Diese Zwangsversteigerung weist folgende Besonderheit auf: Das oben beschriebene Objekt wird gemeinsam mit einem oder mehreren anderen Objekten versteigert. Dies ist " +
+                "ersichtlich aus den Versteigerungsdaten / Terminsbestimmung (siehe oben). Dabei besteht die Möglichkeit, die Versteigerungsobjekte einzeln oder in einem Gesamtgebot zu ersteigern. " +
+                "Das wird sich jedoch erst beim Versteigerungstermin ergeben und vom Rechtspfleger bekannt gegeben. Nähere Informationen hierzu erfragen Sie bitte bei Gericht, dem Gläubiger oder " +
+                "dem vom Gläubiger beauftragten Vertreter/Makler.\n" + "\n" +
+                "Wenn hier kein bzw. nur eines der vorhandenen Gutachten zum Download zur Verfügung gestellt wurde, können alle Gutachten unter dem jeweiligen Aktenzeichen oder beim Amtsgericht " +
+                "eingesehen werden.", result.getAdditionalInfoDescription());
+
+    }
+
+    @Test
+    public void GIVEN_valid_pageData_AND_links_are_filled_is_passed_THEN_auction_returned() throws IOException {
+
+        // Arrange
+        InputStream hausInputStream = getClass().getClassLoader().getResourceAsStream("versteigerungspool-zwei-einfamilienhauuser.html");
+        final Document htmlDocumentFlat = Jsoup.parse(new ByteArrayInputStream(IOUtils.toString(hausInputStream, StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8)), "UTF-8",
+                "https://versteigerungspool.de/immobilie/zwei-einfamilienhaeuser.325227");
+
+        // Act
+        VersteigerungspoolAuctionDTO result = sut.parse(htmlDocumentFlat);
+
+        //Assert
+        assertNotNull(result);
+
+        assertFalse(result.getExpertiseLinks().isEmpty());
+        //        assertEquals(1, result.getExpertiseLinks().size());
+        //        assertEquals("https://www.hanmark.de/wertgutachten-29362.pdf", result.getExpertiseLinks().get(0));
+        //
+        //        assertFalse(result.getOtherDocumentLinks().isEmpty());
+        //        assertEquals(1, result.getOtherDocumentLinks().size());
+        //        assertTrue(result.getOtherDocumentLinks().contains("https://www.hanmark.de/termin-29362.pdf"));
+        //
+        //        assertFalse(result.getImageLinks().isEmpty());
+        //        assertEquals(6, result.getImageLinks().size());
+        //        assertEquals("https://www.hanmark.de/titelbild-29362.jpg", result.getImageLinks().get(0));
+        //        assertEquals("https://www.hanmark.de/abbildung-198080.jpg", result.getImageLinks().get(1));
+        //        assertEquals("https://www.hanmark.de/abbildung-198081.jpg", result.getImageLinks().get(2));
+        //        assertEquals("https://www.hanmark.de/abbildung-198082.jpg", result.getImageLinks().get(3));
+        //        assertEquals("https://www.hanmark.de/abbildung-198083.jpg", result.getImageLinks().get(4));
+        //        assertEquals("https://www.hanmark.de/abbildung-198084.jpg", result.getImageLinks().get(5));
 
     }
 

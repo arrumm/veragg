@@ -41,6 +41,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
 import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 
 @RunWith(PowerMockRunner.class)
@@ -55,7 +56,7 @@ public class AbstractCrawler_WHEN_crawl_is_called {
     private static final String AUCTION_URL_CONTENT = "auctionUrlContent";
     private static final String ANOTHER_AUCTION_URL = "anotherAuctionUrl";
     private static final String ANOTHER_AUCTION_URL_CONTENT = "anotherAuctionUrlContent";
-    private AbstractCrawler sut;
+    private AbstractCrawler<HanmarkAuctionDTO> sut;
 
     @Mock
     AuctionMapperService<HanmarkAuctionDTO> mapperService;
@@ -110,8 +111,6 @@ public class AbstractCrawler_WHEN_crawl_is_called {
         when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
     }
 
-    // TODO Roman: 03-Apr-21 test the process is running
-
     @Test
     public void GIVEN_source_is_not_null_urls_fetched_mapped_THEN_auction_saved_with_source() throws Exception {
 
@@ -135,7 +134,7 @@ public class AbstractCrawler_WHEN_crawl_is_called {
     }
 
     @Test
-    public void GIVEN_source_is_null_urls_fetched_mapped_THEN_auction_draft_saved_null_source() throws IOException, ParseException {
+    public void GIVEN_source_is_null_urls_fetched_mapped_THEN_auction_saved_null_source() throws ParseException {
 
         //Arrange
         doReturn(new HashSet<String>() {{
@@ -157,7 +156,7 @@ public class AbstractCrawler_WHEN_crawl_is_called {
     }
 
     @Test
-    public void GIVEN_urls_fetched_mapped_THEN_auction_draft_saved() throws Exception {
+    public void GIVEN_urls_fetched_mapped_THEN_auction_saved() throws Exception {
 
         //Arrange
         doReturn(new HashSet<String>() {{
@@ -226,14 +225,15 @@ public class AbstractCrawler_WHEN_crawl_is_called {
         Court court = mock(Court.class);
         when(auction.getFileNumber()).thenReturn(StringUtils.EMPTY);
         when(auction.getCourt()).thenReturn(court);
+        when(auction.getSource()).thenReturn(auctionSource);
 
         //Act
         sut.crawl();
 
         //Assert
-        verify(mapperService).map(eq(auctionDTO));
-        verify(auctionService).findBy(anyString(), any(Court.class), any(AuctionSource.class));
-        verify(auctionService).save(eq(auction));
+        verify(mapperService).map(auctionDTO);
+        verify(auctionService).findBy(auction);
+        verify(auctionService).save(auction);
         verifyNoMoreInteractions(auctionService, mapperService);
 
     }
@@ -251,7 +251,7 @@ public class AbstractCrawler_WHEN_crawl_is_called {
 
         //Assert
         verifyNoMoreInteractions(auctionService);
-        verify(logger).error(eq("Auction draft parse from [{}] failed"), eq(auctionDTO), eq(parseException));
+        verify(logger).error(eq("Auction parse from [{}] failed"), eq(auctionDTO), eq(parseException));
 
     }
 
@@ -288,7 +288,7 @@ public class AbstractCrawler_WHEN_crawl_is_called {
     }
 
     @Test
-    public void GIVEN_no_auction_urls_THEN_no_actions_performed() {
+    public void GIVEN_no_auction_urls_THEN_no_actions_performed() throws Exception {
 
         //Arrange
         doReturn(Collections.EMPTY_SET).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
@@ -299,7 +299,46 @@ public class AbstractCrawler_WHEN_crawl_is_called {
         //Assert
         verifyZeroInteractions(auctionSourceService);
         verifyZeroInteractions(pageData);
-
+        verifyPrivate(sut).invoke("cleanup");
     }
 
+    // TODO Roman: 07-Apr-21 refactor unit test
+    @Test
+    public void GIVEN_urls_fetched_mapped_THEN_actions_performed() throws Exception {
+
+        //Arrange
+        doReturn(new HashSet<String>() {{
+            add(AUCTION_URL);
+        }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
+
+        PowerMockito.whenNew(PageData.class).withArguments(eq(AUCTION_URL)).thenReturn(pageData);
+        when(pageData.fetch()).thenReturn(pageData);
+        when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
+        when(pageData.getUrl()).thenReturn("baseUrl");
+
+        HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
+        doReturn(oneAuctionDTO).when(hanmarkParser).parse(eq(jsoupDocument));
+        Auction oneAuction = mock(Auction.class);
+        doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
+
+        //Act
+        sut.crawl();
+
+        //        verifyNew(pageData);
+        verify(pageData, times(1)).fetch();
+        verify(pageData, times(1)).getUrl();
+
+        //        Document doc = getDocumentFromContent(pageData.fetch(), pageData.getUrl());
+        //        auctionDTO = auctionParser.parse(doc);
+        //        Auction auction = auctionMapper.map(auctionDTO);
+        //        Auction auctionFound = auctionService.findBy(auction);
+        //        if (isNull(auctionFound)) {
+        //            auction.setSource(auctionSource);
+        //            auctionService.save(auction);
+        //        }
+
+        //Assert
+        verify(auctionService, times(1)).save(eq(oneAuction));
+
+    }
 }

@@ -55,21 +55,25 @@ public abstract class AbstractCrawler<T extends BaseAuctionDTO> implements Crawl
                     Document doc = getDocumentFromContent(pageData.fetch(), pageData.getUrl());
                     auctionDTO = auctionParser.parse(doc);
                     Auction auction = auctionMapper.map(auctionDTO);
-                    Auction auctionFound = auctionService.findBy(auction.getFileNumber(), auction.getCourt(), auctionSource);
-                    if (isNull(auctionFound)) {
-                        auction.setSource(auctionSource);
-                        auctionService.save(auction);
-                    }
+                    auction.setSource(auctionSource);
+                    persist(auction);
                 } catch (IOException e) {
                     LOGGER.error("Page data fetch from [{}] failed", url, e);
                 } catch (ParseException e) {
-                    LOGGER.error("Auction draft parse from [{}] failed", auctionDTO, e);
+                    LOGGER.error("Auction parse from [{}] failed", auctionDTO, e);
                 }
             }
         }
 
         cleanup();
 
+    }
+
+    private void persist(Auction auction) {
+        Auction existingAuction = auctionService.findBy(auction);
+        if (isNull(existingAuction)) {
+            auctionService.save(auction);
+        }
     }
 
     protected Document getDocumentFromContent(PageData pageData, String baseUri) throws IOException {

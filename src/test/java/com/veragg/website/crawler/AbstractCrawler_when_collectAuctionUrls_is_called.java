@@ -77,6 +77,9 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
     @Mock
     Parsing hanmarkParser;
 
+    @Mock
+    Set<String> visitedUrls;
+
     @Before
     public void setUp() throws Exception {
         initMocks(this);
@@ -162,7 +165,6 @@ public class AbstractCrawler_when_collectAuctionUrls_is_called {
         Pattern crawlPattern = Pattern.compile(CRAWL);
         Pattern collectPattern = Pattern.compile(COLLECT);
 
-        Set visitedUrls = mock(HashSet.class);
         when(visitedUrls.contains(VISITED_URL)).thenReturn(true);
 
         Whitebox.setInternalState(sut, "visitedUrls", visitedUrls);

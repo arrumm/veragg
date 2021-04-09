@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.veragg.website.domain.Auction;
-import com.veragg.website.domain.AuctionSource;
 import com.veragg.website.domain.AuctionStatus;
 import com.veragg.website.domain.Court;
 import com.veragg.website.repository.AuctionRepo;
@@ -79,8 +78,7 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public Auction findBy(@NonNull String fileNumber, @NonNull Court court, @NonNull AuctionSource source) {
-        return auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(fileNumber, court, source, AuctionStatus.DRAFT);
+    public Auction findBy(@NonNull Auction auction) {
+        return auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(auction.getFileNumber(), auction.getCourt(), auction.getSource(), AuctionStatus.DRAFT);
     }
-
 }
