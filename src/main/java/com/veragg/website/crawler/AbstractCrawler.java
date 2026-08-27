@@ -3,6 +3,7 @@ package com.veragg.website.crawler;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,19 +40,22 @@ public abstract class AbstractCrawler implements Crawling {
     @Override
     public void crawl() {
 
-        Set<String> urlsToFetch = collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
+        Set<String> urlsToFetch = collectAuctionUrls();
         AuctionSource auctionSource = auctionSourceService.findByName(getSourceName());
 
         BaseAuctionDTO auctionDTO = null;
         for (String url : urlsToFetch) {
             try {
-                PageData pageData = new PageData(url);
+                PageData pageData = new PageData(url, getReferer());
                 auctionDTO = fetchAuction(pageData.fetch());
-                Auction auction = auctionMapper.map(auctionDTO);
-                Auction auctionFound = auctionService.findDraftBy(auction.getFileNumber(), auction.getCourt(), auctionSource);
-                if (isNull(auctionFound)) {
-                    auction.setSource(auctionSource);
-                    auctionService.saveDraft(auction);
+                @SuppressWarnings("unchecked")
+                List<Auction> auctions = (List<Auction>) auctionMapper.map(auctionDTO);
+                for (Auction auction : auctions) {
+                    Auction auctionFound = auctionService.findDraftBy(auction.getFileNumber(), auction.getCourt(), auctionSource, auction.getLotNumber());
+                    if (isNull(auctionFound)) {
+                        auction.setSource(auctionSource);
+                        auctionService.saveDraft(auction);
+                    }
                 }
             } catch (IOException e) {
                 LOGGER.error("Page data fetch from [{}] failed", url, e);
@@ -62,6 +66,14 @@ public abstract class AbstractCrawler implements Crawling {
 
         cleanup();
 
+    }
+
+    /**
+     * Default: recursive GET+regex link-following from {@link #getStartURL()}. Override for sources whose
+     * listing pages aren't reachable that way (e.g. a POST-based search).
+     */
+    protected Set<String> collectAuctionUrls() {
+        return collectAuctionUrls(getStartURL(), 0, getContainerPageUrlPattern(), getAuctionUrlPattern());
     }
 
     /**
@@ -127,15 +139,32 @@ public abstract class AbstractCrawler implements Crawling {
      */
     abstract BaseAuctionDTO fetchAuction(PageData pageData) throws IOException;
 
-    abstract String getStartURL();
-
-    abstract int getMaxCrawlDepth();
-
     abstract Pattern getAuctionUrlPattern();
 
-    abstract Pattern getContainerPageUrlPattern();
-
     abstract String getSourceName();
+
+    /**
+     * Only used by the default {@link #collectAuctionUrls()} implementation; crawlers that override it
+     * (e.g. a POST-based search) don't need to implement these.
+     */
+    String getStartURL() {
+        throw new UnsupportedOperationException();
+    }
+
+    int getMaxCrawlDepth() {
+        throw new UnsupportedOperationException();
+    }
+
+    Pattern getContainerPageUrlPattern() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Referer header applied to every {@link PageData} fetch; some sources reject requests without one.
+     */
+    protected String getReferer() {
+        return null;
+    }
 
     private void cleanup() {
         this.visitedUrls.clear();

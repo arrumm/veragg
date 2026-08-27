@@ -55,7 +55,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftBy("", court, null));
+        assertThrows(NullPointerException.class, () -> sut.findDraftBy("", court, null, null));
 
     }
 
@@ -65,7 +65,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftBy(null, court, auctionSource));
+        assertThrows(NullPointerException.class, () -> sut.findDraftBy(null, court, auctionSource, null));
 
     }
 
@@ -75,7 +75,7 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
         //Arrange
         //Act
         //Assert
-        assertThrows(NullPointerException.class, () -> sut.findDraftBy("", null, auctionSource));
+        assertThrows(NullPointerException.class, () -> sut.findDraftBy("", null, auctionSource, null));
 
     }
 
@@ -83,10 +83,10 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
     public void given_valid_fileNumber_and_court_and_source_then_auction_draft_should_return() {
 
         //Arrange
-        when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq(AuctionStatus.DRAFT))).thenReturn(auctionMock);
+        when(auctionRepo.findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq((String) null), eq(AuctionStatus.DRAFT))).thenReturn(auctionMock);
 
         //Act
-        Auction result = sut.findDraftBy("1K 12", court, auctionSource);
+        Auction result = sut.findDraftBy("1K 12", court, auctionSource, null);
 
         //Assert
         assertNotNull(result);
@@ -98,13 +98,28 @@ public class AuctionServiceImpl_when_findDraftByFileNumberCourtSource_is_called 
     public void given_fileNumber_with_no_auction_then_null_should_return() {
 
         //Arrange
-        when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq(AuctionStatus.DRAFT))).thenReturn(null);
+        when(auctionRepo.findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq((String) null), eq(AuctionStatus.DRAFT))).thenReturn(null);
 
         //Act
-        Auction result = sut.findDraftBy("1K 12", court, auctionSource);
+        Auction result = sut.findDraftBy("1K 12", court, auctionSource, null);
 
         //Assert
         assertNull(result);
+
+    }
+
+    @Test
+    public void given_valid_lotNumber_then_lotNumber_used_in_lookup() {
+
+        //Arrange
+        when(auctionRepo.findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(eq("1K 12"), eq(court), eq(auctionSource), eq("2"), eq(AuctionStatus.DRAFT))).thenReturn(auctionMock);
+
+        //Act
+        Auction result = sut.findDraftBy("1K 12", court, auctionSource, "2");
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(auctionMock, result);
 
     }
 

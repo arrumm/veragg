@@ -56,6 +56,10 @@ public class Auction {
     @NonNull
     private String fileNumber;
 
+    //lfd. Nr. - distinguishes multiple objects auctioned under the same fileNumber
+    @Column(name = "lot_number")
+    private String lotNumber;
+
     //objekttyp
     @NonNull
     @ElementCollection
@@ -128,11 +132,12 @@ public class Auction {
     //TODO: additional info like in https://www.hanmark.de/wertgutachten-29300.html
 
     @Builder
-    public Auction(@NonNull Court court, @NonNull String fileNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment, @NonNull Integer amount,
-            @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription, String sourceUrl,
-            AuctionSource source, List<Document> documents, @NonNull AuctionStatus auctionStatus) {
+    public Auction(@NonNull Court court, @NonNull String fileNumber, String lotNumber, @NonNull Set<PropertyType> propertyTypes, @NonNull Address address, LocalDateTime appointment,
+            @NonNull Integer amount, @NonNull BuyLimit buyLimit, String outdoorDescription, String propertyBuildingDescription, String propertyPlotDescription, String expertiseDescription,
+            String sourceUrl, AuctionSource source, List<Document> documents, @NonNull AuctionStatus auctionStatus) {
         this.court = court;
         this.fileNumber = fileNumber;
+        this.lotNumber = lotNumber;
         this.propertyTypes = propertyTypes;
         this.address = address;
         this.appointment = appointment;

@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -96,7 +97,7 @@ public class AbstractCrawler_when_process_is_called {
         PowerMockito.when(LoggerFactory.getLogger(HanmarkCrawler.class)).thenReturn(logger);
         Whitebox.setInternalState(sut, logger);
 
-        PowerMockito.whenNew(PageData.class).withArguments(eq(AUCTION_URL)).thenReturn(pageData);
+        PowerMockito.whenNew(PageData.class).withArguments(AUCTION_URL, (String) null).thenReturn(pageData);
         when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
     }
@@ -112,7 +113,7 @@ public class AbstractCrawler_when_process_is_called {
         HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
         doReturn(oneAuctionDTO).when(sut).fetchAuction(eq(pageData));
         Auction oneAuction = mock(Auction.class);
-        doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
+        doReturn(Collections.singletonList(oneAuction)).when(mapperService).map(eq(oneAuctionDTO));
         doReturn(auctionSource).when(auctionSourceService).findByName(anyString());
 
         //Act
@@ -134,7 +135,7 @@ public class AbstractCrawler_when_process_is_called {
         HanmarkAuctionDTO oneAuctionDTO = mock(HanmarkAuctionDTO.class);
         doReturn(oneAuctionDTO).when(sut).fetchAuction(eq(pageData));
         Auction oneAuction = mock(Auction.class);
-        doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
+        doReturn(Collections.singletonList(oneAuction)).when(mapperService).map(eq(oneAuctionDTO));
         doReturn(null).when(auctionSourceService).findByName(anyString());
 
         //Act
@@ -154,9 +155,9 @@ public class AbstractCrawler_when_process_is_called {
             add(AUCTION_URL);
         }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
 
-        PowerMockito.whenNew(PageData.class).withArguments(eq(AUCTION_URL)).thenReturn(pageData);
+        PowerMockito.whenNew(PageData.class).withArguments(AUCTION_URL, (String) null).thenReturn(pageData);
         PageData pageDataFromAnotherUrl = mock(PageData.class);
-        PowerMockito.whenNew(PageData.class).withArguments(eq(ANOTHER_AUCTION_URL)).thenReturn(pageDataFromAnotherUrl);
+        PowerMockito.whenNew(PageData.class).withArguments(ANOTHER_AUCTION_URL, (String) null).thenReturn(pageDataFromAnotherUrl);
 
         when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
@@ -172,8 +173,8 @@ public class AbstractCrawler_when_process_is_called {
         Auction oneAuction = mock(Auction.class);
         Auction anotherAuction = mock(Auction.class);
 
-        doReturn(oneAuction).when(mapperService).map(eq(oneAuctionDTO));
-        doReturn(anotherAuction).when(mapperService).map(eq(anotherAuctionDTO));
+        doReturn(Collections.singletonList(oneAuction)).when(mapperService).map(eq(oneAuctionDTO));
+        doReturn(Collections.singletonList(anotherAuction)).when(mapperService).map(eq(anotherAuctionDTO));
 
         //Act
         sut.crawl();
@@ -193,9 +194,9 @@ public class AbstractCrawler_when_process_is_called {
             add(AUCTION_URL);
         }}).when(sut).collectAuctionUrls(anyString(), anyInt(), any(), any());
 
-        PowerMockito.whenNew(PageData.class).withArguments(eq(AUCTION_URL)).thenReturn(pageData);
+        PowerMockito.whenNew(PageData.class).withArguments(AUCTION_URL, (String) null).thenReturn(pageData);
         PageData pageDataNPE = mock(PageData.class);
-        PowerMockito.whenNew(PageData.class).withArguments(eq("auctionUrlNPE")).thenReturn(pageDataNPE);
+        PowerMockito.whenNew(PageData.class).withArguments("auctionUrlNPE", (String) null).thenReturn(pageDataNPE);
 
         when(pageData.fetch()).thenReturn(pageData);
         when(pageData.getContent()).thenReturn(AUCTION_URL_CONTENT);
@@ -205,7 +206,7 @@ public class AbstractCrawler_when_process_is_called {
         doThrow(ioException).when(sut).fetchAuction(eq(pageData));
         doReturn(auctionDTO).when(sut).fetchAuction(eq(pageDataNPE));
 
-        doReturn(auction).when(mapperService).map(eq(auctionDTO));
+        doReturn(Collections.singletonList(auction)).when(mapperService).map(eq(auctionDTO));
 
         doReturn(auctionSource).when(auctionSourceService).findByName(anyString());
         Court court = mock(Court.class);
@@ -217,7 +218,7 @@ public class AbstractCrawler_when_process_is_called {
 
         //Assert
         verify(mapperService).map(eq(auctionDTO));
-        verify(auctionService).findDraftBy(anyString(), any(Court.class), any(AuctionSource.class));
+        verify(auctionService).findDraftBy(anyString(), any(Court.class), any(AuctionSource.class), isNull());
         verify(auctionService).saveDraft(eq(auction));
         verifyNoMoreInteractions(auctionService, mapperService);
 

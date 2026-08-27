@@ -5,6 +5,7 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -84,9 +85,11 @@ public class HanmarkAuctionMapperServiceImpl_when_map_is_called {
         auctionDTO.setExpertiseLinks(Collections.singletonList("url/expertise.pdf"));
 
         // Act
-        final Auction result = sut.map(auctionDTO);
+        final List<Auction> auctions = sut.map(auctionDTO);
 
         // Assert
+        assertEquals(1, auctions.size());
+        final Auction result = auctions.get(0);
         assertEquals("Wittlich", result.getCourt().getName());
         assertEquals("RP", result.getCourt().getState().getId());
         assertEquals("12b K 3/19", result.getFileNumber());

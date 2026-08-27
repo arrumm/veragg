@@ -67,7 +67,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
 
         //Arrange
         when(auction.getDocuments()).thenReturn(Arrays.asList(document, document));
-        when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(eq("AZ number"), eq(court), eq(source), eq(AuctionStatus.DRAFT))).thenReturn(null);
+        when(auctionRepo.findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(eq("AZ number"), eq(court), eq(source), any(), eq(AuctionStatus.DRAFT))).thenReturn(null);
         when(auctionRepo.save(eq(auction))).thenReturn(auction);
 
         //Act
@@ -76,7 +76,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         //Assert
         assertNotNull(result);
         assertEquals(auction, result);
-        verify(auctionRepo).findByFileNumberAndCourtAndSourceAndAuctionStatus(anyString(), any(Court.class), any(AuctionSource.class), any(AuctionStatus.class));
+        verify(auctionRepo).findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(anyString(), any(Court.class), any(AuctionSource.class), any(), any(AuctionStatus.class));
         verify(auctionRepo).save(any(Auction.class));
         verify(documentAuctionRepo, times(2)).save(any(Document.class));
 
@@ -88,7 +88,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         //Arrange
         Auction auctionFound = mock(Auction.class);
         when(auction.getDocuments()).thenReturn(Arrays.asList(document, document));
-        when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(anyString(), any(), any(), any())).thenReturn(auctionFound);
+        when(auctionRepo.findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(anyString(), any(), any(), any(), any())).thenReturn(auctionFound);
         when(auctionRepo.save(eq(auctionFound))).thenReturn(auctionFound);
 
         //Act
@@ -97,7 +97,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
         //Assert
         assertNotNull(result);
         assertEquals(auctionFound, result);
-        verify(auctionRepo).findByFileNumberAndCourtAndSourceAndAuctionStatus(anyString(), any(Court.class), any(AuctionSource.class), any(AuctionStatus.class));
+        verify(auctionRepo).findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(anyString(), any(Court.class), any(AuctionSource.class), any(), any(AuctionStatus.class));
         verifyNoMoreInteractions(auctionRepo);
         verifyNoMoreInteractions(documentAuctionRepo);
 
@@ -108,7 +108,7 @@ public class AuctionServiceImpl_when_saveDraft_is_called {
 
         //Arrange
         when(auction.getDocuments()).thenReturn(Arrays.asList(document, null, document, null, document));
-        when(auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(anyString(), any(), any(), any())).thenReturn(null);
+        when(auctionRepo.findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(anyString(), any(), any(), any(), any())).thenReturn(null);
         when(auctionRepo.save(eq(auction))).thenReturn(auction);
 
         //Act

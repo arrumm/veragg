@@ -6,13 +6,13 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +36,6 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HanmarkAuctionMapperServiceImpl.class);
 
-    private static final String HOUSE_NUMBER_REGEX = "[\\d\\+]+(\\d+)*";
-    private static final String ZIPCODE_REGEX = "^\\d{5}";
-    private static final String AMOUNT_REGEX = "([0-9.,]+)";
-    private static final String AMOUNT_CENT_REGEX = ",.+";
     private static final String DATE_REGEX = "([1-9]|([012][0-9])|(3[01]))\\.([0]{0,1}[1-9]|1[012])\\.\\d\\d\\d\\d [012]{0,1}[0-9]:[0-6][0-9]";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder().appendPattern("dd.MM.yyyy HH:mm").toFormatter().withZone(ZoneId.of("Europe/Berlin"));
 
@@ -53,9 +49,9 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
     }
 
     @Override
-    public Auction map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
+    public List<Auction> map(final HanmarkAuctionDTO auctionDTO) throws ParseException {
 
-        Address address = getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
+        Address address = AddressHelper.getAddress(auctionDTO.getStreetAddress(), auctionDTO.getCityAddress());
         String courtName = normalizationService.normalizeCity(auctionDTO.getCourtName());
         Court court = courtService.findBy(courtName, address.getZipCode());
         String expertDescription = auctionDTO.getExpertDescription();
@@ -69,7 +65,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
                 .appointment(getAppointmentDate(auctionDTO.getAppointmentDate()))
                 .fileNumber(auctionDTO.getFileNumber())
                 .buyLimit(getLimit(auctionDTO.getLimitDescription()))
-                .amount(Integer.parseInt(getNormalizedAmount(auctionDTO.getAmount())))
+                .amount(Integer.parseInt(normalizationService.normalizeAmount(auctionDTO.getAmount())))
                 .expertiseDescription(expertDescription)
                 .propertyBuildingDescription(auctionDTO.getBuildingDescription())
                 .outdoorDescription(auctionDTO.getOutdoorDescription())
@@ -86,7 +82,7 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
         documents.forEach(document -> document.setAuction(auction));
         auction.setDocuments(documents);
 
-        return auction;
+        return Collections.singletonList(auction);
     }
 
     private LocalDateTime getAppointmentDate(String appointmentDate) {
@@ -106,25 +102,6 @@ public class HanmarkAuctionMapperServiceImpl implements AuctionMapperService<Han
             LOGGER.warn("No property type found {}", propertyTypeName);
         }
         return propertyTypes;
-    }
-
-    private String getNormalizedAmount(final String amount) {
-        String extractedAmount = extractByPattern(Pattern.compile(AMOUNT_REGEX), amount);
-        extractedAmount = extractedAmount.replaceAll(AMOUNT_CENT_REGEX, "");
-        return extractedAmount.replaceAll("\\.", "");
-    }
-
-    private Address getAddress(String streetAddress, String cityAddress) {
-
-        Address.AddressBuilder addressBuilder = Address.builder();
-
-        String houseNumber = extractByPattern(Pattern.compile(HOUSE_NUMBER_REGEX), streetAddress).replace("+", "-");
-        addressBuilder.number(houseNumber.trim()).street(streetAddress.replaceFirst(houseNumber, StringUtils.EMPTY).trim());
-
-        String zipCode = extractByPattern(Pattern.compile(ZIPCODE_REGEX), cityAddress);
-        addressBuilder.zipCode(zipCode.trim()).city(cityAddress.replaceAll(zipCode, StringUtils.EMPTY).trim());
-
-        return addressBuilder.build();
     }
 
     private String extractByPattern(Pattern pattern, String source) {

@@ -79,8 +79,8 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public Auction findDraftBy(@NonNull String fileNumber, @NonNull Court court, @NonNull AuctionSource source) {
-        return auctionRepo.findByFileNumberAndCourtAndSourceAndAuctionStatus(fileNumber, court, source, AuctionStatus.DRAFT);
+    public Auction findDraftBy(@NonNull String fileNumber, @NonNull Court court, @NonNull AuctionSource source, String lotNumber) {
+        return auctionRepo.findByFileNumberAndCourtAndSourceAndLotNumberAndAuctionStatus(fileNumber, court, source, lotNumber, AuctionStatus.DRAFT);
     }
 
 }
